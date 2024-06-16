@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  mysql:
+    image: mysql:8.0.33
+    container_name: mysql-uslugi-8.0.33
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: uslugicykliczne
+      MYSQL_USER: krisent
+      MYSQL_PASSWORD: krisent
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mysql-db:/var/lib/mysql
+volumes:
+  mysql-db:
+
+
