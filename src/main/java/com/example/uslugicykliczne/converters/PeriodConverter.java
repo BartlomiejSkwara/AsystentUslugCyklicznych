@@ -12,7 +12,7 @@ public class PeriodConverter implements AttributeConverter<Period,String> {
     public String convertToDatabaseColumn(Period period) {
         if (period==null)
             return null;
-
+    //
         StringBuilder sb = new StringBuilder();
         sb.append(period.getYears());
         sb.append(SEPARATOR);
