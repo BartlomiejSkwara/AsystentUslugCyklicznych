@@ -49,7 +49,7 @@
       <p>s</p>
       <p>s</p>
       <p>s</p>
-      <p>s</p>
+      <p>{{msg}}</p>
 
       <main>
         sda

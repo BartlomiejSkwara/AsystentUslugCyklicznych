@@ -18,6 +18,14 @@ public class DysponentEntity {
     private Integer id;
     private String name;
     private String surname;
+
+    @Column(unique = true)
     private String mfnSerialNumber;
+
+    @Column(unique = true)
+    private String email;
+
+    @Column(unique = true)
+    private String phoneNumber;
 
 }
