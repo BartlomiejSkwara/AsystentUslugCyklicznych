@@ -15,9 +15,9 @@ import java.time.Period;
 @Entity
 public class CyclicalServiceEntity {
 
-    public CyclicalServiceEntity(String name, String surname, LocalDateTime firstCycleStart, Period period) {
-        this.name = name;
-        this.surname = surname;
+    public CyclicalServiceEntity(String description, Double price, LocalDateTime firstCycleStart, Period period) {
+        this.description = description;
+        this.price = price;
         this.firstCycleStart = firstCycleStart;
         this.renewalPeriod = period;
         this.nextRenewal = firstCycleStart.plus(period);
@@ -26,8 +26,9 @@ public class CyclicalServiceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
-    private String surname;
+
+    private String description;
+    private Double price;
 
     @Basic
     private LocalDateTime firstCycleStart;
