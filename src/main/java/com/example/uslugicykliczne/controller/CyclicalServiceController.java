@@ -4,13 +4,16 @@ import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
+import com.example.uslugicykliczne.scheduling.RunnableTask;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +25,7 @@ public class CyclicalServiceController {
     private final CyclicalServiceService cyclicalServiceService;
     private final ValidationUtility validationUtility;
 
-    CyclicalServiceController(CyclicalServiceRepo cyclicalServiceRepo, CyclicalServiceService cyclicalServiceService, ValidationUtility validationUtility){
+    CyclicalServiceController(CyclicalServiceRepo cyclicalServiceRepo, CyclicalServiceService cyclicalServiceService, ValidationUtility validationUtility, TaskScheduler taskScheduler){
         this.cyclicalServiceRepo = cyclicalServiceRepo;
         this.cyclicalServiceService = cyclicalServiceService;
         this.validationUtility = validationUtility;
