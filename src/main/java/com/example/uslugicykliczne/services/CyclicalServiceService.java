@@ -35,7 +35,7 @@ public class CyclicalServiceService {
 
         if(customerEntity.isPresent() && dysponentEntity.isPresent()){
             CyclicalServiceEntity insertedEntity = cyclicalServiceRepo.save(convertCyclicalServiceDTOtoEntity(new CyclicalServiceEntity(),cyclicalServiceDto,customerEntity.get(),dysponentEntity.get()));
-            schedulingService.trySchedulingNewReminder(insertedEntity);
+            schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
             return ResponseEntity.ok("Successfully added the cyclical service");
         }
 
@@ -69,7 +69,7 @@ public class CyclicalServiceService {
 
         if(customerEntity.isPresent() && dysponentEntity.isPresent()){
             CyclicalServiceEntity cyclicalServiceEntity1 = cyclicalServiceRepo.save(convertCyclicalServiceDTOtoEntity(cyclicalServiceEntity.get(),cyclicalServiceDto,customerEntity.get(),dysponentEntity.get()));
-            schedulingService.trySchedulingNewReminder(cyclicalServiceEntity1);
+            schedulingService.trySchedulingReminderWhenUpdated(cyclicalServiceEntity1);
             return ResponseEntity.ok("Successfully updated the cyclical service");
         }
 

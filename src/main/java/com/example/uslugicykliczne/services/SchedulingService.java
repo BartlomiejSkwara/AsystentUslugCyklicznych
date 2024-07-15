@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 @Service
@@ -21,14 +18,19 @@ public class SchedulingService {
     private final CyclicalServiceRepo cyclicalServiceRepo;
     private final TaskScheduler taskScheduler;
     private ScheduledFuture<?> scheduledFuture;
-    private Instant nextRegisteredRenewal;
+    private CyclicalServiceEntity lastRegisteredService;
 
     public ScheduledFuture<?> getScheduledFuture() {
         return scheduledFuture;
     }
 
-    public Instant getNextRegisteredRenewal() {
-        return nextRegisteredRenewal;
+    public CyclicalServiceEntity getLastRegisteredService(){
+        return lastRegisteredService;
+    }
+    public Instant getLastRegisteredRenewal() {
+        if(lastRegisteredService == null)
+            return null;
+        return lastRegisteredService.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
     }
 
     public SchedulingService(CyclicalServiceRepo cyclicalServiceRepo, TaskScheduler taskScheduler) {
@@ -36,30 +38,44 @@ public class SchedulingService {
         this.taskScheduler = taskScheduler;
     }
 
-    public void trySchedulingNewReminder(CyclicalServiceEntity cyclicalServiceEntity)  {
-        Instant instantEntityNextRenewal = cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
+    public void findNextServiceAndScheduleIt(){
+        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findServiceWithNextRenewalDate();
+        if(cyclicalServiceEntity.isPresent())
+            trySchedulingReminderWhenInserted(cyclicalServiceEntity.get());
+
+    }
+    public void trySchedulingReminderWhenInserted(CyclicalServiceEntity cyclicalServiceEntity)  {
         RunnableTask runnableTask = new RunnableTask("Reminder about: "+cyclicalServiceEntity.toString(), cyclicalServiceRepo);
 
-        if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))){
-            runnableTask.run();
-            return;
-        }
-        if(nextRegisteredRenewal==null){
+        if(lastRegisteredService==null){
             scheduledFuture = taskScheduler.schedule(
                     runnableTask,
                     cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset())
             );
-            nextRegisteredRenewal = instantEntityNextRenewal;
-        } else if (instantEntityNextRenewal.isBefore(nextRegisteredRenewal)) {
+            lastRegisteredService = cyclicalServiceEntity;
+            return;
+        }
+
+        Instant lastRenewal = getLastRegisteredRenewal();
+        Instant instantEntityNextRenewal = cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
+
+        if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))||TimeUtility.isToday(instantEntityNextRenewal)){
+            runnableTask.run();
+            return;
+        }
+
+        if (instantEntityNextRenewal.isBefore(lastRenewal)) {
             scheduledFuture.cancel(false);
             scheduledFuture = taskScheduler.schedule(
                     runnableTask,
                     cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset())
             );
-            nextRegisteredRenewal = instantEntityNextRenewal;
+            lastRegisteredService = cyclicalServiceEntity;
 
-        } else {
+        } else if(TimeUtility.isSameDay(instantEntityNextRenewal, lastRenewal)){
             return;
+        } else {
+            /// szukam wcześniejszego w bd
         }
 
 
@@ -68,8 +84,60 @@ public class SchedulingService {
 
     }
 
-    public void scheduleAllNearestReminders(){
+    public void trySchedulingReminderWhenUpdated(CyclicalServiceEntity cyclicalServiceEntity){
+
+        if(!cyclicalServiceEntity.getId().equals(lastRegisteredService.getId())){
+            trySchedulingReminderWhenInserted(cyclicalServiceEntity);
+            return;
+        }
+
+
+        Instant lastRenewal = getLastRegisteredRenewal();
+        Instant instantEntityNextRenewal = cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
+        RunnableTask runnableTask = new RunnableTask("Reminder about: "+cyclicalServiceEntity.toString(), cyclicalServiceRepo);
+
+        if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))||TimeUtility.isToday(instantEntityNextRenewal)){
+            runnableTask.run();
+            return;
+        }
+
+
+        if (instantEntityNextRenewal.isBefore(lastRenewal)) {
+            scheduledFuture.cancel(false);
+            scheduledFuture = taskScheduler.schedule(
+                    runnableTask,
+                    cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset())
+            );
+            lastRegisteredService = cyclicalServiceEntity;
+
+        } else if(TimeUtility.isSameDay(instantEntityNextRenewal, lastRenewal)){
+            return;
+        } else {
+
+
+            /// Checking if after postponing current task there is another thing that should fire earlier
+            Optional<CyclicalServiceEntity> replacement  = cyclicalServiceRepo.findFirstDateBefore(lastRegisteredService.getNextRenewal());
+            if(replacement.isPresent()){
+                scheduledFuture.cancel(false);
+                RunnableTask runnableTask2 = new RunnableTask("Reminder about: "+replacement.get().toString(), cyclicalServiceRepo);
+                scheduledFuture = taskScheduler.schedule(
+                        runnableTask,
+                        replacement.get().getNextRenewal().toInstant(TimeUtility.getZoneOffset())
+                );
+                lastRegisteredService = replacement.get();
+
+            }
+
+
+        }
+
 
     }
+
+    private void resetCurrentTaskInfo(){
+        this.scheduledFuture = null;
+        this.lastRegisteredService = null;
+    }
+
 
 }
