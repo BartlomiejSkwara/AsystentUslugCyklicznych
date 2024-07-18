@@ -34,6 +34,7 @@ public class CyclicalServiceDto {
     private final LocalDateTime nextRenewal;
 
 
+
     public CyclicalServiceDto(String description, Double price, LocalDateTime firstCycleStart, Period renewalPeriod, Integer dysponentId, Integer customerId) {
         this.description = description;
         this.price = price;

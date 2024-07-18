@@ -36,16 +36,17 @@ public class SchedulingService {
     public SchedulingService(CyclicalServiceRepo cyclicalServiceRepo, TaskScheduler taskScheduler) {
         this.cyclicalServiceRepo = cyclicalServiceRepo;
         this.taskScheduler = taskScheduler;
+        findNextServiceAndScheduleIt();
     }
 
     public void findNextServiceAndScheduleIt(){
-        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findServiceWithNextRenewalDate();
+        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findFirstServiceWithNoMessageSent();
         if(cyclicalServiceEntity.isPresent())
             trySchedulingReminderWhenInserted(cyclicalServiceEntity.get());
 
     }
     public void trySchedulingReminderWhenInserted(CyclicalServiceEntity cyclicalServiceEntity)  {
-        RunnableTask runnableTask = new RunnableTask("Reminder about: "+cyclicalServiceEntity.toString(), cyclicalServiceRepo);
+        RunnableTask runnableTask = new RunnableTask(cyclicalServiceEntity, cyclicalServiceRepo, this);
 
         if(lastRegisteredService==null){
             scheduledFuture = taskScheduler.schedule(
@@ -94,7 +95,7 @@ public class SchedulingService {
 
         Instant lastRenewal = getLastRegisteredRenewal();
         Instant instantEntityNextRenewal = cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
-        RunnableTask runnableTask = new RunnableTask("Reminder about: "+cyclicalServiceEntity.toString(), cyclicalServiceRepo);
+        RunnableTask runnableTask = new RunnableTask(cyclicalServiceEntity, cyclicalServiceRepo, this);
 
         if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))||TimeUtility.isToday(instantEntityNextRenewal)){
             runnableTask.run();
@@ -116,10 +117,10 @@ public class SchedulingService {
 
 
             /// Checking if after postponing current task there is another thing that should fire earlier
-            Optional<CyclicalServiceEntity> replacement  = cyclicalServiceRepo.findFirstDateBefore(lastRegisteredService.getNextRenewal());
+            Optional<CyclicalServiceEntity> replacement  = cyclicalServiceRepo.findFirstDateBeforeWithNoMessageSent(lastRegisteredService.getNextRenewal());
             if(replacement.isPresent()){
                 scheduledFuture.cancel(false);
-                RunnableTask runnableTask2 = new RunnableTask("Reminder about: "+replacement.get().toString(), cyclicalServiceRepo);
+                RunnableTask runnableTask2 = new RunnableTask(replacement.get(), cyclicalServiceRepo, this);
                 scheduledFuture = taskScheduler.schedule(
                         runnableTask,
                         replacement.get().getNextRenewal().toInstant(TimeUtility.getZoneOffset())

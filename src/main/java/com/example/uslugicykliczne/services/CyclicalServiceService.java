@@ -29,6 +29,22 @@ public class CyclicalServiceService {
     }
 
 
+
+    public ResponseEntity<String> renewCyclicalService(Integer id){
+        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findById(id);
+        if(cyclicalServiceEntity.isEmpty()){
+            return ResponseEntity.badRequest().body("Can't find the task you try to renew");
+        }
+
+        if(cyclicalServiceEntity.get().getRenewalMessageSent()){
+            schedulingService.trySchedulingReminderWhenInserted(cyclicalServiceEntity.get());
+
+        } else {
+            schedulingService.trySchedulingReminderWhenUpdated(cyclicalServiceEntity.get());
+        }
+        return ResponseEntity.ok().body("The task was successfully renewed");
+    }
+
     public ResponseEntity<String> insertNewCyclicalServiceEntity(CyclicalServiceDto cyclicalServiceDto){
         Optional<CustomerEntity> customerEntity = customerRepo.findById(cyclicalServiceDto.getCustomerId());
         Optional<DysponentEntity> dysponentEntity = dysponentRepo.findById(cyclicalServiceDto.getDysponentId());

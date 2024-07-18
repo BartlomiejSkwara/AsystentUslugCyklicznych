@@ -6,6 +6,7 @@ import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.scheduling.RunnableTask;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
+import com.example.uslugicykliczne.services.SchedulingService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.TaskScheduler;
@@ -25,12 +26,20 @@ public class CyclicalServiceController {
     private final CyclicalServiceService cyclicalServiceService;
     private final ValidationUtility validationUtility;
 
+
     CyclicalServiceController(CyclicalServiceRepo cyclicalServiceRepo, CyclicalServiceService cyclicalServiceService, ValidationUtility validationUtility, TaskScheduler taskScheduler){
         this.cyclicalServiceRepo = cyclicalServiceRepo;
         this.cyclicalServiceService = cyclicalServiceService;
         this.validationUtility = validationUtility;
     }
 
+
+
+    @GetMapping("/renew/{id}")
+    public ResponseEntity<String> renew (@PathVariable Integer id ){
+        return cyclicalServiceService.renewCyclicalService(id);
+
+    }
 
 
     @GetMapping("/getAll")
