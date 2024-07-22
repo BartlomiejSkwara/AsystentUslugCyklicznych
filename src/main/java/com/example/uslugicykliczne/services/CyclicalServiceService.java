@@ -19,11 +19,30 @@ public class CyclicalServiceService {
     private final CyclicalServiceRepo cyclicalServiceRepo;
     private final CustomerRepo customerRepo;
     private final DysponentRepo dysponentRepo;
+    private final SchedulingService schedulingService;
 
-    public CyclicalServiceService(CyclicalServiceRepo cyclicalServiceRepo, CustomerRepo customerRepo, DysponentRepo dysponentRepo) {
+    public CyclicalServiceService(CyclicalServiceRepo cyclicalServiceRepo, CustomerRepo customerRepo, DysponentRepo dysponentRepo, SchedulingService schedulingService) {
         this.cyclicalServiceRepo = cyclicalServiceRepo;
         this.customerRepo = customerRepo;
         this.dysponentRepo = dysponentRepo;
+        this.schedulingService = schedulingService;
+    }
+
+
+
+    public ResponseEntity<String> renewCyclicalService(Integer id){
+        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findById(id);
+        if(cyclicalServiceEntity.isEmpty()){
+            return ResponseEntity.badRequest().body("Can't find the task you try to renew");
+        }
+
+        if(cyclicalServiceEntity.get().getRenewalMessageSent()){
+            schedulingService.trySchedulingReminderWhenInserted(cyclicalServiceEntity.get());
+
+        } else {
+            schedulingService.trySchedulingReminderWhenUpdated(cyclicalServiceEntity.get());
+        }
+        return ResponseEntity.ok().body("The task was successfully renewed");
     }
 
     public ResponseEntity<String> insertNewCyclicalServiceEntity(CyclicalServiceDto cyclicalServiceDto){
@@ -31,7 +50,8 @@ public class CyclicalServiceService {
         Optional<DysponentEntity> dysponentEntity = dysponentRepo.findById(cyclicalServiceDto.getDysponentId());
 
         if(customerEntity.isPresent() && dysponentEntity.isPresent()){
-            cyclicalServiceRepo.save(convertCyclicalServiceDTOtoEntity(new CyclicalServiceEntity(),cyclicalServiceDto,customerEntity.get(),dysponentEntity.get()));
+            CyclicalServiceEntity insertedEntity = cyclicalServiceRepo.save(convertCyclicalServiceDTOtoEntity(new CyclicalServiceEntity(),cyclicalServiceDto,customerEntity.get(),dysponentEntity.get()));
+            schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
             return ResponseEntity.ok("Successfully added the cyclical service");
         }
 
@@ -64,7 +84,8 @@ public class CyclicalServiceService {
         Optional<DysponentEntity> dysponentEntity = dysponentRepo.findById(cyclicalServiceDto.getDysponentId());
 
         if(customerEntity.isPresent() && dysponentEntity.isPresent()){
-            cyclicalServiceRepo.save(convertCyclicalServiceDTOtoEntity(cyclicalServiceEntity.get(),cyclicalServiceDto,customerEntity.get(),dysponentEntity.get()));
+            CyclicalServiceEntity cyclicalServiceEntity1 = cyclicalServiceRepo.save(convertCyclicalServiceDTOtoEntity(cyclicalServiceEntity.get(),cyclicalServiceDto,customerEntity.get(),dysponentEntity.get()));
+            schedulingService.trySchedulingReminderWhenUpdated(cyclicalServiceEntity1);
             return ResponseEntity.ok("Successfully updated the cyclical service");
         }
 

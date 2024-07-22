@@ -30,6 +30,8 @@ public class CyclicalServiceEntity {
     private String description;
     private Double price;
 
+    private Boolean renewalMessageSent = false;
+
     @Basic
     private LocalDateTime firstCycleStart;
     @Basic
