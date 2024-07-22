@@ -2,19 +2,23 @@ package com.example.uslugicykliczne.scheduling;
 
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
+import com.example.uslugicykliczne.services.EmailService;
 import com.example.uslugicykliczne.services.SchedulingService;
 
 import java.util.Date;
 import java.util.Objects;
 
 public class RunnableTask implements Runnable{
-    private CyclicalServiceEntity cyclicalServiceEntity;
+    private final CyclicalServiceEntity cyclicalServiceEntity;
     private final CyclicalServiceRepo cyclicalServiceRepo;
     private final SchedulingService schedulingService;
-    public RunnableTask(CyclicalServiceEntity cyclicalServiceEntity, CyclicalServiceRepo cyclicalServiceRepo, SchedulingService schedulingService){
+
+    private final EmailService emailService;
+    public RunnableTask(CyclicalServiceEntity cyclicalServiceEntity, CyclicalServiceRepo cyclicalServiceRepo, SchedulingService schedulingService, EmailService emailService){
         this.cyclicalServiceEntity = cyclicalServiceEntity;
         this.cyclicalServiceRepo = cyclicalServiceRepo;
         this.schedulingService = schedulingService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -31,15 +35,14 @@ public class RunnableTask implements Runnable{
 
     @Override
     public void run() {
-        sendEmailNotification();
         cyclicalServiceEntity.setNextRenewal(cyclicalServiceEntity.getNextRenewal().plus(cyclicalServiceEntity.getRenewalPeriod()));
         cyclicalServiceEntity.setRenewalMessageSent(true);
         cyclicalServiceRepo.save(cyclicalServiceEntity);
         schedulingService.findNextServiceAndScheduleIt();
-        System.out.println(new Date()+" Runnable Task with "+cyclicalServiceEntity.toString()+" on thread "+Thread.currentThread().getName());
+        emailService.sendEmailNotification("Cyclical service renewal time is near !", cyclicalServiceEntity.toString());
+
+        //System.out.println(new Date()+" Runnable Task with "+cyclicalServiceEntity.toString()+" on thread "+Thread.currentThread().getName());
     }
 
-    public void sendEmailNotification(){
 
-    }
 }

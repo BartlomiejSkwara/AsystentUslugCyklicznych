@@ -2,6 +2,7 @@ package com.example.uslugicykliczne.configuration;
 
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
+import com.example.uslugicykliczne.scheduling.RunnableTask;
 import com.example.uslugicykliczne.services.SchedulingService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -31,5 +32,6 @@ public class CustomApplicationRunner implements ApplicationRunner {
             schedulingService.trySchedulingReminderWhenInserted(cyclicalService);
         }
         schedulingService.findNextServiceAndScheduleIt();
+
     }
 }

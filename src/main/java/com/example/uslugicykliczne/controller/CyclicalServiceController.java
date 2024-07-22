@@ -75,6 +75,7 @@ public class CyclicalServiceController {
         }
     }
 
+    ///TODO obsłuż sytuację gdzie user podaje ujemny okres odnowienia
     @PostMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable Integer id, @Valid @RequestBody() CyclicalServiceDto cyclicalServiceDto, BindingResult bindingResult ){
         if(bindingResult.hasErrors()){

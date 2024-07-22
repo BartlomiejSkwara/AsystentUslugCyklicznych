@@ -2,6 +2,7 @@ package com.example.uslugicykliczne.serviceTests.UnitTests;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.scheduling.RunnableTask;
+import com.example.uslugicykliczne.services.EmailService;
 import com.example.uslugicykliczne.services.SchedulingService;
 import com.example.uslugicykliczne.utility.TimeUtility;
 import org.junit.jupiter.api.AfterEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.TaskScheduler;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +27,8 @@ public class ScheduledReminderTest {
     @Mock
     private TaskScheduler mockTaskScheduler;
 
+    @Mock
+    EmailService emailService;
     @Mock
     private CyclicalServiceRepo mockCyclicalServiceRepo;
 
@@ -58,7 +62,7 @@ public class ScheduledReminderTest {
                 LocalDateTime.now().plusYears(1),
                 Period.of(1,0,0)
         );
-        RunnableTask task = new RunnableTask(cyclicalServiceEntity, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task = new RunnableTask(cyclicalServiceEntity, mockCyclicalServiceRepo, schedulingService, emailService);
 
         schedulingService.trySchedulingReminderWhenInserted(cyclicalServiceEntity);
 
@@ -80,14 +84,14 @@ public class ScheduledReminderTest {
                 LocalDateTime.now().plusYears(1),
                 Period.of(1,0,0)
         );
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
                 LocalDateTime.now().plusYears(1),
                 Period.of(2,0,0)
         );
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
         when(mockTaskScheduler.schedule(any(RunnableTask.class),any(Instant.class))).thenReturn(scheduledFutureHelper);
 
@@ -117,14 +121,14 @@ public class ScheduledReminderTest {
                 LocalDateTime.now().plusYears(1),
                 Period.of(3,0,0)
         );
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
                 LocalDateTime.now().plusYears(1),
                 Period.of(2,0,0)
         );
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
         when(mockTaskScheduler.schedule(any(RunnableTask.class),any(Instant.class))).thenReturn(scheduledFutureHelper);
 
@@ -155,14 +159,14 @@ public class ScheduledReminderTest {
                 LocalDateTime.now().plusYears(2),
                 Period.of(1,0,0)
         );
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
                 LocalDateTime.now().minusYears(2),
                 Period.of(1,0,0)
         );
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
 
         schedulingService.trySchedulingReminderWhenInserted(cyclicalServiceEntity1);
@@ -187,14 +191,14 @@ public class ScheduledReminderTest {
                 LocalDateTime.now().plusYears(2),
                 Period.of(1,0,0)
         );
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
                 LocalDateTime.now().minusYears(1).plusMinutes(5),
                 Period.of(1,0,0)
         );
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
         when(mockTaskScheduler.schedule(any(RunnableTask.class),any(Instant.class))).thenReturn(scheduledFutureHelper);
 
@@ -225,7 +229,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity1.setId(0);
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
@@ -233,7 +237,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity2.setId(1);
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
         schedulingService.trySchedulingReminderWhenInserted(cyclicalServiceEntity1);
         schedulingService.trySchedulingReminderWhenUpdated(cyclicalServiceEntity2);
@@ -252,7 +256,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity1.setId(1);
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
@@ -260,7 +264,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity2.setId(1);
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
 
         schedulingService.trySchedulingReminderWhenInserted(cyclicalServiceEntity1);
@@ -285,7 +289,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity1.setId(1);
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
@@ -293,7 +297,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity2.setId(1);
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
 
         schedulingService.trySchedulingReminderWhenInserted(cyclicalServiceEntity1);
@@ -316,7 +320,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity1.setId(1);
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
@@ -324,7 +328,7 @@ public class ScheduledReminderTest {
                 Period.of(0,6,0)
         );
         cyclicalServiceEntity2.setId(1);
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
         when(mockTaskScheduler.schedule(any(RunnableTask.class),any(Instant.class))).thenReturn(scheduledFutureHelper);
 
         //////////
@@ -353,7 +357,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity1.setId(1);
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
@@ -361,7 +365,7 @@ public class ScheduledReminderTest {
                 Period.of(3,0,0)
         );
         cyclicalServiceEntity2.setId(1);
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
 
         CyclicalServiceEntity cyclicalServiceEntity3 = new CyclicalServiceEntity(
@@ -403,7 +407,7 @@ public class ScheduledReminderTest {
                 Period.of(1,0,0)
         );
         cyclicalServiceEntity1.setId(1);
-        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, mockCyclicalServiceRepo, schedulingService, emailService);
 
         CyclicalServiceEntity cyclicalServiceEntity2 = new CyclicalServiceEntity(
                 "opis222",1.2,
@@ -411,7 +415,7 @@ public class ScheduledReminderTest {
                 Period.of(3,0,0)
         );
         cyclicalServiceEntity2.setId(1);
-        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService);
+        RunnableTask task2 = new RunnableTask(cyclicalServiceEntity2, mockCyclicalServiceRepo, schedulingService, emailService);
 
 
         when(mockTaskScheduler.schedule(any(RunnableTask.class),any(Instant.class))).thenReturn(scheduledFutureHelper);
