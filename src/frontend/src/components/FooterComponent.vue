@@ -1,4 +1,4 @@
-<template lang="">
+<template>
   <footer class="pt-5 my-5 text-body-secondary border-top">
     Created by the Bootstrap team · © 2024
   </footer>
