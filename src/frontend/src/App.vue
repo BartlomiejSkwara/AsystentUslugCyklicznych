@@ -40,11 +40,11 @@ export default {
     }
   },
   mounted() {
-    // fetch("/api/customer/getAll")
-    //   .then((response) => response.text())
-    //   .then((data) => {
-    //       this.msg = data;
-    //   });
+    fetch("/api/customer/getAll")
+      .then((response) => response.text())
+      .then((data) => {
+          this.msg = data;
+      });
   }
 }
 </script>
