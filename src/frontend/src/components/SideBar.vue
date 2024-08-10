@@ -8,15 +8,21 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li>
-        <router-link to="/Products" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Products
-        </router-link>
-      </li>
-      <li>
         <router-link to="/Customer" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
           Customers
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/Dysponents" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+          Dysponents
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/Cycles" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+          Cycles
         </router-link>
       </li>
     </ul>
@@ -27,7 +33,7 @@
         <strong>Current User</strong>
       </a>
       <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><a class="dropdown-item" href="#">New project...</a></li>
+        <li><a class="dropdown-item" href="#">Add new payment...</a></li>
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="#">Sign out</a></li>
       </ul>
