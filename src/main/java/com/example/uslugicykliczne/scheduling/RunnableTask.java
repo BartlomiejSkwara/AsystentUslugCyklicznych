@@ -39,7 +39,7 @@ public class RunnableTask implements Runnable{
         cyclicalServiceEntity.setRenewalMessageSent(true);
         cyclicalServiceRepo.save(cyclicalServiceEntity);
         schedulingService.findNextServiceAndScheduleIt();
-        emailService.sendEmailNotification("Cyclical service renewal time is near !", cyclicalServiceEntity.toString());
+        emailService.sendEmailNotification("Cyclical service renewal time is near !", cyclicalServiceEntity);
 
         //System.out.println(new Date()+" Runnable Task with "+cyclicalServiceEntity.toString()+" on thread "+Thread.currentThread().getName());
     }

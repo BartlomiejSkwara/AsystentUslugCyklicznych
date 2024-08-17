@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:remove="all">Template for HTML email with inline image</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body>
+        <h1>The time of cyclical service renewal is coming soon. Please Consider marking it as renewed or deleting it.</h1>
+
+        <b>Cyclical Service:</b>
+        <p th:text="${'Description: '+service.getDescription()}"></p>
+        <p th:text="${'ID: '+service.getId().toString()}"></p>
+        <p th:text="${'First Cycle: '+service.getFirstCycleStart()}"></p>
+        <p th:text="${'Next Renewal: '+service.getNextRenewal()}"></p>
+        <p th:text="${'Price: '+service.getPrice()}"></p>
+<!--        <p th:text="${'Renewal Period: '+service.getRenewalPeriod()}"></p>-->
+        <br>
+
+        <b>Dysponent:</b>
+        <p th:text="${'ID: '+dysponent.getId().toString()}"></p>
+        <p th:text="${'Email: '+dysponent.getEmail()}"></p>
+        <p th:text="${'Name: '+dysponent.getName()}"></p>
+        <p th:text="${'Surname: '+dysponent.getSurname()}"></p>
+        <p th:text="${'Mfn: '+dysponent.getMfnSerialNumber()}"></p>
+        <p th:text="${'Phone number: '+dysponent.getPhoneNumber()}"></p>
+
+        <br>
+        <b>Customer:</b>
+        <p th:text="${'ID: '+customer.getId().toString()}"></p>
+        <p th:text="${'Email: '+customer.getEmail()}"></p>
+        <p th:text="${'Name: '+customer.getName()}"></p>
+        <p th:text="${'Surname: '+customer.getSurname()}"></p>
+        <p th:text="${'Phone number: '+customer.getPhoneNumber()}"></p>
+
+    </body>
+</html>
