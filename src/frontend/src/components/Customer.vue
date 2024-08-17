@@ -1,8 +1,9 @@
 <template>
   <div>
     <h1 style="margin-bottom: 20px;">Customer list</h1>
-    <div style="margin-bottom: 20px;">
-      <input type="text" v-model="search" placeholder="Insert surname" style="margin-bottom: 10px;">
+    <div class="container">
+      <router-link to="/add-customer" class="add-button">Add new Customer</router-link>
+      <input type="text" class="input" v-model="search" placeholder="Insert surname" style="margin-bottom: 10px;">
     </div>
     <div style="margin-top: 20px;">
       <table>
@@ -27,19 +28,6 @@
       </table>
     </div>
   </div>
-  <div>
-<!--Pod zapytania z bazy danych-->
-<!--    <h1>Lista Użytkowników</h1>-->
-<!--    <ul>-->
-<!--      <li v-for="user in users" :key="user.id">-->
-<!--        <strong>ID:</strong> {{ user.id }} <br>-->
-<!--        <strong>Email:</strong> {{ user.email }} <br>-->
-<!--        <strong>Name:</strong> {{ user.name }} <br>-->
-<!--        <strong>Phone Number:</strong> {{ user.phone_number }} <br>-->
-<!--        <strong>Surname:</strong> {{ user.surname }} <br>-->
-<!--      </li>-->
-<!--    </ul>-->
-  </div>
 </template>
 
 <script>
@@ -47,13 +35,8 @@ export default {
   name: 'CustomerList',
   data() {
     return {
-      customers: [
-        { id: 1, name: 'Jan', surname: 'Kowalski', email: 'jan.kowalski@example.com', phoneNumber: '123456789' },
-        { id: 2, name: 'Anna', surname: 'Nowak', email: 'anna.nowak@example.com', phoneNumber: '987654321' },
-
-      ],
+      customers: [],
       msg: "",
-      users: [],
       search: ''
     };
   },
@@ -73,7 +56,7 @@ export default {
           return response.json();
         })
         .then((data) => {
-          this.users = data;
+          this.customers = data;
         })
         .catch((error) => {
           console.error("There has been a problem with your fetch operation:", error);
@@ -82,18 +65,4 @@ export default {
 }
 </script>
 
-<style>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table, th, td {
-  border: 1px solid black;
-}
-
-th, td {
-  padding: 8px;
-  text-align: left;
-}
-</style>
+<style src="@/assets/style.css"></style>

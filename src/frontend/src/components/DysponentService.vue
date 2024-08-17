@@ -1,9 +1,10 @@
 <template>
   <div>
     <h1 style="margin-bottom: 20px;">Dysponents List</h1>
-  <div style="margin-bottom: 20px;">
-    <input type="text" v-model="search" placeholder="Insert serial number" style="margin-bottom: 10px;">
-  </div>
+    <div class="container">
+      <router-link to="/add-dysponent" class="add-button">Add new Dysponent</router-link>
+      <input type="text" class="input" v-model="search" placeholder="Insert serial number" style="margin-bottom: 10px;">
+    </div>
     <table>
       <thead>
       <tr>
@@ -33,12 +34,7 @@
 export default {
   data() {
     return {
-      dysponents: [
-        { id: 1, name: "John", surname: "Doe", mfnSerialNumber: "MFN123456", email: "john.doe@example.com", phoneNumber: "123-456-7890" },
-        { id: 2, name: "Jane", surname: "Smith", mfnSerialNumber: "MFN654321", email: "jane.smith@example.com", phoneNumber: "098-765-4321" },
-        { id: 3, name: "Alice", surname: "Johnson", mfnSerialNumber: "MFN987654", email: "alice.johnson@example.com", phoneNumber: "567-890-1234" },
-        { id: 4, name: "Bob", surname: "Brown", mfnSerialNumber: "MFN456789", email: "bob.brown@example.com", phoneNumber: "234-567-8901" }
-      ],
+      dysponents: [],
       msg: "",
       search: ''
     };
@@ -46,7 +42,7 @@ export default {
   computed: {
     filteredDysponents() {
       return this.dysponents.filter(dysponent =>
-          dysponent.mfnSerialNumber.toLowerCase().includes(this.search.toLowerCase())
+              dysponent.mfnSerialNumber.toLowerCase().includes(this.search.toLowerCase())
       );
     }
   },
@@ -67,4 +63,6 @@ export default {
   }
 };
 </script>
+
+<style src="@/assets/style.css"></style>
 
