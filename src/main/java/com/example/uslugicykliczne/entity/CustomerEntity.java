@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +30,8 @@ public class CustomerEntity {
     @Column(unique = true)
     private String phoneNumber;
 
+    @OneToMany(mappedBy = "customerEntity", cascade = CascadeType.ALL)
+    private List<CyclicalServiceEntity> orders = new ArrayList<>();
 
 
 

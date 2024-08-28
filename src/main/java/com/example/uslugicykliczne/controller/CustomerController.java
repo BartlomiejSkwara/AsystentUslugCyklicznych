@@ -3,19 +3,15 @@ package com.example.uslugicykliczne.controller;
 
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.CustomerDto;
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.entity.CustomerEntity;
 import com.example.uslugicykliczne.repo.CustomerRepo;
 import com.example.uslugicykliczne.services.CustomerService;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +34,8 @@ public class CustomerController {
 
 
     @GetMapping("/getAll")
-    public List<CustomerEntity> getAllCustomers(){
-        return customerRepo.findAll();
+    public List<CyclicalServiceProjection.CustomerProjection> getAllCustomers(){
+        return customerRepo.findProjectionBy();
     }
 
     @GetMapping("/get/{id}")

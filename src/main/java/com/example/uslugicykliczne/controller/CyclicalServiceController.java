@@ -2,6 +2,7 @@ package com.example.uslugicykliczne.controller;
 
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.scheduling.RunnableTask;
@@ -43,8 +44,8 @@ public class CyclicalServiceController {
 
 
     @GetMapping("/getAll")
-    public List<CyclicalServiceEntity> getAllCustomers(){
-        return cyclicalServiceRepo.findAll();
+    public List<CyclicalServiceProjection> getAllCustomers(){
+        return cyclicalServiceRepo.findProjectionsBy();
     }
 
 

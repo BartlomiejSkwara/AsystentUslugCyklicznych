@@ -1,5 +1,6 @@
 package com.example.uslugicykliczne.repo;
 
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 public interface CyclicalServiceRepo extends ListCrudRepository<CyclicalServiceEntity,Integer> {
 
+    List<CyclicalServiceProjection> findProjectionsBy();
     @Query("SELECT e FROM CyclicalServiceEntity e WHERE e.nextRenewal < :dateLimit AND  e.renewalMessageSent = false ORDER BY e.nextRenewal")
     List<CyclicalServiceEntity> findAllDatesBeforeWithNoMessageSent(@Param("dateLimit") LocalDateTime dateLimit);
     @Query("SELECT e FROM CyclicalServiceEntity e WHERE e.nextRenewal < :dateLimit AND  e.renewalMessageSent = false ORDER BY e.nextRenewal ASC LIMIT 1")

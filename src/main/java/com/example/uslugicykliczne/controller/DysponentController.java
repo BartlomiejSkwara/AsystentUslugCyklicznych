@@ -1,6 +1,7 @@
 package com.example.uslugicykliczne.controller;
 
 import com.example.uslugicykliczne.ValidationUtility;
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.DysponentDto;
 import com.example.uslugicykliczne.dataTypes.DysponentDto;
 import com.example.uslugicykliczne.entity.DysponentEntity;
@@ -30,8 +31,8 @@ public class DysponentController
     }
 
     @GetMapping("/getAll")
-    public List<DysponentEntity> getAllDysponents(){
-        return dysponentRepo.findAll();
+    public List<CyclicalServiceProjection.DysponentProjection> getAllDysponents(){
+        return dysponentRepo.findProjectionsBy();
     }
 
     @GetMapping("/get/{id}")

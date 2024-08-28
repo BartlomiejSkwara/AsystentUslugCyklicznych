@@ -40,10 +40,9 @@ public class CyclicalServiceEntity {
     @Convert(converter = PeriodConverter.class)
     private Period renewalPeriod;
 
-    @ManyToOne
+    @ManyToOne()
     private DysponentEntity dysponentEntity;
-
-    @ManyToOne
+    @ManyToOne()
     private CustomerEntity customerEntity;
 
 
