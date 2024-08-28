@@ -14,6 +14,7 @@
         <th>MFN Serial Number</th>
         <th>Email</th>
         <th>Phone Number</th>
+        <th>Actions</th>
       </tr>
       </thead>
       <tbody>
@@ -24,6 +25,10 @@
         <td>{{ dysponent.mfnSerialNumber }}</td>
         <td>{{ dysponent.email }}</td>
         <td>{{ dysponent.phoneNumber }}</td>
+        <td>
+          <button class="action-button edit-button" @click="editDysponent(dysponent.id)">Edit</button>
+          <button class="action-button delete-button" @click="deleteDysponent(dysponent.id)">Delete</button>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -60,6 +65,40 @@ export default {
         .catch((error) => {
           console.error("There has been a problem with your fetch operation:", error);
         });
+  },
+  methods: {
+    editDysponent(id) {
+      const dysponent = this.dysponents.find(d => d.id === id);
+      if (dysponent) {
+        this.$router.push({
+          path: '/add-dysponent',
+          query: {
+            id: dysponent.id,
+            name: dysponent.name,
+            surname: dysponent.surname,
+            mfnSerialNumber: dysponent.mfnSerialNumber,
+            email: dysponent.email,
+            phoneNumber: dysponent.phoneNumber
+          }
+        });
+      }
+    },
+    deleteDysponent(id) {
+      if (confirm("Are you sure you want to delete this dysponent?")) {
+        fetch(`/api/dysponent/delete/${id}`, {
+          method: 'DELETE'
+        })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              this.dysponents = this.dysponents.filter(dysponent => dysponent.id !== id);
+            })
+            .catch(error => {
+              console.error('There has been a problem with your fetch operation:', error);
+            });
+      }
+    }
   }
 };
 </script>

@@ -67,3 +67,26 @@ th {
     border: 1px solid #ccc;
     width: 200px; /* Adjust this value to make the input field narrower */
 }
+
+.action-button {
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.renew-button {
+    background-color: #505950;
+    color: white;
+}
+
+.edit-button {
+    background-color: #ff9407;
+    color: white;
+}
+
+.delete-button {
+    background-color: #F44336;
+    color: white;
+}

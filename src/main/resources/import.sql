@@ -33,7 +33,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `dysponenet` WRITE;
 /*!40000 ALTER TABLE `dysponenet` DISABLE KEYS */;
-INSERT INTO `dysponenet` VALUES (2,'12345','lulu','gaming','lgm@interia.pl','888666');
+INSERT INTO `dysponenet` VALUES (1,'dpl@wp.pl','111999','dysPL','222111333','Katowice'), (2,'lgm@interia.pl','888666','gaming','12345','lulu');
 /*!40000 ALTER TABLE `dysponenet` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

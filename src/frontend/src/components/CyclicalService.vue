@@ -42,7 +42,9 @@
           <td>{{ cycle.dysponentEntity.name }}</td>
           <td>{{ cycle.customerEntity.name }}</td>
           <td>
-            <button @click="renewCycle(cycle.id)">Renew</button>
+            <button class="action-button renew-button" @click="renewCycle(cycle.id)">Renew</button>
+            <button class="action-button edit-button" @click="editCycle(cycle.id)">Edit</button>
+            <button class="action-button delete-button" @click="deleteCycle(cycle.id)">Delete</button>
             <div v-if="cycle.renewedAt">
               Renewed recently at {{ formatDate(cycle.renewedAt) }}
             </div>
@@ -163,6 +165,45 @@ export default {
             })
             .then(() => {
               console.log('Cycle successfully updated in the database');
+            })
+            .catch(error => {
+              console.error('There has been a problem with your fetch operation:', error);
+            });
+      }
+    },
+    editCycle(id) {
+      const cycle = this.cycles.find(c => c.id === id);
+      if (cycle) {
+        this.$router.push({
+          path: '/add-cycle',
+          query: {
+            id: cycle.id,
+            description: cycle.description,
+            price: cycle.price,
+            firstCycleStart: cycle.firstCycleStart.toISOString().slice(0, 16), // format for datetime-local
+            renewalPeriodYears: parseInt(cycle.renewalPeriod.match(/(\d+)Y/)?.[1] || 0, 10),
+            renewalPeriodMonths: parseInt(cycle.renewalPeriod.match(/(\d+)M/)?.[1] || 0, 10),
+            renewalPeriodDays: parseInt(cycle.renewalPeriod.match(/(\d+)D/)?.[1] || 0, 10),
+            dysponentId: cycle.dysponentEntity.id,
+            customerId: cycle.customerEntity.id
+          }
+        });
+      }
+    },
+    deleteCycle(id) {
+      if (confirm("Are you sure you want to delete this dysponent?")) {
+        fetch(`/api/cyclicalservice/delete/${id}`, {
+          method: 'DELETE',
+        })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+              }
+              return response.text();
+            })
+            .then(() => {
+              console.log('Cycle successfully deleted');
+              this.cycles = this.cycles.filter(cycle => cycle.id !== id);
             })
             .catch(error => {
               console.error('There has been a problem with your fetch operation:', error);

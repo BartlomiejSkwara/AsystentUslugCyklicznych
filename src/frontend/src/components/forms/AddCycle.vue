@@ -55,16 +55,18 @@ export default {
       },
       customerName: '',
       dysponentName: '',
-      nextRenewal: '' // Store nextRenewal separately for display
+      nextRenewal: '',
+      isEdit: false, // Flag to check if it's an edit
+      cycleId: null // Store cycle id if it's an edit
     };
+  },
+  mounted() {
+    this.prefillForm();
   },
   methods: {
     async submitForm() {
       try {
-        // Fetch customer name based on customerId
         await this.fetchCustomerName();
-
-        // Fetch dysponent name based on dysponentId
         await this.fetchDysponentName();
 
         const renewalPeriod = `P${this.form.renewalPeriod.years}Y${this.form.renewalPeriod.months}M${this.form.renewalPeriod.days}D`;
@@ -79,12 +81,12 @@ export default {
           customerId: this.form.customerId,
           nextRenewal: this.calculateNextRenewal(firstCycleStart, this.form.renewalPeriod)
         };
-
+        const url = this.isEdit ? `/api/cyclicalservice/update/${this.cycleId}` : '/api/cyclicalservice/insertBody';
+        const method = this.isEdit ? 'POST' : 'POST';
         console.log('Sending new cycle:', newCycle); // Debugging
 
-        // Send newCycle object to backend
-        const response = await fetch('/api/cyclicalservice/insertBody', {
-          method: 'POST',
+        const response = await fetch(url, {
+          method: method,
           headers: {
             'Content-Type': 'application/json'
           },
@@ -112,7 +114,7 @@ export default {
         this.customerName = customerData.name;
       } catch (error) {
         console.error('Error fetching customer name:', error);
-        this.customerName = 'Unknown'; // Handle error gracefully
+        this.customerName = 'Unknown';
       }
     },
     async fetchDysponentName() {
@@ -125,7 +127,7 @@ export default {
         this.dysponentName = dysponentData.name;
       } catch (error) {
         console.error('Error fetching dysponent name:', error);
-        this.dysponentName = 'Unknown'; // Handle error gracefully
+        this.dysponentName = 'Unknown';
       }
     },
     calculateNextRenewal(firstCycleStart, renewalPeriod) {
@@ -133,7 +135,22 @@ export default {
       nextRenewal.setFullYear(nextRenewal.getFullYear() + renewalPeriod.years);
       nextRenewal.setMonth(nextRenewal.getMonth() + renewalPeriod.months);
       nextRenewal.setDate(nextRenewal.getDate() + renewalPeriod.days);
-      return nextRenewal.toISOString();
+      const nextRenewalUTC = nextRenewal.toISOString();
+      return nextRenewalUTC;
+    },
+    prefillForm() {
+      if (this.$route.query.id) {
+        this.isEdit = true;
+        this.cycleId = this.$route.query.id;
+        this.form.description = this.$route.query.description;
+        this.form.price = this.$route.query.price;
+        this.form.firstCycleStart = new Date(this.$route.query.firstCycleStart).toLocaleString();
+        this.form.renewalPeriod.years = parseInt(this.$route.query.renewalPeriodYears, 10);
+        this.form.renewalPeriod.months = parseInt(this.$route.query.renewalPeriodMonths, 10);
+        this.form.renewalPeriod.days = parseInt(this.$route.query.renewalPeriodDays, 10);
+        this.form.dysponentId = parseInt(this.$route.query.dysponentId, 10);
+        this.form.customerId = parseInt(this.$route.query.customerId, 10);
+      }
     }
   }
 };
