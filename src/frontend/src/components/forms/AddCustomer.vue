@@ -33,42 +33,48 @@ export default {
         surname: '',
         email: '',
         phoneNumber: ''
-      }
+      },
+      isEdit: false,
+      customerId: null
     };
   },
+  mounted() {
+    this.prefillForm();
+  },
   methods: {
-    submitForm() {
-      const newCustomer = {
-        email: this.form.email,
-        name: this.form.name,
-        phoneNumber: this.form.phoneNumber,
-        surname: this.form.surname
-      };
+    prefillForm() {
+      if (this.$route.query.id) {
+        this.isEdit = true;
+        this.customerId = this.$route.query.id;
+        this.form.name = this.$route.query.name;
+        this.form.surname = this.$route.query.surname;
+        this.form.email = this.$route.query.email;
+        this.form.phoneNumber = this.$route.query.phoneNumber;
+      }
+    },
+    async submitForm() {
+      try {
+        const url = this.isEdit ? `/api/customer/update/${this.customerId}` : '/api/customer/insertBody';
+        const method = this.isEdit ? 'POST' : 'POST';
 
-      fetch("/api/customer/insertBody", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newCustomer)
-      })
-          .then(response => {
-            if (!response.ok) {
-              if (response.status === 409) {
-                throw new Error('Conflict: Customer already exists or data conflict.');
-              } else {
-                throw new Error('Network response was not ok: ' + response.statusText);
-              }
-            }
-            return response.text();
-          })
-          .then(() => {
-            alert("Customer added successfully!");
-            this.$router.push('/Customer');
-          })
-          .catch(error => {
-            console.error("There has been a problem with your fetch operation:", error);
-          });
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.form)
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        alert(this.isEdit ? 'Customer updated successfully!' : 'Customer added successfully!');
+        this.$router.push('/Customer');
+      } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+        alert('There has been a problem with your fetch operation: ' + error.message);
+      }
     },
   }
 };

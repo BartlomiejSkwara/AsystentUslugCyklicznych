@@ -38,42 +38,55 @@ export default {
         mfnSerialNumber: '',
         email: '',
         phoneNumber: ''
-      }
+      },
+      isEdit: false, // Flag to check if it's an edit
+      dysponentId: null // Store dysponent id if it's an edit
     };
   },
-  methods: {
-    submitForm() {
-      const newDysponent = {
-        name: this.form.name,
-        surname: this.form.surname,
-        mfnSerialNumber: this.form.mfnSerialNumber,
-        email: this.form.email,
-        phoneNumber: this.form.phoneNumber
-      };
 
-      fetch('/api/dysponent/insertBody', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newDysponent)
-      })
-          .then(response => {
-            if (!response.ok) {
-              console.error('Server response:', response); // Debugging
-              throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.text();
-          })
-          .then(() => {
-            alert('Dysponent added successfully!');
-            this.$router.push('/Dysponents'); // Redirect to the main page after successful submission
-          })
-          .catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
+  mounted() {
+    this.prefillForm();
+  },
+
+  methods: {
+    prefillForm()
+      {
+        if (this.$route.query.id) {
+          this.isEdit = true;
+          this.dysponentId = this.$route.query.id;
+          this.form.name = this.$route.query.name;
+          this.form.surname = this.$route.query.surname;
+          this.form.mfnSerialNumber = this.$route.query.mfnSerialNumber;
+          this.form.email = this.$route.query.email;
+          this.form.phoneNumber = this.$route.query.phoneNumber;
+        }
+      },
+      async submitForm()
+      {
+        try {
+          const url = this.isEdit ? `/api/dysponent/update/${this.dysponentId}` : '/api/dysponent/insertBody';
+          const method = this.isEdit ? 'POST' : 'POST';
+
+          const response = await fetch(url, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.form)
           });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          alert(this.isEdit ? 'Dysponent updated successfully!' : 'Dysponent added successfully!');
+          this.$router.push('/Dysponents');
+        } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+          alert('There has been a problem with your fetch operation: ' + error.message);
+        }
+      }
     }
-  }
 };
 </script>
 

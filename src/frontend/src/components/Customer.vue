@@ -14,6 +14,7 @@
           <th>Surname</th>
           <th>Email</th>
           <th>Phone number</th>
+          <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -23,6 +24,10 @@
           <td>{{ customer.surname }}</td>
           <td>{{ customer.email }}</td>
           <td>{{ customer.phoneNumber }}</td>
+          <td>
+            <button class="action-button edit-button" @click="editCustomer(customer.id)">Edit</button>
+            <button class="action-button delete-button" @click="deleteCustomer(customer.id)">Delete</button>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -61,6 +66,40 @@ export default {
         .catch((error) => {
           console.error("There has been a problem with your fetch operation:", error);
         });
+  },
+  methods: {
+    editCustomer(id) {
+      const customer = this.customers.find(c => c.id === id);
+      if (customer) {
+        this.$router.push({
+          path: '/add-customer',
+          query: {
+            id: customer.id,
+            name: customer.name,
+            surname: customer.surname,
+            email: customer.email,
+            phoneNumber: customer.phoneNumber
+          }
+        });
+      }
+    },
+
+    deleteCustomer(id) {
+      if (confirm("Are you sure you want to delete this customer?")) {
+        fetch(`/api/customer/delete/${id}`, {
+          method: 'DELETE'
+        })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              this.customers = this.customers.filter(customer => customer.id !== id);
+            })
+            .catch(error => {
+              console.error('There has been a problem with your fetch operation:', error);
+            });
+      }
+    }
   }
 }
 </script>
