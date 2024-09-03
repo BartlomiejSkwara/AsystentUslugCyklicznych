@@ -1,6 +1,5 @@
 package com.example.uslugicykliczne.serviceTests.UnitTests;
 
-import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CustomerRepo;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.repo.DysponentRepo;
