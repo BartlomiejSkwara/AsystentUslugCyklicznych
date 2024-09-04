@@ -26,7 +26,7 @@ public class ServiceUserEntity {
     @Column(name = "hasPolishPESEL",nullable = false)
     private boolean hasPolishPesel;
     @Basic
-    @Column(name = "taxIdentificationNumber",nullable = false, length = 80)
+    @Column(name = "taxIdentificationNumber", length = 80)
     private String taxIdentificationNumber;
     @OneToMany(mappedBy = "serviceUser")
     private Collection<CyclicalServiceEntity> cyclicalServices;

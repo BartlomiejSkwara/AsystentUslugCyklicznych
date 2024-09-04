@@ -11,14 +11,14 @@ public class EmailEntity {
     @Id
     @Column(name = "idEmail")
     private int idEmail;
-    @Basic
-    @Column(name = "email", nullable = false, length = 40)
-    private String email;
+
 
     @ManyToOne
     @JoinColumn(name = "idContactData",nullable = false)
     ContactDataEntity contactDataEntity;
-
+    @Basic
+    @Column(name = "email", nullable = false, length = 40)
+    private String email;
 
     @Override
     public boolean equals(Object o) {
