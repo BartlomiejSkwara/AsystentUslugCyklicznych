@@ -10,6 +10,6 @@ public interface ServiceUserProjection {
 
     //getCyclicalServices (albo może  lepiej ich tu nie dodawać :>)
 
-    ContactDataProjection getContactDataByContactDataIdContactData();
+    ContactDataProjection getContactData();
 
 }

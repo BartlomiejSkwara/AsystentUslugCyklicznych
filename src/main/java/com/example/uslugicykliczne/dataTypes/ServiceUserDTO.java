@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -21,14 +22,14 @@ public class ServiceUserDTO {
     private final String surname;
 
     @NotEmpty(message = "No emails specified for ServiceUser ")
-    private final Collection<
-            @NotBlank(message = "ServiceUser's email is empty !!!")
-            @Size(max=40, message = "ServiceUser's email is too long !!!")
-            @Email(message = "ServiceUser's email is not a correct email !!!")
-            String> emails;
+    private final List<
+                @NotBlank(message = "ServiceUser's email is empty !!!")
+                @Size(max=40, message = "ServiceUser's email is too long !!!")
+                @Email(message = "ServiceUser's email is not a correct email !!!")
+                String> emails;
 
     @NotEmpty(message = "No phone number specified for ServiceUser ")
-    private final Collection<
+    private final List<
             @NotBlank(message = "ServiceUser's phone number is empty!!!")
             @Size(max = 16 , message = "ServiceUser's phone number is too long !!!")
             @Pattern(regexp = "^\\d+$", message = "ServiceUser's phone number has characters other than numbers!!!")

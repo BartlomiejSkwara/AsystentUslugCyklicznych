@@ -1,12 +1,13 @@
 package com.example.uslugicykliczne.dataTypes;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface ContactDataProjection {
     int getIdContactData();
 
     Collection<EmailProjection> getEmails();
-    Collection<PhoneNumberProjection> getPhoneNumbers();
+    List<PhoneNumberProjection> getPhoneNumbers();
 
     public interface EmailProjection{
         int getIdEmail();

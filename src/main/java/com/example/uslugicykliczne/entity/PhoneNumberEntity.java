@@ -39,4 +39,12 @@ public class PhoneNumberEntity {
         result = 31 * result + (number != null ? number.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "PhoneNumberEntity{" +
+                "idPhoneNumber=" + idPhoneNumber +
+                ", number='" + number + '\'' +
+                '}';
+    }
 }

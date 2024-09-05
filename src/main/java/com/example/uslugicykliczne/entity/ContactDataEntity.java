@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -14,12 +15,15 @@ public class ContactDataEntity {
     @Column(name = "idContactData")
     private int idContactData;
     @OneToMany(mappedBy = "contactDataEntity", cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
-    private Collection<EmailEntity> emails;
+    private List<EmailEntity> emails;
     //contactDataByContactDataIdContactData
 
     @OneToMany(mappedBy = "contactDataEntity", cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
-    private Collection<PhoneNumberEntity> phoneNumbers;
+    private List<PhoneNumberEntity> phoneNumbers;
 
+
+    @OneToOne(mappedBy = "contactData")
+    private ServiceUserEntity serviceUserEntity;
 
     @Override
     public boolean equals(Object o) {
@@ -38,5 +42,12 @@ public class ContactDataEntity {
         return idContactData;
     }
 
-
+    @Override
+    public String toString() {
+        return "ContactDataEntity{" +
+                "idContactData=" + idContactData +
+                ", emails=" + emails +
+                ", phoneNumbers=" + phoneNumbers +
+                '}';
+    }
 }

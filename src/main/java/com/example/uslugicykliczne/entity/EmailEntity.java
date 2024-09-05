@@ -16,6 +16,7 @@ public class EmailEntity {
     @ManyToOne
     @JoinColumn(name = "idContactData",nullable = false)
     ContactDataEntity contactDataEntity;
+
     @Basic
     @Column(name = "email", nullable = false, length = 40)
     private String email;
@@ -38,5 +39,13 @@ public class EmailEntity {
         int result = idEmail;
         result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "EmailEntity{" +
+                "idEmail=" + idEmail +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

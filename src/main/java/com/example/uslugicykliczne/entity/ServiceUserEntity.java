@@ -30,9 +30,11 @@ public class ServiceUserEntity {
     private String taxIdentificationNumber;
     @OneToMany(mappedBy = "serviceUser")
     private Collection<CyclicalServiceEntity> cyclicalServices;
-    @ManyToOne
-    @JoinColumn(name = "ContactData_idContactData", referencedColumnName = "idContactData", nullable = false)
-    private ContactDataEntity contactDataByContactDataIdContactData;
+
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "contactDataId", referencedColumnName = "idContactData", nullable = false)
+    private ContactDataEntity contactData;
 
 
     @Override

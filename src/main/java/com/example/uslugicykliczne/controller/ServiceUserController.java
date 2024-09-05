@@ -39,9 +39,6 @@ public class ServiceUserController {
 
     @GetMapping("/getAll")
     public List<ServiceUserProjection> getAllCustomers(){
-        List<ServiceUserProjection> serviceUserProjections = serviceUserRepo.findProjectionsBy();
-        List<ServiceUserEntity> serviceUserEntities = serviceUserRepo.findAll();
-        Collection<EmailEntity> contactDataEntity = serviceUserEntities.get(0).getContactDataByContactDataIdContactData().getEmails();
 
         return serviceUserRepo.findProjectionsBy();
     }
@@ -57,14 +54,14 @@ public class ServiceUserController {
 //        }
 //    }
 //
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseEntity<String> delete (@PathVariable Integer id ){
-//        serviceUserRepo.deleteById(id);
-//        return ResponseEntity.ok().body("Customer was deleted");
-//
-//    }
-//
-//
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete (@PathVariable Integer id ){
+        serviceUserRepo.deleteById(id);
+        return ResponseEntity.ok().body("Customer was deleted");
+
+    }
+
+
     @PostMapping("/insertBody")
     public ResponseEntity<String> insert(@Valid @RequestBody() ServiceUserDTO serviceUserDTO, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -72,14 +69,14 @@ public class ServiceUserController {
         }
         return serviceUserService.insertNewServiceUserEntity(serviceUserDTO);
     }
-//
-//
-//    @PostMapping("/update/{id}")
-//    public ResponseEntity<String> update(@PathVariable Integer id,@Valid @RequestBody() CustomerDto customerDto, BindingResult bindingResult ){
-//        if(bindingResult.hasErrors()){
-//            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
-//        }
-//        return serviceUserService.updateCustomerEntity(id, customerDto);
-//    }
+
+
+    @PostMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Integer id,@Valid @RequestBody() ServiceUserDTO serviceUserDTO, BindingResult bindingResult ){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
+        }
+        return serviceUserService.updateCustomerEntity(id, serviceUserDTO);
+    }
 
 }
