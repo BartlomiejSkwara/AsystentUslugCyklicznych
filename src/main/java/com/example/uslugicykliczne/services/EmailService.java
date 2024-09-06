@@ -29,11 +29,13 @@ public class EmailService {
 
     }
 
-    public List<EmailEntity> updateEmailEntities(List<EmailEntity> emailEntities, List<String> emails,ContactDataEntity contactDataEntity) {
+    public void updateEmailEntities(List<EmailEntity> emailEntities, List<String> emails,ContactDataEntity contactDataEntity) {
 
         int smallerSize  = emailEntities.size();
         if(emails.size()<emailEntities.size()){
-            emailRepo.deleteAll(emailEntities.subList(emails.size(), emailEntities.size()));
+            List<EmailEntity> entities = new ArrayList<>(emailEntities.subList(emails.size(), emailEntities.size()));
+            contactDataEntity.removeEmails(entities);
+            emailRepo.deleteAll(entities);
             smallerSize = emails.size();
         }
         else if (emails.size()>emailEntities.size()){
@@ -45,21 +47,7 @@ public class EmailService {
             emailEntities.get(i).setEmail(emails.get(i));
         }
 
-        return emailRepo.saveAll(emailEntities.subList(0,smallerSize));
+        emailRepo.saveAll(emailEntities.subList(0,smallerSize));
 
-//        int smallerSize  = emailEntities.size();
-//        if(emails.size()<emailEntities.size()){
-//            emailEntities = emailEntities.subList(0, emails.size());
-//        }
-//        else if (emails.size()>emailEntities.size()){
-//            emailEntities.addAll(insertNewEmailEntities(emails.subList(emailEntities.size(), emails.size()),contactDataEntity));
-//        }
-//        smallerSize = emails.size();
-//
-//        for (int i = 0; i<smallerSize; i++){
-//            emailEntities.get(i).setEmail(emails.get(i));
-//        }
-//
-//        return emailEntities;
     }
 }

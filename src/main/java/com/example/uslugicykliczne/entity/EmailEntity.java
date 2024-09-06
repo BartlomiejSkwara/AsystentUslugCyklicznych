@@ -12,7 +12,6 @@ public class EmailEntity {
     @Column(name = "idEmail")
     private int idEmail;
 
-
     @ManyToOne
     @JoinColumn(name = "idContactData",nullable = false)
     ContactDataEntity contactDataEntity;
@@ -48,4 +47,5 @@ public class EmailEntity {
                 ", email='" + email + '\'' +
                 '}';
     }
+
 }

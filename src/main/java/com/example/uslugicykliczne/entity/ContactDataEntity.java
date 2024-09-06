@@ -1,9 +1,11 @@
 package com.example.uslugicykliczne.entity;
 
+import com.example.uslugicykliczne.services.PhoneNumberService;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 @Entity
@@ -49,5 +51,14 @@ public class ContactDataEntity {
                 ", emails=" + emails +
                 ", phoneNumbers=" + phoneNumbers +
                 '}';
+    }
+
+    public void removeEmails(List<EmailEntity> emailEntities) {
+        emails.removeAll(emailEntities);
+
+    }
+    public void removePhoneNumber(List<PhoneNumberEntity> phoneNumberEntities) {
+        phoneNumbers.removeAll(phoneNumberEntities);
+
     }
 }

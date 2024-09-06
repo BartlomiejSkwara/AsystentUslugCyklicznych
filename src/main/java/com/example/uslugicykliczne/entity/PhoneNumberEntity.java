@@ -11,13 +11,15 @@ public class PhoneNumberEntity {
     @Id
     @Column(name = "idPhoneNumber")
     private int idPhoneNumber;
-    @Basic
-    @Column(name = "number", length = 40,nullable = false)
-    private String number;
 
     @ManyToOne
     @JoinColumn(name = "idContactData",nullable = false)
     ContactDataEntity contactDataEntity;
+
+    @Basic
+    @Column(name = "number", length = 40,nullable = false)
+    private String number;
+
 
 
     @Override
@@ -47,4 +49,6 @@ public class PhoneNumberEntity {
                 ", number='" + number + '\'' +
                 '}';
     }
+
+
 }

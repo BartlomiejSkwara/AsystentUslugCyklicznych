@@ -30,11 +30,13 @@ public class PhoneNumberService {
 
     }
 
-    public Collection<PhoneNumberEntity> updatePhoneNumberEntities(List<PhoneNumberEntity> phoneNumberEntities, List<String> phoneNumbers, ContactDataEntity contactDataEntity) {
+    public void updatePhoneNumberEntities(List<PhoneNumberEntity> phoneNumberEntities, List<String> phoneNumbers, ContactDataEntity contactDataEntity) {
 
         int smallerSize  = phoneNumberEntities.size();
         if(phoneNumbers.size()<phoneNumberEntities.size()){
-            phoneNumberRepo.deleteAll(phoneNumberEntities.subList(phoneNumbers.size(), phoneNumberEntities.size()));
+            List<PhoneNumberEntity> entities = new ArrayList<>(phoneNumberEntities.subList(phoneNumbers.size(), phoneNumberEntities.size()));
+            contactDataEntity.removePhoneNumber(entities);
+            phoneNumberRepo.deleteAll(entities);
             smallerSize = phoneNumbers.size();
         }
         else if (phoneNumbers.size()>phoneNumberEntities.size()){
@@ -46,6 +48,6 @@ public class PhoneNumberService {
             phoneNumberEntities.get(i).setNumber(phoneNumbers.get(i));
         }
 
-        return  phoneNumberRepo.saveAll(phoneNumberEntities.subList(0,smallerSize));
+        phoneNumberRepo.saveAll(phoneNumberEntities.subList(0,smallerSize));
     }
 }
