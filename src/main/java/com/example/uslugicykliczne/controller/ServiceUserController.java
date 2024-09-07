@@ -40,7 +40,7 @@ public class ServiceUserController {
     @GetMapping("/getAll")
     public List<ServiceUserProjection> getAllCustomers(){
 
-        return serviceUserRepo.findProjectionsBy();
+        return serviceUserRepo.findUsersWithProjectedContactData();
     }
 
 //    @GetMapping("/get/{id}")

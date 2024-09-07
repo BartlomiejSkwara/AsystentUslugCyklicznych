@@ -16,11 +16,11 @@ public class ContactDataEntity {
     @Id
     @Column(name = "idContactData")
     private int idContactData;
-    @OneToMany(mappedBy = "contactDataEntity", cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
+    @OneToMany(mappedBy = "contactDataEntity", cascade = CascadeType.ALL)
     private List<EmailEntity> emails;
     //contactDataByContactDataIdContactData
 
-    @OneToMany(mappedBy = "contactDataEntity", cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
+    @OneToMany(mappedBy = "contactDataEntity", cascade = CascadeType.ALL)
     private List<PhoneNumberEntity> phoneNumbers;
 
 

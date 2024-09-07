@@ -12,7 +12,7 @@ public class EmailEntity {
     @Column(name = "idEmail")
     private int idEmail;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "idContactData",nullable = false)
     ContactDataEntity contactDataEntity;
 
