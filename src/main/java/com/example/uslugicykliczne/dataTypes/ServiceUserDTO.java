@@ -1,6 +1,7 @@
 package com.example.uslugicykliczne.dataTypes;
 
 import jakarta.validation.constraints.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Getter()
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class ServiceUserDTO {
 
     @NotBlank(message = "ServiceUser's name is empty !!!")
@@ -46,15 +48,5 @@ public class ServiceUserDTO {
             String> taxId;
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ServiceUserDTO that)) return false;
-        return Objects.equals(getName(), that.getName()) && Objects.equals(getSurname(), that.getSurname()) && Objects.equals(getEmails(), that.getEmails()) && Objects.equals(getPhoneNumbers(), that.getPhoneNumbers()) && Objects.equals(getHasPolishPESEL(), that.getHasPolishPESEL()) && Objects.equals(getComments(), that.getComments()) && Objects.equals(getTaxId(), that.getTaxId());
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), getSurname(), getEmails(), getPhoneNumbers(), getHasPolishPESEL(), getComments(), getTaxId());
-    }
 }

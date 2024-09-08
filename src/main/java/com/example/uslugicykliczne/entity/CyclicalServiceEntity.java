@@ -29,7 +29,7 @@ public class CyclicalServiceEntity {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
+    @ManyToOne()
     //@JoinColumns({@JoinColumn(name = "Business_idBusiness", referencedColumnName = "idBusiness"), @JoinColumn(name = "Business_ContactData_idContactData", referencedColumnName = "ContactData_idContactData")})
     private BusinessEntity business;
 
@@ -37,8 +37,10 @@ public class CyclicalServiceEntity {
     //@JoinColumns({@JoinColumn(name = "ServiceUser_idServiceUser", referencedColumnName = "idServiceUser", nullable = false), @JoinColumn(name = "ServiceUser_ContactData_idContactData", referencedColumnName = "ContactData_idContactData", nullable = false)})
     private ServiceUserEntity serviceUser;
 
+
     @OneToMany(mappedBy = "idCertificate")
-    private Collection<CertificateEntity> certificateEntity;
+    private Collection<CertificateEntity> certificates;
+
 
 
     @Override

@@ -1,34 +1,31 @@
-//package com.example.uslugicykliczne.controller;
-//
-//import com.example.uslugicykliczne.ValidationUtility;
-//import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
-//import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
-//import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
-//import com.example.uslugicykliczne.services.CyclicalServiceService;
-//import jakarta.validation.Valid;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.scheduling.TaskScheduler;
-//import org.springframework.validation.BindingResult;
-//import org.springframework.validation.annotation.Validated;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//import java.util.Optional;
-//
-//@RestController
-//@RequestMapping("/api/cyclicalservice")
-//public class CyclicalServiceController {
-//
-//    private final CyclicalServiceRepo cyclicalServiceRepo;
-//    private final CyclicalServiceService cyclicalServiceService;
-//    private final ValidationUtility validationUtility;
-//
-//
-//    CyclicalServiceController(CyclicalServiceRepo cyclicalServiceRepo, CyclicalServiceService cyclicalServiceService, ValidationUtility validationUtility, TaskScheduler taskScheduler){
-//        this.cyclicalServiceRepo = cyclicalServiceRepo;
-//        this.cyclicalServiceService = cyclicalServiceService;
-//        this.validationUtility = validationUtility;
-//    }
+package com.example.uslugicykliczne.controller;
+
+import com.example.uslugicykliczne.ValidationUtility;
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
+import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
+import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
+import com.example.uslugicykliczne.services.CyclicalServiceService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/cyclicalservice")
+public class CyclicalServiceController {
+
+    private final CyclicalServiceRepo cyclicalServiceRepo;
+    private final ValidationUtility validationUtility;
+    private final CyclicalServiceService cyclicalServiceService;
+
+    public CyclicalServiceController(CyclicalServiceRepo cyclicalServiceRepo, ValidationUtility validationUtility, CyclicalServiceService cyclicalServiceService) {
+        this.cyclicalServiceRepo = cyclicalServiceRepo;
+        this.validationUtility = validationUtility;
+        this.cyclicalServiceService = cyclicalServiceService;
+    }
+
 //
 //
 //
@@ -39,19 +36,19 @@
 //    }
 //
 //
-//    @GetMapping("/getAll")
-//    public List<CyclicalServiceProjection> getAllCustomers(){
-//        return cyclicalServiceRepo.findProjectionsBy();
-//    }
-//
-//
-//    @PostMapping("/insertBody")
-//    public ResponseEntity<String> insert(@Validated @RequestBody CyclicalServiceDto cyclicalServiceDto, BindingResult bindingResult){
-//        if(bindingResult.hasErrors()){
-//            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
-//        }
-//        return cyclicalServiceService.insertNewCyclicalServiceEntity(cyclicalServiceDto);
-//    }
+    @GetMapping("/getAll")
+    public List<CyclicalServiceEntity> getAllCustomers(){
+        return cyclicalServiceRepo.findAll();
+    }
+
+    @PostMapping("/insertBody")
+    public ResponseEntity<String> insert(@Validated @RequestBody CyclicalServiceDto cyclicalServiceDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
+        }
+        return cyclicalServiceService.insertNewCyclicalServiceEntity(cyclicalServiceDto);
+    }
+
 //
 //    @DeleteMapping("/delete/{id}")
 //    public ResponseEntity<String> delete (@PathVariable Integer id ){
@@ -80,4 +77,4 @@
 //        }
 //        return cyclicalServiceService.updateCyclicalServiceEntity(id, cyclicalServiceDto);
 //    }
-//}
+}

@@ -24,8 +24,7 @@ public class ContactDataEntity {
     private List<PhoneNumberEntity> phoneNumbers;
 
 
-    @OneToOne(mappedBy = "contactData")
-    private ServiceUserEntity serviceUserEntity;
+
 
     @Override
     public boolean equals(Object o) {

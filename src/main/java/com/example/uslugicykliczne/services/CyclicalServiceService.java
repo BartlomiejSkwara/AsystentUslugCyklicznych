@@ -1,29 +1,22 @@
-//package com.example.uslugicykliczne.services;
-//
-//import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
-//import com.example.uslugicykliczne.repo.CustomerRepo;
-//import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
-//import com.example.uslugicykliczne.repo.DysponentRepo;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.Optional;
-//
-//@Service
-//public class CyclicalServiceService {
-//
-//    private final CyclicalServiceRepo cyclicalServiceRepo;
-//    private final CustomerRepo customerRepo;
-//    private final DysponentRepo dysponentRepo;
+package com.example.uslugicykliczne.services;
+
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
+import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class CyclicalServiceService {
+
+    private final CyclicalServiceRepo cyclicalServiceRepo;
 //    private final SchedulingService schedulingService;
-//
-//    public CyclicalServiceService(CyclicalServiceRepo cyclicalServiceRepo, CustomerRepo customerRepo, DysponentRepo dysponentRepo, SchedulingService schedulingService) {
-//        this.cyclicalServiceRepo = cyclicalServiceRepo;
-//        this.customerRepo = customerRepo;
-//        this.dysponentRepo = dysponentRepo;
-//        this.schedulingService = schedulingService;
-//    }
+
+    public CyclicalServiceService(CyclicalServiceRepo cyclicalServiceRepo) {
+        this.cyclicalServiceRepo = cyclicalServiceRepo;
+    }
 //
 //
 //
@@ -42,7 +35,7 @@
 //        return ResponseEntity.ok().body("The task was successfully renewed");
 //    }
 //
-//    public ResponseEntity<String> insertNewCyclicalServiceEntity(CyclicalServiceDto cyclicalServiceDto){
+    public ResponseEntity<String> insertNewCyclicalServiceEntity(CyclicalServiceDto cyclicalServiceDto){
 //        Optional<CustomerEntity> customerEntity = customerRepo.findById(cyclicalServiceDto.getCustomerId());
 //        Optional<DysponentEntity> dysponentEntity = dysponentRepo.findById(cyclicalServiceDto.getDysponentId());
 //
@@ -52,12 +45,12 @@
 //            return ResponseEntity.ok("Successfully added the cyclical service");
 //        }
 //
-//        StringBuilder stringBuilder = new StringBuilder("Entities :");
+        StringBuilder stringBuilder = new StringBuilder("Entities :");
 //        stringBuilder.append((customerEntity.isEmpty())?"[customer]":"");
 //        stringBuilder.append((dysponentEntity.isEmpty())?"[dysponent]":"");
 //        stringBuilder.append("with the provided ID(s) could not be found.");
-//        return  ResponseEntity.badRequest().body(stringBuilder.toString());
-//    }
+        return  ResponseEntity.badRequest().body(stringBuilder.toString());
+    }
 //
 //    public CyclicalServiceEntity convertCyclicalServiceDTOtoEntity(CyclicalServiceEntity cyclicalServiceEntity,CyclicalServiceDto dto, CustomerEntity customerEntity, DysponentEntity dysponentEntity){
 //        cyclicalServiceEntity.setCustomerEntity(customerEntity);
@@ -97,4 +90,4 @@
 //    }
 //
 //
-//}
+}

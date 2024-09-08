@@ -11,6 +11,7 @@ public class BusinessEntity {
     @Id
     @Column(name = "idBusiness")
     private int idBusiness;
+
     @Basic
     @Column(name = "name",nullable = false, length = 80)
     private String name;
@@ -28,8 +29,8 @@ public class BusinessEntity {
     private String comments;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ContactData_idContactData", referencedColumnName = "idContactData", nullable = false)
-    private ContactDataEntity contactDataByContactDataIdContactData;
+    @JoinColumn(name = "contactDataId", referencedColumnName = "idContactData", nullable = false)
+    private ContactDataEntity contactData;
 
 
     @Override

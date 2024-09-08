@@ -31,10 +31,12 @@ public class CertificateEntity {
     @Basic
     @Column(name = "nameInOrganisation", length = 80)
     private String nameInOrganisation;
-
     @ManyToOne
     @JoinColumn(name = "idCyclicalService",nullable = false)
-    CyclicalServiceEntity cyclicalServiceEntity;
+    private CyclicalServiceEntity cyclicalServiceEntity;
+//    @Basic
+//    @Column(nullable = false)
+//    private Boolean recent;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
