@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer> {
 
@@ -23,9 +24,24 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
 
     @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails ")
     List<BusinessEntity> findBJoinedEmailBy();
-    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.phoneNumbers where b in (:oldb)")
-    List<BusinessProjection> findBJoinedPhoneBy(List<BusinessEntity> oldb);
+    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.phoneNumbers where b in (:oldB)")
+    List<BusinessProjection> findBJoinedPhoneBy(List<BusinessEntity> oldB);
 
+
+
+    ///////////////////////
+    default Optional<BusinessEntity> findBusinessWithContactDataById(int id){
+        Optional<BusinessEntity> entity = findBSingleJoinedEmailBy(id);
+        if (entity != null && entity.isPresent()){
+            return  findBSingleJoinedPhoneBy(entity.get());
+        }
+        return Optional.empty();
+    }
+    @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails WHERE su.idBusiness = :id")
+    Optional<BusinessEntity> findBSingleJoinedEmailBy(int id);
+
+    @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.phoneNumbers where su = :oldB")
+    Optional<BusinessEntity> findBSingleJoinedPhoneBy(BusinessEntity oldB);
 
 //    List<BusinessEntity> findBusinessEntitiesByEmailOrPhoneNumberOrMfnSerialNumber(String email, String phoneNumber, String mfnSerialNumber);
 //    List<CyclicalServiceProjection.DysponentProjection> findProjectionsBy();

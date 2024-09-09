@@ -1,6 +1,7 @@
 package com.example.uslugicykliczne.services;
 
 import com.example.uslugicykliczne.dataTypes.ServiceUserDTO;
+import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.entity.ContactDataEntity;
 import com.example.uslugicykliczne.entity.ServiceUserEntity;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
@@ -23,10 +24,10 @@ public class ServiceUserService {
 
 
 
-    public ResponseEntity<String> updateCustomerEntity(Integer id,ServiceUserDTO serviceUserDTO){
-        Optional<ServiceUserEntity> serviceUserEntity = serviceUserRepo.findById(id);
+    public ResponseEntity<String> updateServiceUserEntity(Integer id, ServiceUserDTO serviceUserDTO){
+        Optional<ServiceUserEntity> serviceUserEntity = serviceUserRepo.findUserWithContactDataById(id);
         if (serviceUserEntity.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Can't edit nonexistant service user !!!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Can't edit nonexistent service user !!!");
         ContactDataEntity contactDataEntity = serviceUserEntity.get().getContactData();
         contactDataService.updateContactDataEntity(contactDataEntity,serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
 
@@ -79,4 +80,12 @@ public class ServiceUserService {
         return serviceUserEntity;
     }
 
+    public void deleteServiceUser(Integer id) {
+        Optional<ServiceUserEntity> serviceUserEntity = serviceUserRepo.findById(id);
+        if (serviceUserEntity.isPresent()){
+            serviceUserRepo.delete(serviceUserEntity.get());
+        }
+
+
+    }
 }

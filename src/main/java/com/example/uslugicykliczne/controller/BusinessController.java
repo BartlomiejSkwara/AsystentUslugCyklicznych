@@ -44,15 +44,15 @@ public class BusinessController
 //            return ResponseEntity.notFound().build();
 //        }
 //    }
-//
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseEntity<String> delete (@PathVariable Integer id ){
-//        dysponentRepo.deleteById(id);
-//        return ResponseEntity.ok().body("Dysponent was deleted");
-//
-//    }
-//
-//
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete (@PathVariable Integer id ){
+        businessService.deleteBusiness(id);
+        return ResponseEntity.ok().body("Business was deleted");
+
+    }
+
+
     @PostMapping("/insertBody")
     public ResponseEntity<String> insert(@Valid @RequestBody() BusinessDTO businessDTO, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -60,13 +60,13 @@ public class BusinessController
         }
         return businessService.insertNewBusinessEntity(businessDTO);
     }
-//
-//    @PostMapping("/update/{id}")
-//    public ResponseEntity<String> update(@PathVariable Integer id, @Valid @RequestBody() DysponentDto dysponentDto, BindingResult bindingResult ){
-//        if(bindingResult.hasErrors()){
-//            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
-//        }
-//        return dysponentService.updateDysponentEntity(id, dysponentDto);
-//    }
-//
+
+    @PostMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Integer id, @Valid @RequestBody() BusinessDTO businessDTO, BindingResult bindingResult ){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
+        }
+        return businessService.updateBusinessEntity(id, businessDTO);
+    }
+
 }

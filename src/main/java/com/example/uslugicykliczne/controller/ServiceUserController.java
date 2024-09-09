@@ -2,11 +2,8 @@ package com.example.uslugicykliczne.controller;
 
 
 import com.example.uslugicykliczne.ValidationUtility;
-import com.example.uslugicykliczne.dataTypes.ContactDataProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceUserDTO;
 import com.example.uslugicykliczne.dataTypes.ServiceUserProjection;
-import com.example.uslugicykliczne.entity.ContactDataEntity;
-import com.example.uslugicykliczne.entity.EmailEntity;
 import com.example.uslugicykliczne.entity.ServiceUserEntity;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
 import com.example.uslugicykliczne.services.ServiceUserService;
@@ -15,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,8 +40,8 @@ public class ServiceUserController {
     }
 
 //    @GetMapping("/get/{id}")
-//    public ResponseEntity<CustomerEntity> getCustomer (@PathVariable Integer id ){
-//        Optional<CustomerEntity> soughtEntity = serviceUserRepo.findById(id);
+//    public ResponseEntity<ServiceUserEntity> getCustomer (@PathVariable Integer id ){
+//        Optional<ServiceUserEntity> soughtEntity = serviceUserRepo.findById(id);
 //        if(soughtEntity.isPresent()){
 //            return ResponseEntity.ok(soughtEntity.get());
 //        }
@@ -53,10 +49,10 @@ public class ServiceUserController {
 //            return ResponseEntity.notFound().build();
 //        }
 //    }
-//
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete (@PathVariable Integer id ){
-        serviceUserRepo.deleteById(id);
+        serviceUserService.deleteServiceUser(id);
         return ResponseEntity.ok().body("Customer was deleted");
 
     }
@@ -76,7 +72,7 @@ public class ServiceUserController {
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
-        return serviceUserService.updateCustomerEntity(id, serviceUserDTO);
+        return serviceUserService.updateServiceUserEntity(id, serviceUserDTO);
     }
 
 }
