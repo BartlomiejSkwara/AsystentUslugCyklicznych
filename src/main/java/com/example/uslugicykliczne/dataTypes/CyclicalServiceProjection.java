@@ -1,33 +1,39 @@
 package com.example.uslugicykliczne.dataTypes;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
-import java.time.Period;
 
-public interface CyclicalServiceProjection {
-    Integer getId();
-    String getDescription();
-    Double getPrice();
-    LocalDateTime getFirstCycleStart();
-    LocalDateTime getNextRenewal();
-    Period getRenewalPeriod();
+@Data
+public class CyclicalServiceProjection {
 
-    CustomerProjection getCustomerEntity();
-    DysponentProjection getDysponentEntity();
-    public interface CustomerProjection {
-        Integer getId();
-        String getName();
-        String getSurname();
-        String getEmail();
-        String getPhoneNumber();
+    public CyclicalServiceProjection(int getIdCyclicalService, boolean renewalMessageSent, double price, boolean oneTime, String agreementNumber, String description,
+                                     int businessId, String businessName,int idServiceUser,String userName, String userSurname,
+                                     int idCertificate,String certificateSerialNumber,LocalDateTime validFrom,LocalDateTime validTo,String cardType,String cardNumber,String nameInOrganisation) {
+        this.getIdCyclicalService = getIdCyclicalService;
+        this.renewalMessageSent = renewalMessageSent;
+        this.price = price;
+        this.oneTime = oneTime;
+        this.agreementNumber = agreementNumber;
+        this.description = description;
+        this.business = new MinimalBusinessRecord(businessId,businessName);
+        this.serviceUser = new MinimalServiceUserRecord(idServiceUser,userName, userSurname);
+        this.certificate = new CertificateProjectionRecord(idCertificate,certificateSerialNumber,validFrom,validTo,cardType,cardNumber,nameInOrganisation);
     }
 
-    public interface DysponentProjection{
-        Integer getId();
-        String getMfnSerialNumber();
-        String getEmail();
-        String getPhoneNumber();
-        String getName();
-        String getSurname();
-    }
+    private final int getIdCyclicalService;
+    private final boolean renewalMessageSent;
+    private final double price;
+    private final boolean oneTime;
+    private final String agreementNumber;
+    private final String description;
+    private final MinimalBusinessRecord business;
+    private final MinimalServiceUserRecord serviceUser;
+    private final CertificateProjectionRecord certificate;
+
+
+    private record MinimalBusinessRecord (int idBusiness, String businessName){};
+    private record MinimalServiceUserRecord(int idServiceUser,String name, String getSurname){};
+
 
 }

@@ -2,9 +2,12 @@ package com.example.uslugicykliczne.controller;
 
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
+import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -26,19 +29,21 @@ public class CyclicalServiceController {
         this.cyclicalServiceService = cyclicalServiceService;
     }
 
-//
-//
-//
-//    @GetMapping("/renew/{id}")
-//    public ResponseEntity<String> renew (@PathVariable Integer id ){
-//        return cyclicalServiceService.renewCyclicalService(id);
-//
-//    }
-//
-//
+
+
+
+    @PostMapping("/renew/{id}")
+    public ResponseEntity<String> renew (@Validated @RequestBody ServiceRenewalRecord serviceRenewalRecord, BindingResult bindingResult, @PathVariable Integer id ){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
+        }
+        return cyclicalServiceService.renewCyclicalService(serviceRenewalRecord,id);
+    }
+
+
     @GetMapping("/getAll")
-    public List<CyclicalServiceEntity> getAllCustomers(){
-        return cyclicalServiceRepo.findAll();
+    public List<CyclicalServiceProjection> getAllCustomers(){
+        return cyclicalServiceService.getAll();
     }
 
     @PostMapping("/insertBody")
@@ -49,15 +54,16 @@ public class CyclicalServiceController {
         return cyclicalServiceService.insertNewCyclicalServiceEntity(cyclicalServiceDto);
     }
 
-//
-//    @DeleteMapping("/delete/{id}")
-//    public ResponseEntity<String> delete (@PathVariable Integer id ){
-//        cyclicalServiceRepo.deleteById(id);
-//        return ResponseEntity.ok().body("Cyclical service was deleted");
-//
-//    }
-//
-//
+
+    ///TODO masowe usuwanie certyfikatów
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete (@PathVariable Integer id ){
+        cyclicalServiceRepo.deleteById(id);
+        return ResponseEntity.ok().body("Cyclical service was deleted");
+
+    }
+
+
 //    @GetMapping("/get/{id}")
 //    public ResponseEntity<CyclicalServiceEntity> getCyclicalService (@PathVariable Integer id ){
 //        Optional<CyclicalServiceEntity> soughtEntity = cyclicalServiceRepo.findById(id);
@@ -69,7 +75,7 @@ public class CyclicalServiceController {
 //        }
 //    }
 //
-//    ///TODO obsłuż sytuację gdzie user podaje ujemny okres odnowienia
+    ///TODO obsłuż sytuację gdzie user podaje ujemny okres odnowienia
 //    @PostMapping("/update/{id}")
 //    public ResponseEntity<String> update(@PathVariable Integer id, @Valid @RequestBody() CyclicalServiceDto cyclicalServiceDto, BindingResult bindingResult ){
 //        if(bindingResult.hasErrors()){

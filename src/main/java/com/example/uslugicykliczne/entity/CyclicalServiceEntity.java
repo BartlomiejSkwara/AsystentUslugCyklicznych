@@ -38,7 +38,7 @@ public class CyclicalServiceEntity {
     private ServiceUserEntity serviceUser;
 
 
-    @OneToMany(mappedBy = "idCertificate")
+    @OneToMany(mappedBy = "idCertificate",cascade = CascadeType.ALL)
     private Collection<CertificateEntity> certificates;
 
 
