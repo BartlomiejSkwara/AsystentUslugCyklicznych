@@ -7,11 +7,10 @@ import java.time.LocalDateTime;
 @Data
 public class CyclicalServiceProjection {
 
-    public CyclicalServiceProjection(int getIdCyclicalService, boolean renewalMessageSent, double price, boolean oneTime, String agreementNumber, String description,
+    public CyclicalServiceProjection(int getIdCyclicalService, double price, boolean oneTime, String agreementNumber, String description,
                                      int businessId, String businessName,int idServiceUser,String userName, String userSurname,
                                      int idCertificate,String certificateSerialNumber,LocalDateTime validFrom,LocalDateTime validTo,String cardType,String cardNumber,String nameInOrganisation) {
         this.getIdCyclicalService = getIdCyclicalService;
-        this.renewalMessageSent = renewalMessageSent;
         this.price = price;
         this.oneTime = oneTime;
         this.agreementNumber = agreementNumber;
@@ -22,7 +21,7 @@ public class CyclicalServiceProjection {
     }
 
     private final int getIdCyclicalService;
-    private final boolean renewalMessageSent;
+    //private final boolean renewalMessageSent;
     private final double price;
     private final boolean oneTime;
     private final String agreementNumber;

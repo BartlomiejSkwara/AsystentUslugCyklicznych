@@ -4,16 +4,14 @@ import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
 import com.example.uslugicykliczne.entity.BusinessEntity;
+import com.example.uslugicykliczne.entity.CertificateEntity;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.entity.ServiceUserEntity;
 import com.example.uslugicykliczne.repo.BusinessRepo;
+import com.example.uslugicykliczne.repo.CertificateRepo;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,35 +26,42 @@ public class CyclicalServiceService {
     private final BusinessRepo businessRepo;
     private final CertificateService certificateService;
     private final EntityManager entityManager;
+    private final CertificateRepo certificateRepo;
 //    private final SchedulingService schedulingService;
 
-    public CyclicalServiceService(CyclicalServiceRepo cyclicalServiceRepo, ServiceUserRepo serviceUserRepo, BusinessRepo businessRepo, CertificateService certificateService, EntityManager entityManager) {
+    public CyclicalServiceService(CyclicalServiceRepo cyclicalServiceRepo, ServiceUserRepo serviceUserRepo, BusinessRepo businessRepo, CertificateService certificateService, EntityManager entityManager, CertificateRepo certificateRepo) {
         this.cyclicalServiceRepo = cyclicalServiceRepo;
         this.serviceUserRepo = serviceUserRepo;
         this.businessRepo = businessRepo;
         this.certificateService = certificateService;
         this.entityManager = entityManager;
+        this.certificateRepo = certificateRepo;
     }
 
     public ResponseEntity<String> renewCyclicalService(ServiceRenewalRecord serviceRenewalRecord, Integer id){
-        Optional<CyclicalServiceEntity> cyclicalServiceEntityOptional = cyclicalServiceRepo.findById(id);
-        if(cyclicalServiceEntityOptional.isEmpty())
+        Optional<CertificateEntity> certificateEntityOptional = certificateRepo.findCertificateWithNotRenewedCertBy(id);
+        if(certificateEntityOptional.isEmpty())
             return ResponseEntity.badRequest().body("Can't renew nonexistent service");
+        CertificateEntity certificateEntity = certificateEntityOptional.get();
 
-        CyclicalServiceEntity cyclicalServiceEntity = cyclicalServiceEntityOptional.get();
-
-        if(cyclicalServiceEntity.isOneTime())
+        if(certificateEntity.getCyclicalServiceEntity().isOneTime())
             return ResponseEntity.badRequest().body("Can't renew one time service");
 
-        if(cyclicalServiceEntity.isRenewalMessageSent()){
+//        if(cyclicalServiceEntity.getCertificates().size()>1)
+//            throw  new RuntimeException("UWAGA UWAGA UWAGA : BŁĄD NA MIARĘ ... IDK JAKĄ ALE BARDZO DUŻĄ POINFORMUJ MNIE PROSZĘ O 'PROBLEMACH Z FETCHOWANIEM CERTYFIKATÓW I BŁĘDAMI Z ODNOWIENIEM'");
+//
+//        if (cyclicalServiceEntity.getCertificates().size()<=0)
+//            throw new RuntimeException("Nie wiem jak do tego doprowadziłeś ale .... gratulacje XD ");
+        if(certificateEntity.isRenewalMessageSent()){
             //schedulingService.trySchedulingReminderWhenInserted(cyclicalServiceEntity.get());
 
         } else {
             //schedulingService.trySchedulingReminderWhenUpdated(cyclicalServiceEntity.get());
         }
+        certificateEntity.setRenewed(true);
+        certificateEntity.setRenewalMessageSent(true);
 
-        certificateService.insertCertificateCreatedFromRenewalRecord(cyclicalServiceEntity, serviceRenewalRecord);
-        cyclicalServiceEntity.setRenewalMessageSent(false);
+        certificateService.insertCertificateCreatedFromRenewalRecord(certificateEntity.getCyclicalServiceEntity(), serviceRenewalRecord);
 
         return ResponseEntity.ok().body("The task was successfully renewed");
     }
@@ -87,13 +92,12 @@ public class CyclicalServiceService {
         cyclicalServiceEntity.setPrice(dto.getPrice());
         cyclicalServiceEntity.setOneTime(dto.getOneTime());
         cyclicalServiceEntity.setAgreementNumber(dto.getAgreementNumber());
-        cyclicalServiceEntity.setRenewalMessageSent(false);
 
         return cyclicalServiceEntity;
     }
 
-    public List<CyclicalServiceProjection> getAll() {
-        return cyclicalServiceRepo.customFindCyclicalProjections();
+    public List<CyclicalServiceProjection> getAllFromNextNDays(int nDays) {
+        return cyclicalServiceRepo.customFindCyclicalProjectionsInNextNDays(nDays);
     }
 
 

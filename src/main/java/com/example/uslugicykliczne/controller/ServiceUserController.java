@@ -2,12 +2,15 @@ package com.example.uslugicykliczne.controller;
 
 
 import com.example.uslugicykliczne.ValidationUtility;
+import com.example.uslugicykliczne.dataTypes.BusinessProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceUserDTO;
 import com.example.uslugicykliczne.dataTypes.ServiceUserProjection;
 import com.example.uslugicykliczne.entity.ServiceUserEntity;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
 import com.example.uslugicykliczne.services.ServiceUserService;
 import jakarta.validation.Valid;
+import org.springframework.data.projection.ProjectionFactory;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -39,16 +42,18 @@ public class ServiceUserController {
         return serviceUserRepo.findUsersWithProjectedContactData();
     }
 
-//    @GetMapping("/get/{id}")
-//    public ResponseEntity<ServiceUserEntity> getCustomer (@PathVariable Integer id ){
-//        Optional<ServiceUserEntity> soughtEntity = serviceUserRepo.findById(id);
-//        if(soughtEntity.isPresent()){
-//            return ResponseEntity.ok(soughtEntity.get());
-//        }
-//        else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @GetMapping("/get/{id}")
+    public ResponseEntity<ServiceUserProjection> getCustomer (@PathVariable Integer id ){
+        Optional<ServiceUserEntity> soughtEntity = serviceUserRepo.findUserWithContactDataById(id);
+        if(soughtEntity.isPresent()){
+            ProjectionFactory pf = new SpelAwareProxyProjectionFactory();
+            ServiceUserProjection sp = pf.createProjection(ServiceUserProjection.class, soughtEntity.get());
+            return ResponseEntity.ok(sp);
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete (@PathVariable Integer id ){

@@ -42,8 +42,11 @@ public class CyclicalServiceController {
 
 
     @GetMapping("/getAll")
-    public List<CyclicalServiceProjection> getAllCustomers(){
-        return cyclicalServiceService.getAll();
+    public List<CyclicalServiceProjection> getAllCustomers(@RequestParam(required = false) String days){
+        int nDays = 7;
+        if (days.equals("7") || days.equals("14")||days.equals("30")||days.equals("60"))
+            nDays = Integer.parseInt(days);
+        return cyclicalServiceService.getAllFromNextNDays(nDays);
     }
 
     @PostMapping("/insertBody")

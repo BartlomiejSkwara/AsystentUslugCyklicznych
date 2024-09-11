@@ -20,8 +20,6 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
         }
         return null;
     }
-
-
     @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails ")
     List<BusinessEntity> findBJoinedEmailBy();
     @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.phoneNumbers where b in (:oldB)")
@@ -37,6 +35,8 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
         }
         return Optional.empty();
     }
+
+
     @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails WHERE su.idBusiness = :id")
     Optional<BusinessEntity> findBSingleJoinedEmailBy(int id);
 
