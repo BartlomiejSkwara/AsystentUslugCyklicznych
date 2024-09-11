@@ -1,70 +1,53 @@
 package com.example.uslugicykliczne.services;
 
-import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import com.example.uslugicykliczne.entity.ContactDataEntity;
+import com.example.uslugicykliczne.entity.EmailEntity;
+import com.example.uslugicykliczne.repo.EmailRepo;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Service
-public class EmailService{
+public class EmailService {
+    private final EmailRepo emailRepo;
 
-    private final JavaMailSender emailSender;
-    private final String recipientEmail;
-    private final DateTimeFormatter formatter;
-    private final String sender;
-
-    private final TemplateEngine templateEngine;
-    public EmailService(JavaMailSender emailSender, TemplateEngine templateEngine) {
-        this.emailSender = emailSender;
-        this.templateEngine = templateEngine;
-        //recipientEmail = "gdd58951@doolk.com";
-        recipientEmail = "bartlomiejskwara731@gmail.com";
-        sender = "cyclicservicesreminder@gmail.com";
-        this.formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    public EmailService(EmailRepo emailRepo) {
+        this.emailRepo = emailRepo;
     }
 
+    public List<EmailEntity> insertNewEmailEntities(List<String> emails, ContactDataEntity contactDataEntity){
+        ArrayList<EmailEntity> emailEntities = new ArrayList<>();
+        for(String email:emails){
+            EmailEntity emailEntity = new EmailEntity();
+            emailEntity.setEmail(email);
+            emailEntity.setContactDataEntity(contactDataEntity);
+            emailEntities.add(emailEntity);
+        }
+        return  emailRepo.saveAll(emailEntities);
 
-    public void sendEmailNotification(String subject, CyclicalServiceEntity cyclicalServiceEntity) {
+    }
 
+    public void updateEmailEntities(List<EmailEntity> emailEntities, List<String> emails,ContactDataEntity contactDataEntity) {
 
-        MimeMessage  mimeMessage  = this.emailSender.createMimeMessage();
-        try {
-            MimeMessageHelper message =  new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            message.setSubject(subject);
-            message.setFrom(sender);
-            message.setTo(recipientEmail);
-
-
-            final Context ctx = new Context(); //locale
-            ctx.setVariable("service", cyclicalServiceEntity);
-            ctx.setVariable("dysponent", cyclicalServiceEntity.getDysponentEntity());
-            ctx.setVariable("customer", cyclicalServiceEntity.getCustomerEntity());
-            //ctx.setVariable("imageResourceName", imageResourceName);
-
-            final String htmlContent = this.templateEngine.process("emailTemplate.html", ctx);
-            message.setText(htmlContent, true);
-            emailSender.send(message.getMimeMessage());
-
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
+        int smallerSize  = emailEntities.size();
+        if(emails.size()<emailEntities.size()){
+            List<EmailEntity> entities = new ArrayList<>(emailEntities.subList(emails.size(), emailEntities.size()));
+            contactDataEntity.removeEmails(entities);
+            emailRepo.deleteAll(entities);
+            smallerSize = emails.size();
+        }
+        else if (emails.size()>emailEntities.size()){
+            insertNewEmailEntities(emails.subList(emailEntities.size(), emails.size()),contactDataEntity);
+            smallerSize = emailEntities.size();
         }
 
+        for (int i = 0; i<smallerSize; i++){
+            emailEntities.get(i).setEmail(emails.get(i));
+        }
 
-
-
-        //SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom();
-//        message.setTo(recipientEmail);
-//        message.setSubject(subject);
-//        message.setText(text);
-
+        emailRepo.saveAll(emailEntities.subList(0,smallerSize));
 
     }
 }

@@ -1,59 +1,80 @@
 package com.example.uslugicykliczne.dataTypes;
 
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Objects;
+import java.util.Optional;
 
 @Getter()
+@RequiredArgsConstructor
+@EqualsAndHashCode()
 public class CyclicalServiceDto {
-    @NotBlank(message = "Description is empty !!!")
-    private final String description;
+
+//TODO maybe in the future :>
+//    private final Optional<
+//            @Min(value = 0L, message = "Specified Business Id must be a positive Integer")
+//            Integer> businessId;
+    @NotNull(message = "Business Id  is empty !!!")
+    @Min(value = 0L, message = "Specified Business Id must be a positive Integer")
+    private final Integer businessId;
+
+    @FutureOrPresent(message = "future or present constraint broken")
+    @NotNull(message = "cycleStart is empty !!!")
+    private final LocalDateTime cycleStart;
+
+    @FutureOrPresent(message = "future or present constraint broken")
+    @NotNull(message = "cycleEnd is empty !!!")
+    private final LocalDateTime cycleEnd;
+
+    @NotBlank(message = "Certificate cardNumber is empty !!!")
+    @Size(max=40, message = "Certificate cardNumber is too long !!!")
+    private final String  cardNumber;
+
+    @NotBlank(message = "Certificate cardType is empty !!!")
+    @Size(max=40, message = "Certificate cardType is too long !!!")
+    private final String  cardType;
+
+
+    @NotBlank(message = "Certificate serialNumber is empty !!!")
+    @Size(max=40, message = "Certificate serialNumber is too long !!!")
+    private final String  certSerialNumber;
+
+
+    private final Optional<
+            @Size(max = 80, message = "Specified nameInOrganisation is too long")
+                    String> nameInOrganisation;
+
+
+    @NotNull(message = "oneTime not set !!!")
+    private final Boolean oneTime;
+
 
 
     @NotNull(message = "Price is empty !!!")
+    @Min(value = 0, message = "Can't specify negative price !!!")
     private final Double price;
 
-    @FutureOrPresent(message = "future or present constraint broken")
-    @NotNull(message = "FirstCycleStart is empty !!!")
-    private final LocalDateTime firstCycleStart;
+    @NotNull(message = "serviceUserId is empty !!!")
+    @Min(value = 0L, message = "Specified serviceUserId must be a positive Integer")
+    private final Integer serviceUserId;
 
-    @NotNull(message = "RenewalPeriod is empty !!!")
-    private final Period renewalPeriod;
 
-    @NotNull(message = "DysponentId is empty !!!")
-    private final Integer dysponentId;
+    @NotBlank(message = "Agreement Number is empty !!!")
+    @Size(max=40, message = "Agreement Number is too long !!!")
+    private final String  agreementNumber;
 
-    @NotNull(message = "CustomerId is empty !!!")
-    private final Integer customerId;
-
-    private final LocalDateTime nextRenewal;
+    @NotBlank(message = "Description is empty !!!")
+    @Size(max=255, message = "Description is too long !!!")
+    private final String description;
 
 
 
-    public CyclicalServiceDto(String description, Double price, LocalDateTime firstCycleStart, Period renewalPeriod, Integer dysponentId, Integer customerId) {
-        this.description = description;
-        this.price = price;
-        this.firstCycleStart = firstCycleStart;
-        this.renewalPeriod = renewalPeriod;
-        this.dysponentId = dysponentId;
-        this.customerId = customerId;
-        this.nextRenewal = firstCycleStart.plus(renewalPeriod);
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CyclicalServiceDto that)) return false;
-        return Objects.equals(getDescription(), that.getDescription()) && Objects.equals(getPrice(), that.getPrice()) && Objects.equals(getFirstCycleStart(), that.getFirstCycleStart()) && Objects.equals(getRenewalPeriod(), that.getRenewalPeriod()) && Objects.equals(getDysponentId(), that.getDysponentId()) && Objects.equals(getCustomerId(), that.getCustomerId()) && Objects.equals(getNextRenewal(), that.getNextRenewal());
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getDescription(), getPrice(), getFirstCycleStart(), getRenewalPeriod(), getDysponentId(), getCustomerId(), getNextRenewal());
-    }
+
 }

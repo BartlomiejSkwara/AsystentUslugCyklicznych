@@ -1,5 +1,4 @@
 package com.example.uslugicykliczne.serviceTests.UnitTests;
-import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.scheduling.RunnableTask;
 import com.example.uslugicykliczne.services.EmailService;
@@ -10,10 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.TaskScheduler;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 

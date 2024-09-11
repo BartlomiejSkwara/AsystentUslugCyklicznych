@@ -6,9 +6,10 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 123
-      MYSQL_DATABASE: uslugicykliczne
+      MYSQL_DATABASE: uslugi_cykliczne
       MYSQL_USER: krisent
       MYSQL_PASSWORD: krisent
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin']
     ports:
       - '3306:3306'
     expose:

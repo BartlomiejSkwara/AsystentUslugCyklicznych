@@ -1,6 +1,5 @@
 package com.example.uslugicykliczne.serviceTests.UnitTests;
 
-import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.scheduling.RunnableTask;
 import com.example.uslugicykliczne.services.EmailService;
@@ -12,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.LocalDateTime;
 import java.time.Period;
