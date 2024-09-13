@@ -1,9 +1,11 @@
 package com.example.uslugicykliczne.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "AccountData", schema = "uslugi_cykliczne", catalog = "")
+@Data
 public class AccountDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
