@@ -8,15 +8,15 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li>
-        <router-link to="/Customer" class="nav-link text-white">
+        <router-link to="/ServiceUser" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Customers
+          Users
         </router-link>
       </li>
       <li>
-        <router-link to="/Dysponents" class="nav-link text-white">
+        <router-link to="/Business" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Dysponents
+          Businesses
         </router-link>
       </li>
       <li>
@@ -25,6 +25,13 @@
           Cycles
         </router-link>
       </li>
+<!--      Do ZROBIENIA?     -->
+<!--      <li>-->
+<!--        <router-link to="/certificates" class="nav-link text-white">-->
+<!--          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>-->
+<!--          Certificates-->
+<!--        </router-link>-->
+<!--      </li>-->
     </ul>
     <hr>
     <div class="dropdown">
