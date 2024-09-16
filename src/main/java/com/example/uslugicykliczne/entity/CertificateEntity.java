@@ -42,8 +42,6 @@ public class CertificateEntity {
     @ManyToOne
     @JoinColumn(name = "idCyclicalService",nullable = false)
     private CyclicalServiceEntity cyclicalServiceEntity;
-//    @Basic
-//    @Column(nullable = false)
-//    private Boolean recent;
+
 
 }

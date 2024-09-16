@@ -8,25 +8,6 @@ import java.util.Collection;
 @Entity
 @Data
 @Table(name = "ServiceUser", schema = "uslugi_cykliczne", catalog = "")
-//@NamedEntityGraphs({
-//        @NamedEntityGraph(
-//                name = "ServiceUserEntity.eagerlyFetchSUEmails",
-//                attributeNodes = {
-//                        @NamedAttributeNode(value = "contactData", subgraph = "sub.CD"),
-//
-//                },
-//                subgraphs = {
-//                        @NamedSubgraph(
-//                                name = "sub.CD",
-//                                attributeNodes = {
-//                                        @NamedAttributeNode(value = "emails"),
-//                                }
-//
-//                        )
-//                }
-//
-//        )
-//})
 public class ServiceUserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

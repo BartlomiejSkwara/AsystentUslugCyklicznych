@@ -1,4 +1,5 @@
 SET FOREIGN_KEY_CHECKS=0;
+SET SQL_SAFE_UPDATES = 0;
 
 delete from account_data;
 delete from email;
@@ -8,6 +9,8 @@ delete from cyclical_service;
 delete from business;
 delete from service_user;
 delete from contact_data;
+SET SQL_SAFE_UPDATES = 1;
+
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: uslugi_cykliczne

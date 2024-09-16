@@ -27,7 +27,6 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
 
 
 
-    ///////////////////////
     default Optional<BusinessEntity> findBusinessWithContactDataById(int id){
         Optional<BusinessEntity> entity = findBSingleJoinedEmailBy(id);
         if (entity != null && entity.isPresent()){
@@ -43,7 +42,5 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
     @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.phoneNumbers where su = :oldB")
     Optional<BusinessEntity> findBSingleJoinedPhoneBy(BusinessEntity oldB);
 
-//    List<BusinessEntity> findBusinessEntitiesByEmailOrPhoneNumberOrMfnSerialNumber(String email, String phoneNumber, String mfnSerialNumber);
-//    List<CyclicalServiceProjection.DysponentProjection> findProjectionsBy();
 
 }

@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @RequiredArgsConstructor
 @Configuration
-@EnableWebSecurity(debug = true)
+//@EnableWebSecurity(debug = true)
 public class SecurityConfig {
 
     private final JPAUserDetailsService userDetailsService;
@@ -40,6 +40,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(auth ->
                 auth
                     .requestMatchers("/api/authentication/login").permitAll()
+                    .requestMatchers("/api/authentication/logout").hasAnyRole("user","admin")
                     .requestMatchers(
                             "/api/business/getAll",
                             "/api/business/get/**",

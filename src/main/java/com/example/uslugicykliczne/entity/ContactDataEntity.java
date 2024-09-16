@@ -18,7 +18,6 @@ public class ContactDataEntity {
     private int idContactData;
     @OneToMany(mappedBy = "contactDataEntity", cascade = CascadeType.ALL)
     private List<EmailEntity> emails;
-    //contactDataByContactDataIdContactData
 
     @OneToMany(mappedBy = "contactDataEntity", cascade = CascadeType.ALL)
     private List<PhoneNumberEntity> phoneNumbers;

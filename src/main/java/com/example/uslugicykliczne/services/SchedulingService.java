@@ -1,51 +1,51 @@
-//package com.example.uslugicykliczne.services;
-//
-//import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
-//import com.example.uslugicykliczne.scheduling.RunnableTask;
-//import com.example.uslugicykliczne.utility.TimeUtility;
-//import org.springframework.scheduling.TaskScheduler;
-//import org.springframework.stereotype.Service;
-//
-//import java.time.Instant;
-//import java.time.LocalDateTime;
-//import java.util.Optional;
-//import java.util.concurrent.ScheduledFuture;
-//
-//@Service
-//public class SchedulingService {
-//
-//    private final CyclicalServiceRepo cyclicalServiceRepo;
-//    private final TaskScheduler taskScheduler;
-//    private ScheduledFuture<?> scheduledFuture;
-//    private CyclicalServiceEntity lastRegisteredService;
-//    private final EmailService emailService;
-//
-//    public ScheduledFuture<?> getScheduledFuture() {
-//        return scheduledFuture;
-//    }
-//
-//    public CyclicalServiceEntity getLastRegisteredService(){
-//        return lastRegisteredService;
-//    }
+package com.example.uslugicykliczne.services;
+
+import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
+import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
+import com.example.uslugicykliczne.utility.TimeUtility;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
+
+@Service
+public class SchedulingService {
+
+    private final CyclicalServiceRepo cyclicalServiceRepo;
+    private final TaskScheduler taskScheduler;
+    private ScheduledFuture<?> scheduledFuture;
+    private CyclicalServiceEntity lastRegisteredService;
+    private final EmailService emailService;
+
+    public ScheduledFuture<?> getScheduledFuture() {
+        return scheduledFuture;
+    }
+
+    public CyclicalServiceEntity getLastRegisteredService(){
+        return lastRegisteredService;
+    }
 //    public Instant getLastRegisteredRenewal() {
 //        if(lastRegisteredService == null)
 //            return null;
 //        return lastRegisteredService.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
 //    }
-//
-//    public SchedulingService(CyclicalServiceRepo cyclicalServiceRepo, TaskScheduler taskScheduler, EmailService emailService) {
-//        this.cyclicalServiceRepo = cyclicalServiceRepo;
-//        this.taskScheduler = taskScheduler;
-//        this.emailService = emailService;
-//    }
-//
-//    public void findNextServiceAndScheduleIt(){
+
+    public SchedulingService(CyclicalServiceRepo cyclicalServiceRepo, TaskScheduler taskScheduler, EmailService emailService) {
+        this.cyclicalServiceRepo = cyclicalServiceRepo;
+        this.taskScheduler = taskScheduler;
+        this.emailService = emailService;
+    }
+
+    public void findNextServiceAndScheduleIt(){
 //        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findFirstServiceWithNoMessageSent();
 //        if(cyclicalServiceEntity.isPresent())
 //            trySchedulingReminderWhenInserted(cyclicalServiceEntity.get());
-//
-//    }
-//    public void trySchedulingReminderWhenInserted(CyclicalServiceEntity cyclicalServiceEntity)  {
+
+    }
+    public void trySchedulingReminderWhenInserted(CyclicalServiceEntity cyclicalServiceEntity)  {
 //        RunnableTask runnableTask = new RunnableTask(cyclicalServiceEntity, cyclicalServiceRepo, this, emailService);
 //        if(lastRegisteredService==null){
 //            scheduledFuture = taskScheduler.schedule(
@@ -79,12 +79,12 @@
 //        }
 //
 //
-//
-//
-//
-//    }
-//
-//    public void trySchedulingReminderWhenUpdated(CyclicalServiceEntity cyclicalServiceEntity){
+
+
+
+    }
+
+    public void trySchedulingReminderWhenUpdated(CyclicalServiceEntity cyclicalServiceEntity){
 //
 //        if(!cyclicalServiceEntity.getId().equals(lastRegisteredService.getId())){
 //            trySchedulingReminderWhenInserted(cyclicalServiceEntity);
@@ -131,13 +131,13 @@
 //
 //        }
 //
-//
-//    }
-//
-//    private void resetCurrentTaskInfo(){
-//        this.scheduledFuture = null;
-//        this.lastRegisteredService = null;
-//    }
-//
-//
-//}
+
+    }
+
+    private void resetCurrentTaskInfo(){
+        this.scheduledFuture = null;
+        this.lastRegisteredService = null;
+    }
+
+
+}

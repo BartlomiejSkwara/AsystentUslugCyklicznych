@@ -30,11 +30,9 @@ public class CyclicalServiceEntity {
     private String description;
 
     @ManyToOne()
-    //@JoinColumns({@JoinColumn(name = "Business_idBusiness", referencedColumnName = "idBusiness"), @JoinColumn(name = "Business_ContactData_idContactData", referencedColumnName = "ContactData_idContactData")})
     private BusinessEntity business;
 
     @ManyToOne(optional = false)
-    //@JoinColumns({@JoinColumn(name = "ServiceUser_idServiceUser", referencedColumnName = "idServiceUser", nullable = false), @JoinColumn(name = "ServiceUser_ContactData_idContactData", referencedColumnName = "ContactData_idContactData", nullable = false)})
     private ServiceUserEntity serviceUser;
 
     @OneToMany(mappedBy = "cyclicalServiceEntity",cascade = CascadeType.ALL)

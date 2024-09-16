@@ -50,9 +50,14 @@ public class AuthenticationController {
 
         jwtService.addTokenToResponse(httpServletResponse, jwt);
 
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.ok("Successfully logged in ");
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse httpServletResponse){
+        jwtService.addTokenToResponse(httpServletResponse, "");
+        return ResponseEntity.ok("Logging out was successfull");
+    }
 
 
 
