@@ -1,5 +1,9 @@
-package com.example.uslugicykliczne.security;
+package com.example.uslugicykliczne.configuration;
 
+import com.example.uslugicykliczne.security.CsrfCookieFilter;
+import com.example.uslugicykliczne.security.JPAUserDetailsService;
+import com.example.uslugicykliczne.security.JWTAuthFilter;
+import com.example.uslugicykliczne.security.SPATokenRequestHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 @RequiredArgsConstructor
 @Configuration
@@ -26,11 +34,18 @@ public class SecurityConfig {
 
     private final JPAUserDetailsService userDetailsService;
     private final JWTAuthFilter jwtAuthFilter;
+    private final CsrfCookieFilter csrfCookieFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(httpSecurityCsrfConfigurer ->
-                httpSecurityCsrfConfigurer.disable()
+                httpSecurityCsrfConfigurer
+                        .ignoringRequestMatchers(
+                            "/api/authentication/login",
+                            "/api/authentication/logout")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new SPATokenRequestHandler())
         );
+        httpSecurity.addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class);
 
         httpSecurity.sessionManagement(httpSecuritySessionManagementConfigurer ->
                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

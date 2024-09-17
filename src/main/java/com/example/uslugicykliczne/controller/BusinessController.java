@@ -6,6 +6,7 @@ import com.example.uslugicykliczne.dataTypes.BusinessProjection;
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.repo.BusinessRepo;
 import com.example.uslugicykliczne.services.BusinessService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
@@ -34,7 +35,7 @@ public class BusinessController
 
 
     @GetMapping("/getAll")
-    public List<BusinessProjection> getAllBusinesses(){
+    public List<BusinessProjection> getAllBusinesses(HttpServletResponse httpServletResponse){
         return businessRepo.findBusinessesWithProjectedContactData();
     }
 
