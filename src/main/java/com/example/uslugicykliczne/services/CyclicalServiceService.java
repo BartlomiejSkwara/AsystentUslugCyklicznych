@@ -100,6 +100,10 @@ public class CyclicalServiceService {
         return cyclicalServiceRepo.customFindCyclicalProjectionsInNextNDays(nDays);
     }
 
+    public List<CyclicalServiceProjection> getAllByUserId(Integer userID) {
+        return cyclicalServiceRepo.customfindCyclicalProjectionsByUserId(userID);
+    }
+
 
 //    public ResponseEntity<String> updateCyclicalServiceEntity(Integer id, CyclicalServiceDto cyclicalServiceDto){
 //        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findById(id);

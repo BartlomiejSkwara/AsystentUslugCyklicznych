@@ -1,24 +1,32 @@
 package com.example.uslugicykliczne.services;
 
 import com.example.uslugicykliczne.dataTypes.BusinessDTO;
+import com.example.uslugicykliczne.dataTypes.BusinessProjection;
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.entity.ContactDataEntity;
+import com.example.uslugicykliczne.entity.ServiceUserEntity;
 import com.example.uslugicykliczne.repo.BusinessRepo;
+import com.example.uslugicykliczne.repo.ServiceUserRepo;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class BusinessService {
     private final BusinessRepo businessRepo;
+    private final ServiceUserRepo serviceUserRepo;
     private final ContactDataService contactDataService;
+    private final EntityManager entityManager;
 
-    public BusinessService(BusinessRepo businessRepo, ContactDataService contactDataService) {
-        this.businessRepo = businessRepo;
-        this.contactDataService = contactDataService;
-    }
 
 
 
@@ -79,5 +87,14 @@ public class BusinessService {
             businessRepo.delete(businessEntity.get());
         }
 
+    }
+
+    public List<BusinessProjection> getAllRelatedToUser(Integer userID) {
+        //List<BusinessEntity> businessGroup = businessRepo.find
+        //return businessRepo.findBusinessByRelatedUserID(userID);
+        var v = businessRepo.findBusinessRelatedToUserBy(entityManager.getReference(ServiceUserEntity.class,userID));
+        if(v.isEmpty())
+            return new ArrayList<>();
+        return businessRepo.findBusinessWithProjectedContactDataFromBusinessGroup(v);
     }
 }
