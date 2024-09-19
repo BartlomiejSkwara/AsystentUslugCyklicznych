@@ -1,15 +1,18 @@
 package com.example.uslugicykliczne.repo;
 
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
+import com.example.uslugicykliczne.entity.CertificateEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 interface CustomServiceRepo{
     List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDays(int nDays);
+
 }
 class  CustomServiceRepoImpl implements CustomServiceRepo{
 

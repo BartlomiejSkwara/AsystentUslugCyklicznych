@@ -32,8 +32,8 @@ public class CyclicalServiceService {
     private final SchedulingService schedulingService;
 
 
-    public ResponseEntity<String> renewCyclicalService(ServiceRenewalRecord serviceRenewalRecord, Integer id){
-        Optional<CertificateEntity> certificateEntityOptional = certificateRepo.findCertificateWithNotRenewedCertBy(id);
+    public ResponseEntity<String> renewCyclicalService(ServiceRenewalRecord serviceRenewalRecord, Integer serviceId){
+        Optional<CertificateEntity> certificateEntityOptional = certificateRepo.findCertificateWithNotRenewedCertBy(serviceId);
         if(certificateEntityOptional.isEmpty())
             return ResponseEntity.badRequest().body("Can't renew nonexistent service");
         CertificateEntity certificateEntity = certificateEntityOptional.get();
@@ -43,10 +43,10 @@ public class CyclicalServiceService {
 
 
         if(certificateEntity.isRenewalMessageSent()){
-            schedulingService.trySchedulingReminderWhenInserted(certificateEntity.getCyclicalServiceEntity());
+            schedulingService.trySchedulingReminderWhenInserted(certificateEntity,certificateEntity.getCyclicalServiceEntity());
 
         } else {
-            schedulingService.trySchedulingReminderWhenUpdated(certificateEntity.getCyclicalServiceEntity());
+            schedulingService.trySchedulingReminderWhenUpdated(certificateEntity,certificateEntity.getCyclicalServiceEntity());
         }
         certificateEntity.setRenewed(true);
         certificateEntity.setRenewalMessageSent(true);
@@ -62,11 +62,15 @@ public class CyclicalServiceService {
 
         if(businessEntityOptional.isPresent() && serviceUserEntityOptional.isPresent()){
             CyclicalServiceEntity insertedEntity = cyclicalServiceRepo.save(createCyclicalServiceDTOFromEntity(new CyclicalServiceEntity(),cyclicalServiceDto,serviceUserEntityOptional.get(),businessEntityOptional.get()));
-            certificateService.insertCertificateCreatedFromCyclicalServiceDTO(insertedEntity,cyclicalServiceDto);
+            CertificateEntity certificateEntity = certificateService.insertCertificateCreatedFromCyclicalServiceDTO(insertedEntity,cyclicalServiceDto);
             //cyclicalServiceEntity.setCertificates(dto.getRenewalPeriod());
             //schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
-            schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
-            return ResponseEntity.ok("Successfully added the cyclical service");
+            if(certificateEntity!=null){
+                schedulingService.trySchedulingReminderWhenInserted(certificateEntity,insertedEntity);
+                return ResponseEntity.ok("Successfully added the cyclical service");
+
+            }
+            return  ResponseEntity.internalServerError().body("Couldn't create certificate");
         }
 
         StringBuilder stringBuilder = new StringBuilder("Entities :");

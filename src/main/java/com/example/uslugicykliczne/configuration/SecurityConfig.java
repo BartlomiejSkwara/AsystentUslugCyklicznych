@@ -59,7 +59,8 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/api/business/getAll",
                             "/api/business/get/**",
-                            "/api/business/insertBody"
+                            "/api/business/insertBody",
+                            "/api/business/getAllByUser"
                             ).hasAnyRole("user","admin")
                     .requestMatchers(
                             "/api/serviceUser/getAll",
@@ -68,6 +69,7 @@ public class SecurityConfig {
                             ).hasAnyRole("user","admin")
                     .requestMatchers(
                             "/api/cyclicalservice/getAll",
+                            "/api/cyclicalservice/getAllByUser",
                             "/api/cyclicalservice/renew/**",
                             "/api/cyclicalservice/insertBody"
                             ).hasAnyRole("user","admin")
