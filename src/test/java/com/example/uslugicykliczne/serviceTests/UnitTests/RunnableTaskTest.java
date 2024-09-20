@@ -14,8 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -24,7 +28,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataJpaTest
+
+
+@DataJpaTest()
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class RunnableTaskTest {
 
 
@@ -57,8 +65,10 @@ public class RunnableTaskTest {
         cs2.setIdCyclicalService(2);
         ce1.setIdCertificate(1);
         ce2.setIdCertificate(2);
-        //        cyclicalServiceRepo.save(cs1);
-//        cyclicalServiceRepo.save(cs2);
+        cyclicalServiceRepo.save(cs1);
+        cyclicalServiceRepo.save(cs2);
+        certificateRepo.save(ce1);
+        certificateRepo.save(ce2);
 //        cyclicalServiceEntity1.setId(0);
 //        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, cyclicalServiceRepo, schedulingService, emailService);
 //

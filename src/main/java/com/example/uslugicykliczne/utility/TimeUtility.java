@@ -28,4 +28,7 @@ public class TimeUtility {
     static public boolean isToday(Instant instant1){
         return isSameDay(instant1, LocalDateTime.now().toInstant(getZoneOffset()));
     }
+    static public Instant toInstant(LocalDateTime localDateTime) {
+        return localDateTime.toInstant(getZoneOffset());
+    }
 }

@@ -34,12 +34,18 @@ public class RunnableTask implements Runnable{
     public void run() {
 //        cyclicalServiceEntity.setNextRenewal(cyclicalServiceEntity.getNextRenewal().plus(cyclicalServiceEntity.getRenewalPeriod()));
         certificateEntity.setRenewalMessageSent(true);
-//        certificateEntity.se
         certificateRepo.save(certificateEntity);
         schedulingService.findNextServiceAndScheduleIt();
         emailSenderService.sendEmailNotification("Cyclical service renewal time is near !", cyclicalServiceEntity);
 
         //System.out.println(new Date()+" Runnable Task with "+cyclicalServiceEntity.toString()+" on thread "+Thread.currentThread().getName());
+    }
+
+    public void searchlessRun(){
+        certificateEntity.setRenewalMessageSent(true);
+        certificateRepo.save(certificateEntity);
+        emailSenderService.sendEmailNotification("Cyclical service renewal time is near !", cyclicalServiceEntity);
+
     }
 
 

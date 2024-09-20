@@ -29,13 +29,30 @@ public class TestUtility {
 
     static public CyclicalServiceEntity createCyclicalServiceEntity(boolean oneTime, ServiceUserEntity serviceUser, BusinessEntity businessEntity){
         CyclicalServiceEntity cyclicalServiceEntity = new CyclicalServiceEntity();
-        cyclicalServiceEntity.setServiceUser(serviceUser);
-        cyclicalServiceEntity.setBusiness(businessEntity);
         cyclicalServiceEntity.setDescription("service desc");
         cyclicalServiceEntity.setPrice(100);
         cyclicalServiceEntity.setOneTime(oneTime);
         cyclicalServiceEntity.setAgreementNumber("1234");
+
+        if(serviceUser==null)
+            cyclicalServiceEntity.setServiceUser(createServiceUserEntity());
+        else
+            cyclicalServiceEntity.setServiceUser(serviceUser);
+
+        if (businessEntity==null)
+            cyclicalServiceEntity.setBusiness(createBusinessEntity());
+        else
+            cyclicalServiceEntity.setBusiness(businessEntity);
+
+        cyclicalServiceEntity.setBusiness(businessEntity);
+
         return cyclicalServiceEntity;
     }
 
+    static public ServiceUserEntity createServiceUserEntity(){
+        return new ServiceUserEntity();
+    }
+    static public BusinessEntity createBusinessEntity(){
+        return new BusinessEntity();
+    }
 }

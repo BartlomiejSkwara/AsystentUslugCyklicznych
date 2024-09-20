@@ -25,7 +25,6 @@ public class SchedulingService {
     private CyclicalServiceEntity lastRegisteredCyclicalService;
 
     private final EmailSenderService emailSenderService;
-
     public ScheduledFuture<?> getScheduledFuture() {
         return scheduledFuture;
     }
@@ -34,11 +33,7 @@ public class SchedulingService {
         return lastRegisteredCertificate;
     }
     public CyclicalServiceEntity getLastRegisteredCyclicalService(){return  lastRegisteredCyclicalService;}
-    public Instant getLastRegisteredRenewal() {
-        if(lastRegisteredCertificate == null)
-            return null;
-        return lastRegisteredCertificate.getValidTo().toInstant(TimeUtility.getZoneOffset());
-    }
+
 
     public SchedulingService(CyclicalServiceRepo cyclicalServiceRepo, CertificateRepo certificateRepo, TaskScheduler taskScheduler,  EmailSenderService emailSenderService) {
         this.cyclicalServiceRepo = cyclicalServiceRepo;
@@ -54,7 +49,7 @@ public class SchedulingService {
     }
     public void trySchedulingReminderWhenInserted(CertificateEntity certificateEntity,CyclicalServiceEntity cyclicalServiceEntity)  {
         RunnableTask runnableTask = new RunnableTask(cyclicalServiceEntity, certificateEntity, cyclicalServiceRepo, certificateRepo,this, emailSenderService);
-        if(lastRegisteredCertificate==null){
+        if(getLastRegisteredCertificate()==null){
             scheduledFuture = taskScheduler.schedule(
                     runnableTask,
                     certificateEntity.getValidTo().toInstant(TimeUtility.getZoneOffset())
@@ -63,17 +58,16 @@ public class SchedulingService {
             lastRegisteredCyclicalService = cyclicalServiceEntity;
             return;
         }
-
-        Instant lastRenewal = getLastRegisteredRenewal();
-        Instant instantEntityNextRenewal = certificateEntity.getValidTo().toInstant(TimeUtility.getZoneOffset());
+        Instant lastRenewal = TimeUtility.toInstant(getLastRegisteredCertificate().getValidTo());
+        Instant instantEntityNextRenewal = TimeUtility.toInstant(certificateEntity.getValidTo());
 
         if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))||TimeUtility.isToday(instantEntityNextRenewal)){
-            runnableTask.run();
+            runnableTask.searchlessRun();
             return;
         }
 
         if (instantEntityNextRenewal.isBefore(lastRenewal)) {
-            scheduledFuture.cancel(false);
+            getScheduledFuture().cancel(false);
             scheduledFuture = taskScheduler.schedule(
                     runnableTask,
                     certificateEntity.getValidTo().toInstant(TimeUtility.getZoneOffset())
@@ -103,12 +97,12 @@ public class SchedulingService {
 //        }
 //
 //
-//        Instant lastRenewal = getLastRegisteredRenewal();
+//        Instant lastRenewal = TimeUtility.toInstant(getLastRegisteredCertificate().getValidTo());;
 //        Instant instantEntityNextRenewal = cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
 //        RunnableTask runnableTask = new RunnableTask(cyclicalServiceEntity, cyclicalServiceRepo, this, emailService);
 //
 //        if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))||TimeUtility.isToday(instantEntityNextRenewal)){
-//            runnableTask.run();
+//            runTask(runnableTask);
 //            return;
 //        }
 //
