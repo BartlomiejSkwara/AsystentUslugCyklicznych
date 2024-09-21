@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.scheduling.TaskScheduler;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -42,7 +43,6 @@ public class ScheduledReminderTest {
     @Mock
     private RunnableTask runnableTaskHelper;
 
-
     @Spy
     @InjectMocks
     private SchedulingService schedulingService;
@@ -62,8 +62,8 @@ public class ScheduledReminderTest {
     @Test()
     @DisplayName("Find next and schedule success")
     public void testTryFindingNextAndScheduling1(){
-        CyclicalServiceEntity cs1 = TestUtility.createCyclicalServiceEntity(false,null,null);
-        CertificateEntity ce1 = TestUtility.createCertificateEntity(cs1,LocalDateTime.now().plusDays(10),false,false);
+        CyclicalServiceEntity cs1 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
+        CertificateEntity ce1 = TestUtilityService.createCertificateEntity(cs1,LocalDateTime.now().plusDays(10),false,false);
 
         when(mockCerRepo.findFirstCertificateWithNoRenewalAndMessageSent()).thenReturn(Optional.of(ce1));
 
@@ -90,8 +90,8 @@ public class ScheduledReminderTest {
     @Test()
     @DisplayName("Try insert scheduling reminder (no reminders before)")
     public void testTryInsertSchedulingNewReminderNRB() {
-        CyclicalServiceEntity cs1 = TestUtility.createCyclicalServiceEntity(false,null,null);
-        CertificateEntity ce1 = TestUtility.createCertificateEntity(cs1,LocalDateTime.now().plusDays(10),false,false);
+        CyclicalServiceEntity cs1 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
+        CertificateEntity ce1 = TestUtilityService.createCertificateEntity(cs1,LocalDateTime.now().plusDays(10),false,false);
 
         RunnableTask rt1 = new RunnableTask(cs1,ce1, mockCSRepo,mockCerRepo, schedulingService, mockEmailSender);
 
@@ -116,12 +116,12 @@ public class ScheduledReminderTest {
     @Test()
     @DisplayName("Try insert scheduling reminder (last reminder executes earlier(do nothing))")
     public void testTryInsertSchedulingNewReminderLREE() {
-        CyclicalServiceEntity cs1 = TestUtility.createCyclicalServiceEntity(false,null,null);
-        CertificateEntity ce1 = TestUtility.createCertificateEntity(cs1,LocalDateTime.now().plusYears(1),false,false);
+        CyclicalServiceEntity cs1 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
+        CertificateEntity ce1 = TestUtilityService.createCertificateEntity(cs1,LocalDateTime.now().plusYears(1),false,false);
         RunnableTask rt1 = new RunnableTask(cs1,ce1, mockCSRepo,mockCerRepo, schedulingService, mockEmailSender);
 
-        CyclicalServiceEntity cs2 = TestUtility.createCyclicalServiceEntity(false,null,null);
-        CertificateEntity ce2 = TestUtility.createCertificateEntity(cs2,LocalDateTime.now().plusYears(2),false,false);
+        CyclicalServiceEntity cs2 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
+        CertificateEntity ce2 = TestUtilityService.createCertificateEntity(cs2,LocalDateTime.now().plusYears(2),false,false);
         RunnableTask rt2 = new RunnableTask(cs2,ce2, mockCSRepo,mockCerRepo, schedulingService, mockEmailSender);
 
 
@@ -140,12 +140,12 @@ public class ScheduledReminderTest {
     @Test()
     @DisplayName("Try insert scheduling reminder (last reminder executes later (change and cancel))")
     public void testTryInsertSchedulingNewReminderLREL() {
-        CyclicalServiceEntity cs1 = TestUtility.createCyclicalServiceEntity(false,null,null);
-        CertificateEntity ce1 = TestUtility.createCertificateEntity(cs1,LocalDateTime.now().plusYears(3),false,false);
+        CyclicalServiceEntity cs1 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
+        CertificateEntity ce1 = TestUtilityService.createCertificateEntity(cs1,LocalDateTime.now().plusYears(3),false,false);
         RunnableTask rt1 = new RunnableTask(cs1,ce1, mockCSRepo,mockCerRepo, schedulingService, mockEmailSender);
 
-        CyclicalServiceEntity cs2 = TestUtility.createCyclicalServiceEntity(false,null,null);
-        CertificateEntity ce2 = TestUtility.createCertificateEntity(cs2,LocalDateTime.now().plusYears(2),false,false);
+        CyclicalServiceEntity cs2 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
+        CertificateEntity ce2 = TestUtilityService.createCertificateEntity(cs2,LocalDateTime.now().plusYears(2),false,false);
         RunnableTask rt2 = new RunnableTask(cs2,ce2, mockCSRepo,mockCerRepo, schedulingService, mockEmailSender);
 
         when(mockTaskScheduler.schedule(any(RunnableTask.class),any(Instant.class))).thenReturn(scheduledFutureHelper);
@@ -176,12 +176,12 @@ public class ScheduledReminderTest {
     @Test()
     @DisplayName("Try insert scheduling reminder (task with renewal in past)")
     public void testTryInsertSchedulingNewReminderTWRIP() {
-        CyclicalServiceEntity cs1 = TestUtility.createCyclicalServiceEntity(false,null,null);
-        CertificateEntity ce1 = TestUtility.createCertificateEntity(cs1,LocalDateTime.now().plusYears(3),false,false);
+        CyclicalServiceEntity cs1 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
+        CertificateEntity ce1 = TestUtilityService.createCertificateEntity(cs1,LocalDateTime.now().plusYears(3),false,false);
         RunnableTask rt1 = new RunnableTask(cs1,ce1, mockCSRepo,mockCerRepo, schedulingService, mockEmailSender);
 
-        CyclicalServiceEntity cs2 = TestUtility.createCyclicalServiceEntity(false,null,null);
-        CertificateEntity ce2 = TestUtility.createCertificateEntity(cs2,LocalDateTime.now().minusDays(1),false,false);
+        CyclicalServiceEntity cs2 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
+        CertificateEntity ce2 = TestUtilityService.createCertificateEntity(cs2,LocalDateTime.now().minusDays(1),false,false);
         RunnableTask rt2 = new RunnableTask(cs2,ce2, mockCSRepo,mockCerRepo, schedulingService, mockEmailSender);
 
         when(schedulingService.getLastRegisteredCertificate()).thenReturn(ce1);
