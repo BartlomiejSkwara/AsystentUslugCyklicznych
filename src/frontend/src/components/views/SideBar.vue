@@ -25,7 +25,6 @@
           Cycles
         </router-link>
       </li>
-<!--      Do ZROBIENIA?     -->
 <!--      <li>-->
 <!--        <router-link to="/certificates" class="nav-link text-white">-->
 <!--          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>-->
@@ -33,18 +32,18 @@
 <!--        </router-link>-->
 <!--      </li>-->
     </ul>
-    <hr>
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-        <strong>Current User</strong>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-        <li><a class="dropdown-item" href="#">Add new payment...</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
-      </ul>
-    </div>
+<!--    <hr>-->
+<!--    <div class="dropdown">-->
+<!--      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">-->
+<!--        <strong>Current User</strong>-->
+<!--      </a>-->
+<!--      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">-->
+<!--        <li><a class="dropdown-item" href="#">Add new payment...</a></li>-->
+<!--        <li><hr class="dropdown-divider"></li>-->
+<!--        <li><a class="dropdown-item" href="#">Sign out</a></li>-->
+<!--      </ul>-->
+<!--    </div>-->
   </div>
 </template>
 

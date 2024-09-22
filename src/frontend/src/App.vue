@@ -39,13 +39,6 @@ export default {
       msg:''
     }
   },
-  mounted() {
-    fetch("/api/customer/getAll")
-      .then((response) => response.text())
-      .then((data) => {
-          this.msg = data;
-      });
-  }
 }
 </script>
 

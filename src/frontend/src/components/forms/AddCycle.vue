@@ -8,7 +8,7 @@
       </div>
       <div>
         <label for="price">Price:</label>
-        <input type="number" id="price" v-model="form.price" required>
+        <input type="number" id="price" v-model="form.price" step="0.01" required>
       </div>
       <div>
         <label for="description">Description:</label>
@@ -35,14 +35,17 @@
       </div>
       <div>
         <label for="cardType">Card Type:</label>
-        <input type="text" id="cardType" v-model="form.cardType" required>
+        <select id="cardType" v-model="form.cardType" required>
+          <option value="PHYSICAL">PHYSICAL</option>
+          <option value="SIMPLYSIGN">SIMPLYSIGN</option>
+        </select>
       </div>
       <div>
         <label for="certSerialNumber">Certificate Serial Number:</label>
         <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" required>
       </div>
       <div>
-        <label for="nameInOrganisation">Name in Organisation:</label>
+        <label for="nameInOrganisation">Name in Organisation: (optional)</label>
         <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation">
       </div>
       <div>
@@ -65,13 +68,13 @@ export default {
     return {
       form: {
         agreementNumber: '',
-        price: 0,
+        price: null,
         description: '',
-        oneTime: true, // Default to true
+        oneTime: true,
         cycleStart: '',
         cycleEnd: '',
         cardNumber: '',
-        cardType: '',
+        cardType: 'PHYSICAL',
         certSerialNumber: '',
         nameInOrganisation: '',
         businessId: null,
@@ -83,7 +86,7 @@ export default {
     submitForm() {
       const payload = {
         agreementNumber: this.form.agreementNumber,
-        price: this.form.price,
+        price: parseFloat(this.form.price),
         description: this.form.description,
         oneTime: this.form.oneTime,
         cycleStart: this.form.cycleStart,
@@ -91,7 +94,7 @@ export default {
         cardNumber: this.form.cardNumber,
         cardType: this.form.cardType,
         certSerialNumber: this.form.certSerialNumber,
-        nameInOrganisation: this.form.nameInOrganisation || null, // Handle optional field
+        nameInOrganisation: this.form.nameInOrganisation || null,
         businessId: this.form.businessId,
         serviceUserId: this.form.serviceUserId
       };
@@ -105,7 +108,7 @@ export default {
       })
           .then(response => response.text())
           .then(() => {
-            this.$router.push('/Cycles'); // Redirect to cycles list
+            this.$router.push('/Cycles');
           })
           .catch(error => {
             console.error('Error saving cyclical service:', error);
@@ -117,5 +120,6 @@ export default {
   }
 };
 </script>
+
 
 <style src="@/assets/style.css"></style>

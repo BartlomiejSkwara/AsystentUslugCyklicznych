@@ -19,9 +19,9 @@
         <button type="button" @click="addEmail">Add Email</button>
       </div>
       <div>
-        <label>Phone Numbers:</label>
+        <label>Phone Numbers: (max 16 digits)</label>
         <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="tel" v-model="form.phoneNumbers[index]" pattern="[0-9]{0,12}" placeholder="Enter phone number" required />
+          <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Enter phone number" required />
           <button type="button" @click="removePhoneNumber(index)">Remove</button>
         </div>
         <button type="button" @click="addPhoneNumber">Add Phone Number</button>
@@ -34,7 +34,7 @@
         </select>
       </div>
       <div v-if="form.hasPolishPESEL">
-        <label for="taxIdentificationNumber">Tax ID:</label>
+        <label for="taxIdentificationNumber">Tax ID (exactly 11 digits):</label>
         <input type="text" id="taxIdentificationNumber" v-model="form.taxId" />
       </div>
       <div>

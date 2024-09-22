@@ -11,6 +11,7 @@ import ServiceUserAdd from '../components/forms/ServiceUserAdd.vue';
 import AddBusiness from '../components/forms/AddBusiness.vue';
 import AddCertificate from "../components/forms/AddCertificate.vue";
 import UploadCertificate from "../components/forms/UploadCertificate.vue";
+import LoginComponent from "../components/forms/LoginService.vue";
 
 const routes = [
     {
@@ -65,6 +66,16 @@ const routes = [
         name: UploadCertificate,
         component: UploadCertificate
     },
+    {
+        path: '/login',
+        name: 'Login',
+        component: LoginComponent
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: LoginComponent
+    }
 
 
 ]

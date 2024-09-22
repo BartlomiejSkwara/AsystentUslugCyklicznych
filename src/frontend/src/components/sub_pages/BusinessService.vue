@@ -32,8 +32,7 @@
         <td>{{ business.adres }}</td>
         <td>
           {{ business.contactData ? business.contactData.idContactData : 'N/A' }}
-<!--          TESTOWANIE PRZEDE MNA-->
-<!--          <button v-if="business.contactData" @click="viewContactData(business.contactData.idContactData)">View</button>-->
+          <button v-if="business.contactData" @click="viewContactData(business.idBusiness)" class="view-button">...</button>
         </td>
         <td>{{ business.comments }}</td>
         <td>{{ business.nip }}</td>
@@ -54,11 +53,11 @@
         <div v-if="contactDataDetails">
           <p><strong>Emails:</strong></p>
           <ul>
-            <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ 2 }}</li>
+            <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
           </ul>
           <p><strong>Phone Numbers:</strong></p>
           <ul>
-            <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.business.contactData.idContactData">{{ 1 }}</li>
+            <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
           </ul>
         </div>
         <div v-else>
@@ -68,7 +67,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -129,7 +127,6 @@ export default {
         })
             .then(response => {
               if (!response.ok) {
-                // Check if the error message corresponds to an assigned cycle
                 if (response.status === 409) {
                   throw new Error('Cannot delete, assigned cycle');
                 } else {
@@ -147,11 +144,11 @@ export default {
     },
     viewContactData(id) {
       this.showModal = true;
-      this.contactDataDetails = null; // Reset details
+      this.contactDataDetails = null;
       fetch(`/api/business/get/${id}`)
-          .then(response => response.text())
+          .then(response => response.json())
           .then(data => {
-            this.contactDataDetails = data;
+            this.contactDataDetails = data.contactData;
           })
           .catch(error => {
             console.error("There has been a problem with your fetch operation:", error);
@@ -164,5 +161,55 @@ export default {
 };
 </script>
 
-
 <style src="@/assets/style.css"></style>
+
+<style>
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: page ;
+  top: 20%;
+  left: 30%;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.view-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  margin: 0;
+}
+
+.view-button:hover {
+  background-color: #0056b3;
+}
+</style>
