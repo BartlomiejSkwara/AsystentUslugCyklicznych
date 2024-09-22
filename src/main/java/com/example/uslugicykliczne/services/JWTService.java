@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -36,7 +37,6 @@ public class JWTService {
         return claimsResolver.apply(claims);
 
     }
-
     public Claims retrieveAllClaims(String jwtToken){
         return Jwts.parser().verifyWith(getSecretKey()).build()
                 .parseSignedClaims(jwtToken)
@@ -58,9 +58,9 @@ public class JWTService {
     public String generateJWT(Map<String,Object> stringClaimsMap, UserDetails userDetails){
         Date now = TimeUtility.getCurrentDate();
         JwtBuilder jwtBuilder = Jwts.builder();
-
+        jwtBuilder.claim("frontPerm",((CustomUserDetails)userDetails).getRole());
         if (stringClaimsMap != null){
-            jwtBuilder.setClaims(stringClaimsMap);
+            jwtBuilder.claims(stringClaimsMap);
         }
 
         return jwtBuilder

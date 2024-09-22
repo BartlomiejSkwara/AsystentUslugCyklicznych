@@ -15,7 +15,9 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(()->accountDataEntity.getRole());
     }
-
+    public String getRole(){
+        return accountDataEntity.getRole();
+    }
     @Override
     public String getPassword() {
         return accountDataEntity.getHashedPassword();

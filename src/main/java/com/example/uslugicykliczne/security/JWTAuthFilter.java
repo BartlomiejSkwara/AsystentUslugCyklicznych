@@ -56,6 +56,8 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         try {
             final String username = jwtService.retrieveUsernameClaim(jwtToken);
             SecurityContext securityContext = SecurityContextHolder.getContext();
+
+            response.addHeader("frontRole",jwtService.retrieveSpecificClaim(jwtToken,claims -> claims.get("frontPerm")).toString());
             if (username!= null && securityContext.getAuthentication() == null){
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 if (jwtService.isTokenValid(userDetails, jwtToken)) {
