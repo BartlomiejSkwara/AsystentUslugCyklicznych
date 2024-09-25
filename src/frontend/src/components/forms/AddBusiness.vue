@@ -31,7 +31,7 @@
         <button type="button" @click="addEmail">Add Email</button>
       </div>
       <div>
-        <label>Phone Numbers:</label>
+        <label>Phone Numbers: (max 16 digits)</label>
         <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
           <input type="text" v-model="form.phoneNumbers[index]" placeholder="Enter phone number">
           <button type="button" @click="removePhoneNumber(index)">Remove</button>
