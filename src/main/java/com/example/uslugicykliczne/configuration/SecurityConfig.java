@@ -34,18 +34,19 @@ public class SecurityConfig {
 
     private final JPAUserDetailsService userDetailsService;
     private final JWTAuthFilter jwtAuthFilter;
-    private final CsrfCookieFilter csrfCookieFilter;
+//    private final CsrfCookieFilter csrfCookieFilter; todo nie zapomnij o tym
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(httpSecurityCsrfConfigurer ->
-                httpSecurityCsrfConfigurer
-                        .ignoringRequestMatchers(
-                            "/api/authentication/login",
-                            "/api/authentication/logout")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new SPATokenRequestHandler())
-        );
-        httpSecurity.addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class);
+        httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+//        httpSecurity.csrf(httpSecurityCsrfConfigurer -> todo nie zapomnij o tym
+//                httpSecurityCsrfConfigurer
+//                        .ignoringRequestMatchers(
+//                            "/api/authentication/login",
+//                            "/api/authentication/logout")
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                        .csrfTokenRequestHandler(new SPATokenRequestHandler())
+//        );
+//        httpSecurity.addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class);
 
         httpSecurity.sessionManagement(httpSecuritySessionManagementConfigurer ->
                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -55,24 +56,22 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(auth ->
                 auth
                     .requestMatchers("/api/authentication/login").permitAll()
-                    .requestMatchers("/api/authentication/logout").hasAnyRole("user","admin")
+                    .requestMatchers("/api/authentication/logout").hasAnyRole("user","editor","admin")
                     .requestMatchers(
+                            "/api/cyclicalservice/getAll"
+                            ).hasAnyRole("user","editor")
+                    .requestMatchers(
+                            "/api/cyclicalservice/getAllByUser",
+                            "/api/cyclicalservice/renew/**",
+                            "/api/cyclicalservice/insertBody",
+                            "/api/serviceUser/getAll",
+                            "/api/serviceUser/get/**",
+                            "/api/serviceUser/insertBody",
                             "/api/business/getAll",
                             "/api/business/get/**",
                             "/api/business/insertBody",
                             "/api/business/getAllByUser"
-                            ).hasAnyRole("user","admin")
-                    .requestMatchers(
-                            "/api/serviceUser/getAll",
-                            "/api/serviceUser/get/**",
-                            "/api/serviceUser/insertBody"
-                            ).hasAnyRole("user","admin")
-                    .requestMatchers(
-                            "/api/cyclicalservice/getAll",
-                            "/api/cyclicalservice/getAllByUser",
-                            "/api/cyclicalservice/renew/**",
-                            "/api/cyclicalservice/insertBody"
-                            ).hasAnyRole("user","admin")
+                            ).hasAnyRole("editor")
                     .anyRequest().hasRole("admin")
                 );
         //httpSecurity.authenticationProvider(authenticationProvider());

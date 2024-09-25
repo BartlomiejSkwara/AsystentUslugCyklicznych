@@ -38,6 +38,9 @@ public class CyclicalServiceEntity {
     @OneToMany(mappedBy = "cyclicalServiceEntity",cascade = CascadeType.ALL)
     private List<CertificateEntity> certificates;
 
+    @Basic
+    @Column(name = "status")
+    private int statusBitmap;
 
 
 

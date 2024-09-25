@@ -4,14 +4,17 @@ import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
+import com.example.uslugicykliczne.dataTypes.StatusEnum;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
+import com.example.uslugicykliczne.utility.StatusUtility;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.List;
 
@@ -30,7 +33,26 @@ public class CyclicalServiceController {
     }
 
 
+    @PostMapping("/statusChange/{id}")
+    public ResponseEntity<String> changeStatus( Integer requestedStatusChange, @PathVariable Integer id){
+        if (requestedStatusChange==null){
+            return ResponseEntity.badRequest().body("Nie określono statusu");
+        }
+        if (requestedStatusChange.equals(StatusEnum.RENEWED.getMaskValue()))
+            return ResponseEntity.badRequest().body("Ej ej ej, od tego jest osobny endpoint :>");
 
+        boolean statusIsCorrect = false;
+        for(var curEnum : StatusEnum.values()){
+            if(requestedStatusChange.equals(curEnum.getMaskValue())){
+                statusIsCorrect = true;
+                break;
+            }
+        }
+        if (!statusIsCorrect)
+            return ResponseEntity.badRequest().body("Określono nie poprawny status");
+
+        return cyclicalServiceService.changeServiceStatusAndUpdateDB(id,requestedStatusChange);
+    }
 
     @PostMapping("/renew/{id}")
     public ResponseEntity<String> renew (@Validated @RequestBody ServiceRenewalRecord serviceRenewalRecord, BindingResult bindingResult, @PathVariable Integer id ){

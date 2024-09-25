@@ -3,6 +3,7 @@ package com.example.uslugicykliczne.services;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
+import com.example.uslugicykliczne.dataTypes.StatusEnum;
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.entity.CertificateEntity;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
@@ -11,6 +12,7 @@ import com.example.uslugicykliczne.repo.BusinessRepo;
 import com.example.uslugicykliczne.repo.CertificateRepo;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
+import com.example.uslugicykliczne.utility.StatusUtility;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ public class CyclicalServiceService {
     private final SchedulingService schedulingService;
 
 
+
     public ResponseEntity<String> renewCyclicalService(ServiceRenewalRecord serviceRenewalRecord, Integer serviceId){
         Optional<CertificateEntity> certificateEntityOptional = certificateRepo.findCertificateWithNotRenewedCertBy(serviceId);
         if(certificateEntityOptional.isEmpty())
@@ -51,7 +54,10 @@ public class CyclicalServiceService {
         certificateEntity.setRenewed(true);
         certificateEntity.setRenewalMessageSent(true);
 
-        certificateService.insertCertificateCreatedFromRenewalRecord(certificateEntity.getCyclicalServiceEntity(), serviceRenewalRecord);
+        CyclicalServiceEntity cyclicalService = certificateEntity.getCyclicalServiceEntity();
+
+        changeServiceStatus(cyclicalService, StatusEnum.RENEWED.getMaskValue());
+        certificateService.insertCertificateCreatedFromRenewalRecord(cyclicalService, serviceRenewalRecord);
 
         return ResponseEntity.ok().body("The task was successfully renewed");
     }
@@ -95,6 +101,28 @@ public class CyclicalServiceService {
         return cyclicalServiceRepo.customFindCyclicalProjectionsInNextNDays(nDays);
     }
 
+
+    public ResponseEntity<String> changeServiceStatusAndUpdateDB(Integer id,Integer requestedStatusChange) {
+        Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findById(id);
+        if(optionalCyclicalServiceEntity.isEmpty())
+            return ResponseEntity.badRequest().body("Nie można zmienić statusu nie istniejącej usługi");
+
+        CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
+        changeServiceStatus(cyclicalService,requestedStatusChange);
+
+        cyclicalServiceRepo.save(cyclicalService);
+        return ResponseEntity.ok("Zmiana statusu dokonana z powodzeniem");
+    }
+
+    public void changeServiceStatus(CyclicalServiceEntity cyclicalService,Integer requestedStatusChange) {
+        int statusBitmap = cyclicalService.getStatusBitmap();
+        if (requestedStatusChange.equals(StatusEnum.RENEWED.getMaskValue()))
+            statusBitmap = StatusEnum.RENEWED.getMaskValue();
+        else
+            statusBitmap = StatusUtility.addStatus(statusBitmap,requestedStatusChange);
+
+        cyclicalService.setStatusBitmap(statusBitmap);
+    }
 
 //    public ResponseEntity<String> updateCyclicalServiceEntity(Integer id, CyclicalServiceDto cyclicalServiceDto){
 //        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findById(id);
