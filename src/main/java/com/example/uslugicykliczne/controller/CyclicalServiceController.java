@@ -34,7 +34,7 @@ public class CyclicalServiceController {
 
 
     @PostMapping("/statusChange/{id}")
-    public ResponseEntity<String> changeStatus( Integer requestedStatusChange, @PathVariable Integer id){
+    public ResponseEntity<String> changeStatus(@RequestBody Integer requestedStatusChange, @PathVariable Integer id){
         if (requestedStatusChange==null){
             return ResponseEntity.badRequest().body("Nie określono statusu");
         }
@@ -52,6 +52,16 @@ public class CyclicalServiceController {
             return ResponseEntity.badRequest().body("Określono nie poprawny status");
 
         return cyclicalServiceService.changeServiceStatusAndUpdateDB(id,requestedStatusChange);
+    }
+
+    @PostMapping("/renewalRequest/{id}")
+    public ResponseEntity<String> requestRenewal(@PathVariable Integer id){
+        return cyclicalServiceService.requestRenewal(id);
+    }
+
+    @PostMapping("/cancelRequest/{id}")
+    public ResponseEntity<String> cancelRequest(@PathVariable Integer id){
+        return cyclicalServiceService.cancelRequest(id);
     }
 
     @PostMapping("/renew/{id}")

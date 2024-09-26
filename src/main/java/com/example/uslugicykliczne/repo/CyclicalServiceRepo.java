@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CyclicalServiceRepo extends ListCrudRepository<CyclicalServiceEntity,Integer>,CustomServiceRepo {
-
+//    @Query("select cse from CyclicalServiceEntity cse join fetch  cse.assignedAccountDataEntity where cse.idCyclicalService = :id")
+//    CyclicalServiceEntity  findServiceByIdAndFetchAccountData(Integer id);
 }
 
 

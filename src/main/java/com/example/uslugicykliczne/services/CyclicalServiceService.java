@@ -15,8 +15,11 @@ import com.example.uslugicykliczne.repo.ServiceUserRepo;
 import com.example.uslugicykliczne.utility.StatusUtility;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,7 @@ public class CyclicalServiceService {
     private final EntityManager entityManager;
     private final CertificateRepo certificateRepo;
     private final SchedulingService schedulingService;
+
 
 
 
@@ -116,14 +120,56 @@ public class CyclicalServiceService {
 
     public void changeServiceStatus(CyclicalServiceEntity cyclicalService,Integer requestedStatusChange) {
         int statusBitmap = cyclicalService.getStatusBitmap();
-        if (requestedStatusChange.equals(StatusEnum.RENEWED.getMaskValue()))
-            statusBitmap = StatusEnum.RENEWED.getMaskValue();
+        if(StatusUtility.hasStatus(statusBitmap,StatusEnum.RENEWED)){
+            statusBitmap = 0;
+        }
+
+
+        if (requestedStatusChange.equals(StatusEnum.RENEWED.getMaskValue())||requestedStatusChange.equals(StatusEnum.AWAITING_RENEWAL.getMaskValue()))
+            statusBitmap = requestedStatusChange;
         else
             statusBitmap = StatusUtility.addStatus(statusBitmap,requestedStatusChange);
 
         cyclicalService.setStatusBitmap(statusBitmap);
     }
 
+
+    public ResponseEntity<String> cancelRequest(Integer serviceId) {
+
+        Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.customFindNameOfAccountAssignedToService(serviceId);
+        if(optionalCyclicalServiceEntity.isEmpty())
+            return ResponseEntity.badRequest().body("Can't renew nonexistent service");
+
+        CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
+
+
+        if(!SecurityContextHolder.getContext().getAuthentication().getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+            return new ResponseEntity<>("Don't modify resources you don't own !!!", HttpStatus.FORBIDDEN);
+
+        changeServiceStatus(cyclicalService,StatusEnum.MARKED_FOR_CANCEL.getMaskValue());
+        cyclicalServiceRepo.save(cyclicalService);
+
+        return ResponseEntity.ok("Successfully requested service cancellation");
+    }
+
+    public ResponseEntity<String> requestRenewal(Integer serviceId){
+        Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.customFindNameOfAccountAssignedToService(serviceId);
+        if(optionalCyclicalServiceEntity.isEmpty())
+            return ResponseEntity.badRequest().body("Can't renew nonexistent service");
+        CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
+
+        if(!SecurityContextHolder.getContext().getAuthentication().getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+            return new ResponseEntity<>("Don't modify resources you don't own !!!", HttpStatus.FORBIDDEN);
+
+
+        if (cyclicalService.getStatusBitmap()!=StatusEnum.RENEWED.getMaskValue()){
+            return ResponseEntity.badRequest().body("You can only request renewal of service that has finished last renewal process");
+        }
+        changeServiceStatus(cyclicalService,StatusEnum.AWAITING_RENEWAL.getMaskValue());
+        cyclicalServiceRepo.save(cyclicalService);
+
+        return ResponseEntity.ok("Successfully requested renewal");
+    }
 //    public ResponseEntity<String> updateCyclicalServiceEntity(Integer id, CyclicalServiceDto cyclicalServiceDto){
 //        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findById(id);
 //        if (cyclicalServiceEntity.isEmpty())

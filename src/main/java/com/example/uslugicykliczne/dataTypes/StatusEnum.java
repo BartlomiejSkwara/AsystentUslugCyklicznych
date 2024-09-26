@@ -14,6 +14,7 @@ public enum StatusEnum {
     PAYMENT_DONE(1<<6, "Zapłata otrzymana"),
     INVOICE_SENT(1<<7,"Faktura wystawiona, Kod wysłany"),
     RENEWED(1<<8,"Odnowiony");
+//    REQUESTED_RENEWAL(1<<9,"Zgłoszono prośbę o odnowienie");
 
 
     private final int maskValue;

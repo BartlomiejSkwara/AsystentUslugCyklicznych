@@ -42,6 +42,7 @@ public class CyclicalServiceEntity {
     @Column(name = "status")
     private int statusBitmap;
 
-
+    @ManyToOne()
+    private AccountDataEntity assignedAccountDataEntity;
 
 }

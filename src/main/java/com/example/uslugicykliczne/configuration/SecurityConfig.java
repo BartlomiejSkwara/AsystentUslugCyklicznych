@@ -58,12 +58,15 @@ public class SecurityConfig {
                     .requestMatchers("/api/authentication/login").permitAll()
                     .requestMatchers("/api/authentication/logout").hasAnyRole("user","editor","admin")
                     .requestMatchers(
-                            "/api/cyclicalservice/getAll"
-                            ).hasAnyRole("user","editor")
+                            "/api/cyclicalservice/getAll",
+                            "/api/cyclicalservice/renewalRequest/*",
+                            "/api/cyclicalservice/cancelRequest/*"
+                            ).hasAnyRole("user","editor","admin")
                     .requestMatchers(
                             "/api/cyclicalservice/getAllByUser",
                             "/api/cyclicalservice/renew/**",
                             "/api/cyclicalservice/insertBody",
+                            "/api/cyclicalservice/statusChange/*",
                             "/api/serviceUser/getAll",
                             "/api/serviceUser/get/**",
                             "/api/serviceUser/insertBody",
@@ -71,7 +74,7 @@ public class SecurityConfig {
                             "/api/business/get/**",
                             "/api/business/insertBody",
                             "/api/business/getAllByUser"
-                            ).hasAnyRole("editor")
+                            ).hasAnyRole("editor","admin")
                     .anyRequest().hasRole("admin")
                 );
         //httpSecurity.authenticationProvider(authenticationProvider());

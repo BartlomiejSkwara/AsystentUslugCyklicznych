@@ -34,7 +34,7 @@ SET SQL_SAFE_UPDATES = 1;
 
 LOCK TABLES `account_data` WRITE;
 /*!40000 ALTER TABLE `account_data` DISABLE KEYS */;
-INSERT INTO `account_data` VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_editor','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO'),(3,'ROLE_user','user','$2a$10$EqmkS8yanKknNXT1X.yd7exjhw1cVSVd1oQgRByVABVMZ2QJAjtYq');
+INSERT INTO `account_data` VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_editor','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO'),(3,'ROLE_user','user','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO');
 /*!40000 ALTER TABLE `account_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -86,7 +86,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `cyclical_service` WRITE;
 /*!40000 ALTER TABLE `cyclical_service` DISABLE KEYS */;
-INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description,status) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach',256),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu',256),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego',256),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej',256),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu',256),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu',256);
+INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description,status,assigned_account_data_entity_id_login_credentials) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach',256,1),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu',256,1),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego',256,1),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej',256,1),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu',256,1),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu',256,1);
 /*!40000 ALTER TABLE `cyclical_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
