@@ -10,6 +10,10 @@ import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
 import com.example.uslugicykliczne.utility.StatusUtility;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -17,10 +21,17 @@ import org.springframework.web.bind.annotation.*;
 import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cyclicalservice")
 public class CyclicalServiceController {
+
+    public record Comment(Optional<@Size(max = 255, message = "Specified comment is too long")String> comment){};
+    public record StatusAndComment(Optional<@Size(max = 255, message = "Specified comment is too long")String> comment,
+                                   @NotNull(message = "Nie określono statusu")
+                                   @DecimalMin(value = "0", message = "Status ma być nieujemną liczbą")
+                                   Integer requestedStateChange){};
 
     private final CyclicalServiceRepo cyclicalServiceRepo;
     private final ValidationUtility validationUtility;
@@ -34,16 +45,18 @@ public class CyclicalServiceController {
 
 
     @PostMapping("/statusChange/{id}")
-    public ResponseEntity<String> changeStatus(@RequestBody Integer requestedStatusChange, @PathVariable Integer id){
-        if (requestedStatusChange==null){
-            return ResponseEntity.badRequest().body("Nie określono statusu");
+    public ResponseEntity<String> changeStatus(@PathVariable Integer id, @Validated @RequestBody StatusAndComment statusAndComment, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
-        if (requestedStatusChange.equals(StatusEnum.RENEWED.getMaskValue()))
+
+        if (statusAndComment.requestedStateChange.equals(StatusEnum.RENEWED.getMaskValue())||
+                statusAndComment.requestedStateChange.equals(StatusEnum.MARKED_FOR_CANCEL.getMaskValue()))
             return ResponseEntity.badRequest().body("Ej ej ej, od tego jest osobny endpoint :>");
 
         boolean statusIsCorrect = false;
         for(var curEnum : StatusEnum.values()){
-            if(requestedStatusChange.equals(curEnum.getMaskValue())){
+            if(statusAndComment.requestedStateChange.equals(curEnum.getMaskValue())){
                 statusIsCorrect = true;
                 break;
             }
@@ -51,17 +64,23 @@ public class CyclicalServiceController {
         if (!statusIsCorrect)
             return ResponseEntity.badRequest().body("Określono nie poprawny status");
 
-        return cyclicalServiceService.changeServiceStatusAndUpdateDB(id,requestedStatusChange);
+        return cyclicalServiceService.changeServiceStatusAndUpdateDB(id,statusAndComment.requestedStateChange,statusAndComment.comment.orElseGet(() -> null));
     }
 
     @PostMapping("/renewalRequest/{id}")
-    public ResponseEntity<String> requestRenewal(@PathVariable Integer id){
-        return cyclicalServiceService.requestRenewal(id);
+    public ResponseEntity<String> requestRenewal(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
+        }
+        return cyclicalServiceService.requestRenewal(id,comment.comment.orElseGet(() -> null));
     }
 
     @PostMapping("/cancelRequest/{id}")
-    public ResponseEntity<String> cancelRequest(@PathVariable Integer id){
-        return cyclicalServiceService.cancelRequest(id);
+    public ResponseEntity<String> cancelRequest(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
+        }
+        return cyclicalServiceService.cancelRequest(id,comment.comment.orElseGet(() -> null));
     }
 
     @PostMapping("/renew/{id}")
@@ -72,6 +91,10 @@ public class CyclicalServiceController {
         return cyclicalServiceService.renewCyclicalService(serviceRenewalRecord,id);
     }
 
+    @GetMapping("/getAllCancelRequests")
+    public List<CyclicalServiceProjection> getAllCancelRequests(){
+        return cyclicalServiceRepo.customFindCyclicalProjectionsWithCancelRequest();
+    }
 
     @GetMapping("/getAll")
     public List<CyclicalServiceProjection> getAllCustomers(@RequestParam(required = false) String days){
