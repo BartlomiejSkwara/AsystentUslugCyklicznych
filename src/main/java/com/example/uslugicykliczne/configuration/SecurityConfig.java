@@ -55,24 +55,26 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(auth ->
                 auth
                     .requestMatchers("/api/authentication/login").permitAll()
-                    .requestMatchers("/api/authentication/logout").hasAnyRole("user","admin")
+                    .requestMatchers("/api/authentication/logout").hasAnyRole("user","editor","admin")
                     .requestMatchers(
+                            "/api/cyclicalservice/getAll",
+                            "/api/cyclicalservice/renewalRequest/*",
+                            "/api/cyclicalservice/cancelRequest/*"
+                    ).hasAnyRole("user","editor","admin")
+                    .requestMatchers(
+                            "/api/cyclicalservice/getAllByUser",
+                            "/api/cyclicalservice/getAllCancelRequests",
+                            "/api/cyclicalservice/renew/**",
+                            "/api/cyclicalservice/insertBody",
+                            "/api/cyclicalservice/statusChange/*",
+                            "/api/serviceUser/getAll",
+                            "/api/serviceUser/get/**",
+                            "/api/serviceUser/insertBody",
                             "/api/business/getAll",
                             "/api/business/get/**",
                             "/api/business/insertBody",
                             "/api/business/getAllByUser"
-                            ).hasAnyRole("user","admin")
-                    .requestMatchers(
-                            "/api/serviceUser/getAll",
-                            "/api/serviceUser/get/**",
-                            "/api/serviceUser/insertBody"
-                            ).hasAnyRole("user","admin")
-                    .requestMatchers(
-                            "/api/cyclicalservice/getAll",
-                            "/api/cyclicalservice/getAllByUser",
-                            "/api/cyclicalservice/renew/**",
-                            "/api/cyclicalservice/insertBody"
-                            ).hasAnyRole("user","admin")
+                    ).hasAnyRole("editor","admin")
                     .anyRequest().hasRole("admin")
                 );
         //httpSecurity.authenticationProvider(authenticationProvider());
