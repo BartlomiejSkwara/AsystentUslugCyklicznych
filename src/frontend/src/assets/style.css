@@ -86,6 +86,11 @@ th {
     color: white;
 }
 
+.data-button {
+    background-color: #2288fd;
+    color: white;
+}
+
 .email-field,
 .phone-number-field {
     display: inline;
@@ -218,4 +223,47 @@ button[type="submit"] {
     background-color: #007bff;
     color: white;
     border: 1px solid #007bff;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    font-size: 16px; /* Adjust font size as needed */
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-size: 16px; /* Adjust font size as needed */
+    margin: 0 10px;
+}
+
+.view-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+    margin: 0;
+}
+
+.view-button:hover {
+    background-color: #0056b3;
 }
