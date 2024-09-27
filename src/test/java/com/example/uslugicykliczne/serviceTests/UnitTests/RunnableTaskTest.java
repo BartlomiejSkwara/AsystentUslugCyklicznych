@@ -63,6 +63,7 @@ public class RunnableTaskTest {
 //        cyclicalServiceRepo.save(cs2);
 //        certificateRepo.save(ce1);
 //        certificateRepo.save(ce2);
+
 //        cyclicalServiceEntity1.setId(0);
 //        RunnableTask task1 = new RunnableTask(cyclicalServiceEntity1, cyclicalServiceRepo, schedulingService, emailService);
 //

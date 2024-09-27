@@ -29,7 +29,11 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                         "where ce.renewed = false  and ce.validTo<:desiredTime"
         );
-        query.setParameter("desiredTime", LocalDateTime.now().plusDays(nDays));
+        if(nDays==-1)
+            query.setParameter("desiredTime", LocalDateTime.now().plusYears(100));
+        else
+            query.setParameter("desiredTime", LocalDateTime.now().plusDays(nDays));
         return query.getResultList();
     }
+
 }

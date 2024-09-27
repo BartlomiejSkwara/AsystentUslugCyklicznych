@@ -75,6 +75,9 @@ public class ServiceUserService {
                 serviceUserEntity.setTaxIdentificationNumber(dto.getTaxId().get());
             else
                 serviceUserEntity.setHasPolishPesel(false);
+        else
+            serviceUserEntity.setTaxIdentificationNumber(null);
+
         serviceUserEntity.setContactData(contactDataEntity);
 
         return serviceUserEntity;

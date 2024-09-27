@@ -3,6 +3,7 @@ package com.example.uslugicykliczne.controller;
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.BusinessDTO;
 import com.example.uslugicykliczne.dataTypes.BusinessProjection;
+import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.repo.BusinessRepo;
 import com.example.uslugicykliczne.services.BusinessService;
@@ -38,7 +39,10 @@ public class BusinessController
     public List<BusinessProjection> getAllBusinesses(HttpServletResponse httpServletResponse){
         return businessRepo.findBusinessesWithProjectedContactData();
     }
-
+    @GetMapping("/getAllByUser")
+    public List<BusinessProjection> getAllServicesRelatedToUser(@RequestParam() Integer userID){
+        return businessService.getAllRelatedToUser(userID);
+    }
     @GetMapping("/get/{id}")
     public ResponseEntity<BusinessProjection> getDysponent (@PathVariable Integer id ){
         Optional<BusinessEntity> soughtEntity = businessRepo.findBusinessWithContactDataById(id);
