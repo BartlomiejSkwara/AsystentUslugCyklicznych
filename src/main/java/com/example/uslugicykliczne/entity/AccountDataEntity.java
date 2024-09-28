@@ -1,9 +1,11 @@
 package com.example.uslugicykliczne.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "AccountData", schema = "uslugi_cykliczne", catalog = "")
+@Data
 public class AccountDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -13,7 +15,7 @@ public class AccountDataEntity {
     @Column(name = "username",nullable = false, length = 40)
     private String username;
     @Basic
-    @Column(name = "hashedPassword",nullable = false) /// TODO ustal maks dlugosc gdy bedziesz wiedział jaki algorytm hashowania uzyjesz
+    @Column(name = "hashedPassword",nullable = false, length = 120) /// TODO ustal maks dlugosc gdy bedziesz wiedział jaki algorytm hashowania uzyjesz
     private String hashedPassword;
     @Basic
     @Column(name = "role",nullable = false, length = 40)

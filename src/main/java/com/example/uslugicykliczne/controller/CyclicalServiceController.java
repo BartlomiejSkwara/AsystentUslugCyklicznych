@@ -52,10 +52,6 @@ public class CyclicalServiceController {
         return cyclicalServiceService.getAllFromNextNDays(nDays);
     }
 
-    @GetMapping("/getAllByUser")
-    public List<CyclicalServiceProjection> getAllServicesByUser(@RequestParam() Integer userID){
-        return cyclicalServiceService.getAllByUserId(userID);
-    }
 
     @PostMapping("/insertBody")
     public ResponseEntity<String> insert(@Validated @RequestBody CyclicalServiceDto cyclicalServiceDto, BindingResult bindingResult){

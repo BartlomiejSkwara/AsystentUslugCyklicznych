@@ -1,103 +1,108 @@
-//package com.example.uslugicykliczne.services;
-//
-//import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
-//import com.example.uslugicykliczne.scheduling.RunnableTask;
-//import com.example.uslugicykliczne.utility.TimeUtility;
-//import org.springframework.scheduling.TaskScheduler;
-//import org.springframework.stereotype.Service;
-//
-//import java.time.Instant;
-//import java.time.LocalDateTime;
-//import java.util.Optional;
-//import java.util.concurrent.ScheduledFuture;
-//
-//@Service
-//public class SchedulingService {
-//
-//    private final CyclicalServiceRepo cyclicalServiceRepo;
-//    private final TaskScheduler taskScheduler;
-//    private ScheduledFuture<?> scheduledFuture;
-//    private CyclicalServiceEntity lastRegisteredService;
-//    private final EmailService emailService;
-//
-//    public ScheduledFuture<?> getScheduledFuture() {
-//        return scheduledFuture;
-//    }
-//
-//    public CyclicalServiceEntity getLastRegisteredService(){
-//        return lastRegisteredService;
-//    }
-//    public Instant getLastRegisteredRenewal() {
-//        if(lastRegisteredService == null)
-//            return null;
-//        return lastRegisteredService.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
-//    }
-//
-//    public SchedulingService(CyclicalServiceRepo cyclicalServiceRepo, TaskScheduler taskScheduler, EmailService emailService) {
-//        this.cyclicalServiceRepo = cyclicalServiceRepo;
-//        this.taskScheduler = taskScheduler;
-//        this.emailService = emailService;
-//    }
-//
-//    public void findNextServiceAndScheduleIt(){
-//        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findFirstServiceWithNoMessageSent();
-//        if(cyclicalServiceEntity.isPresent())
-//            trySchedulingReminderWhenInserted(cyclicalServiceEntity.get());
-//
-//    }
-//    public void trySchedulingReminderWhenInserted(CyclicalServiceEntity cyclicalServiceEntity)  {
-//        RunnableTask runnableTask = new RunnableTask(cyclicalServiceEntity, cyclicalServiceRepo, this, emailService);
-//        if(lastRegisteredService==null){
-//            scheduledFuture = taskScheduler.schedule(
-//                    runnableTask,
-//                    cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset())
-//            );
-//            lastRegisteredService = cyclicalServiceEntity;
-//            return;
-//        }
-//
-//        Instant lastRenewal = getLastRegisteredRenewal();
-//        Instant instantEntityNextRenewal = cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
-//
-//        if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))||TimeUtility.isToday(instantEntityNextRenewal)){
-//            runnableTask.run();
-//            return;
-//        }
-//
-//        if (instantEntityNextRenewal.isBefore(lastRenewal)) {
-//            scheduledFuture.cancel(false);
-//            scheduledFuture = taskScheduler.schedule(
-//                    runnableTask,
-//                    cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset())
-//            );
-//            lastRegisteredService = cyclicalServiceEntity;
-//
-//        } else if(TimeUtility.isSameDay(instantEntityNextRenewal, lastRenewal)){
-//            return;
-//        } else {
-//            /// szukam wcześniejszego w bd
-//        }
-//
-//
-//
-//
-//
-//    }
-//
-//    public void trySchedulingReminderWhenUpdated(CyclicalServiceEntity cyclicalServiceEntity){
-//
+package com.example.uslugicykliczne.services;
+
+import com.example.uslugicykliczne.entity.CertificateEntity;
+import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
+import com.example.uslugicykliczne.repo.CertificateRepo;
+import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
+import com.example.uslugicykliczne.scheduling.RunnableTask;
+import com.example.uslugicykliczne.utility.TimeUtility;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
+
+@Service
+public class SchedulingService {
+
+    private final CyclicalServiceRepo cyclicalServiceRepo;
+    private final CertificateRepo certificateRepo;
+    private final TaskScheduler taskScheduler;
+    private ScheduledFuture<?> scheduledFuture;
+    private CertificateEntity lastRegisteredCertificate;
+    private CyclicalServiceEntity lastRegisteredCyclicalService;
+
+    private final EmailSenderService emailSenderService;
+    public ScheduledFuture<?> getScheduledFuture() {
+        return scheduledFuture;
+    }
+
+    public CertificateEntity getLastRegisteredCertificate(){
+        return lastRegisteredCertificate;
+    }
+    public CyclicalServiceEntity getLastRegisteredCyclicalService(){return  lastRegisteredCyclicalService;}
+
+
+    public SchedulingService(CyclicalServiceRepo cyclicalServiceRepo, CertificateRepo certificateRepo, TaskScheduler taskScheduler,  EmailSenderService emailSenderService) {
+        this.cyclicalServiceRepo = cyclicalServiceRepo;
+        this.certificateRepo = certificateRepo;
+        this.taskScheduler = taskScheduler;
+        this.emailSenderService = emailSenderService;
+    }
+
+    public void findNextServiceAndScheduleIt(){
+        Optional<CertificateEntity> certificateEntity = certificateRepo.findFirstCertificateWithNoRenewalAndMessageSent();
+        if(certificateEntity.isPresent())
+            trySchedulingReminderWhenInserted(certificateEntity.get(),certificateEntity.get().getCyclicalServiceEntity());
+    }
+    public void trySchedulingReminderWhenInserted(CertificateEntity certificateEntity,CyclicalServiceEntity cyclicalServiceEntity)  {
+        RunnableTask runnableTask = new RunnableTask(cyclicalServiceEntity, certificateEntity, cyclicalServiceRepo, certificateRepo,this, emailSenderService);
+        if(getLastRegisteredCertificate()==null){
+            scheduledFuture = taskScheduler.schedule(
+                    runnableTask,
+                    certificateEntity.getValidTo().toInstant(TimeUtility.getZoneOffset())
+            );
+            lastRegisteredCertificate = certificateEntity;
+            lastRegisteredCyclicalService = cyclicalServiceEntity;
+            return;
+        }
+        Instant lastRenewal = TimeUtility.toInstant(getLastRegisteredCertificate().getValidTo());
+        Instant instantEntityNextRenewal = TimeUtility.toInstant(certificateEntity.getValidTo());
+
+        if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))||TimeUtility.isToday(instantEntityNextRenewal)){
+            runnableTask.searchlessRun();
+            return;
+        }
+
+        if (instantEntityNextRenewal.isBefore(lastRenewal)) {
+            getScheduledFuture().cancel(false);
+            scheduledFuture = taskScheduler.schedule(
+                    runnableTask,
+                    certificateEntity.getValidTo().toInstant(TimeUtility.getZoneOffset())
+            );
+            lastRegisteredCertificate = certificateEntity;
+            lastRegisteredCyclicalService = cyclicalServiceEntity;
+
+        } else if(TimeUtility.isSameDay(instantEntityNextRenewal, lastRenewal)){
+            return;
+        }
+
+    }
+
+    public void trySchedulingReminderWhenUpdated(CertificateEntity certificateEntity, CyclicalServiceEntity cyclicalServiceEntity){
+
+        if(lastRegisteredCyclicalService.getIdCyclicalService() == cyclicalServiceEntity.getIdCyclicalService()){
+            scheduledFuture.cancel(false);
+            lastRegisteredCertificate.setRenewalMessageSent(true);
+            certificateRepo.save(lastRegisteredCertificate);
+            lastRegisteredCertificate = null;
+            lastRegisteredCyclicalService = null;
+        }
+        trySchedulingReminderWhenInserted(certificateEntity,cyclicalServiceEntity);
 //        if(!cyclicalServiceEntity.getId().equals(lastRegisteredService.getId())){
 //            trySchedulingReminderWhenInserted(cyclicalServiceEntity);
 //            return;
 //        }
 //
 //
-//        Instant lastRenewal = getLastRegisteredRenewal();
+//        Instant lastRenewal = TimeUtility.toInstant(getLastRegisteredCertificate().getValidTo());;
 //        Instant instantEntityNextRenewal = cyclicalServiceEntity.getNextRenewal().toInstant(TimeUtility.getZoneOffset());
 //        RunnableTask runnableTask = new RunnableTask(cyclicalServiceEntity, cyclicalServiceRepo, this, emailService);
 //
 //        if(instantEntityNextRenewal.isBefore(LocalDateTime.now().toInstant(TimeUtility.getZoneOffset()))||TimeUtility.isToday(instantEntityNextRenewal)){
-//            runnableTask.run();
+//            runTask(runnableTask);
 //            return;
 //        }
 //
@@ -131,13 +136,14 @@
 //
 //        }
 //
-//
-//    }
-//
-//    private void resetCurrentTaskInfo(){
-//        this.scheduledFuture = null;
-//        this.lastRegisteredService = null;
-//    }
-//
-//
-//}
+
+    }
+
+    private void resetCurrentTaskInfo(){
+        this.scheduledFuture = null;
+        this.lastRegisteredCertificate = null;
+        this.lastRegisteredCyclicalService = null;
+    }
+
+
+}

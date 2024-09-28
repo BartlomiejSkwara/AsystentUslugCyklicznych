@@ -42,17 +42,7 @@ public interface ServiceUserRepo  extends ListCrudRepository<ServiceUserEntity,I
 
     @Query("select su from ServiceUserEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.phoneNumbers where su = :oldSu")
     Optional<ServiceUserEntity> findSingleJoinedPhoneBy(ServiceUserEntity oldSu);
-    //@EntityGraph(value = "ServiceUserEntity.eagerlyFetchSUEmails", type = EntityGraph.EntityGraphType.LOAD)
 
-
-    //List<ServiceUserEntity> find
     List<ServiceUserProjection> findProjectionsBy();
-    //@Query("SELECT  su from  ServiceUserEntity su JOIN FETCH su.contactData cd JOIN fetch cd.emails")
-    //List<ServiceUserProjection> findProjections2By();
 
-//    @Query("SELECT su FROM ServiceUserEntity su JOIN FETCH su.contactData cd LEFT JOIN FETCH cd.phoneNumbers LEFT JOIN FETCH cd.emails")
-//    List<ServiceUserProjection> findProjectionsQuery();
-    //List<ServiceUserProjection> findAll();
-//    List<CustomerEntity> findCustomerEntitiesByEmailOrPhoneNumber(String email, String phoneNumber);
-//    List<CyclicalServiceProjection.CustomerProjection> findProjectionBy();
 }

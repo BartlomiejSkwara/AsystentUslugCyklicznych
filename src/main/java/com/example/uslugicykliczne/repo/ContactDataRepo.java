@@ -7,6 +7,5 @@ import org.springframework.data.repository.ListCrudRepository;
 import java.util.Collection;
 
 public interface ContactDataRepo  extends ListCrudRepository<ContactDataEntity,Integer> {
-    //Collection<>
 
 }

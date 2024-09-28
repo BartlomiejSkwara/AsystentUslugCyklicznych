@@ -1,4 +1,5 @@
 SET FOREIGN_KEY_CHECKS=0;
+SET SQL_SAFE_UPDATES = 0;
 
 delete from account_data;
 delete from email;
@@ -8,6 +9,8 @@ delete from cyclical_service;
 delete from business;
 delete from service_user;
 delete from contact_data;
+SET SQL_SAFE_UPDATES = 1;
+
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: uslugi_cykliczne
@@ -29,11 +32,12 @@ delete from contact_data;
 -- Dumping data for table `account_data`
 --
 
-# LOCK TABLES `account_data` WRITE;
-# /*!40000 ALTER TABLE `account_data` DISABLE KEYS */;
-# INSERT INTO `account_data`(id_login_credentials,role,username,hashed_password) VALUES (5,'5','5','5');
-# /*!40000 ALTER TABLE `account_data` ENABLE KEYS */;
-# UNLOCK TABLES;
+LOCK TABLES `account_data` WRITE;
+/*!40000 ALTER TABLE `account_data` DISABLE KEYS */;
+INSERT INTO `account_data` VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_user','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO');
+/*!40000 ALTER TABLE `account_data` ENABLE KEYS */;
+UNLOCK TABLES;
+
 
 --
 -- Dumping data for table `contact_data`
@@ -83,7 +87,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `cyclical_service` WRITE;
 /*!40000 ALTER TABLE `cyclical_service` DISABLE KEYS */;
-INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach'),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu'),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego'),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej'),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu'),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu'),(3,7,_binary '\0',922.4,3,'124142','9kg gorzkiej czekolady'),(6,8,_binary '\0',100,2,'6426546','25 litrów wody po parówkach ');
+INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach'),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu'),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego'),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej'),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu'),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu');
 /*!40000 ALTER TABLE `cyclical_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +98,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `certificate` WRITE;
 /*!40000 ALTER TABLE `certificate` DISABLE KEYS */;
-INSERT INTO `certificate` (id_certificate,id_cyclical_service,renewal_message_sent,renewed,valid_from,valid_to,card_number,card_type,certificate_serial_number,name_in_organisation) VALUES (1,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','15213412421142214',NULL),(2,2,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000','2024-07-31 00:00:00.000000','945322155213','PHYSICAL','32623523632',NULL),(3,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(4,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(5,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(6,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(7,1,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000','2024-07-30 00:00:00.000000','4215213','PHYSICAL','15213412421142214','CEO'),(8,3,_binary '',_binary '','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','15213412421142214',NULL),(9,3,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(10,3,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000','2024-08-01 00:00:00.000000','4215213','PHYSICAL','15213412421142214','CEO'),(11,4,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000','2024-08-04 00:00:00.000000','4215213','PHYSICAL','15213412421142214',NULL),(12,5,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000','2024-08-10 00:00:00.000000','251235132','PHYSICAL','1613451',NULL),(13,6,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000','2024-08-26 00:00:00.000000','8675987','PHYSICAL','4123124',NULL),(14,7,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','1535413631',NULL),(15,8,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','753764356','PHYSICAL','94624526',NULL);
+INSERT INTO `certificate` (id_certificate,id_cyclical_service,renewal_message_sent,renewed,valid_from,valid_to,card_number,card_type,certificate_serial_number,name_in_organisation) VALUES (1,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','15213412421142214',NULL),(2,2,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 5 day,'945322155213','PHYSICAL','32623523632',NULL),(3,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(4,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(5,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(6,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(7,1,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 4 day,'4215213','PHYSICAL','15213412421142214','CEO'),(8,3,_binary '',_binary '','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','15213412421142214',NULL),(9,3,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(10,3,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 6 day,'4215213','PHYSICAL','15213412421142214','CEO'),(11,4,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 9 day,'4215213','PHYSICAL','15213412421142214',NULL),(12,5,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 15 day,'251235132','PHYSICAL','1613451',NULL),(13,6,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 31 day,'8675987','PHYSICAL','4123124',NULL);
 /*!40000 ALTER TABLE `certificate` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,8 +111,9 @@ UNLOCK TABLES;
 
 LOCK TABLES `service_user` WRITE;
 /*!40000 ALTER TABLE `service_user` DISABLE KEYS */;
-INSERT INTO `service_user` (contact_data_id, has_polishpesel, id_service_user, name, surname,tax_identification_number, comments)VALUES (3,_binary '\0',1,'crazy','steve',NULL,NULL),(4,_binary '',2,'Mieszko','Pierwszy','96696696611',NULL),(5,_binary '\0',3,'Michael','Byrd',NULL,'Mostly orders a suspiciously large amounts of feathers'),(10,_binary '\0',4,'Big','E',NULL,NULL),(11,_binary '\0',5,'Ku\'gath','Plaguefather ',NULL,NULL),(12,_binary '\0',6,'Aaron','Burr ',NULL,NULL),(13,_binary '\0',7,'Roboute','Guilliman',NULL,NULL),(14,_binary '\0',8,'Sandro','the Great',NULL,NULL),(15,_binary '\0',9,'Crag','Hack',NULL,NULL),(16,_binary '\0',10,'Karlach','Cliffgate',NULL,NULL);
+INSERT INTO `service_user` (contact_data_id, has_polishpesel, id_service_user, name, surname,tax_identification_number, comments) VALUES (3,_binary '\0',1,'crazy','steve',NULL,NULL),(4,_binary '',2,'Mieszko','Pierwszy','96696696611',NULL),(5,_binary '\0',3,'Michael','Byrd',NULL,'Mostly orders a suspiciously large amounts of feathers'),(10,_binary '\0',4,'Big','E',NULL,NULL),(11,_binary '\0',5,'Ku\'gath','Plaguefather ',NULL,NULL),(12,_binary '\0',6,'Aaron','Burr ',NULL,NULL),(13,_binary '\0',7,'Roboute','Guilliman',NULL,NULL),(14,_binary '\0',8,'Sandro','the Great',NULL,NULL),(15,_binary '\0',9,'Crag','Hack',NULL,NULL),(16,_binary '\0',10,'Karlach','Cliffgate',NULL,NULL);
 UNLOCK TABLES;
+
 SET FOREIGN_KEY_CHECKS=1;
 
 /*!40000 ALTER TABLE `service_user` ENABLE KEYS */;

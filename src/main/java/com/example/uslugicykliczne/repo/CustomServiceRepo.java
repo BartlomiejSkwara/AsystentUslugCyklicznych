@@ -1,16 +1,18 @@
 package com.example.uslugicykliczne.repo;
 
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
+import com.example.uslugicykliczne.entity.CertificateEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 interface CustomServiceRepo{
     List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDays(int nDays);
-    List<CyclicalServiceProjection> customfindCyclicalProjectionsByUserId(int userId);
+
 }
 class  CustomServiceRepoImpl implements CustomServiceRepo{
 
@@ -33,19 +35,5 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
             query.setParameter("desiredTime", LocalDateTime.now().plusDays(nDays));
         return query.getResultList();
     }
-    @Override
-    public List<CyclicalServiceProjection> customfindCyclicalProjectionsByUserId(int userId) {
-        Query query = entityManager.createQuery(
-                "select  new com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection(" +
-                        "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
-                        "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
-                        "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation)" +
-                        "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
-                        "where ce.renewed = false  and cs.serviceUser.id=:userId"
-        );
 
-        query.setParameter("userId", userId);
-
-        return query.getResultList();
-    }
 }
