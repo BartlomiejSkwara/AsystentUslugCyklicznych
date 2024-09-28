@@ -1,4 +1,4 @@
-package com.example.uslugicykliczne.dataTypes;
+package com.example.uslugicykliczne.dataTypes.projections;
 
 public interface BusinessProjection {
     int getIdBusiness();

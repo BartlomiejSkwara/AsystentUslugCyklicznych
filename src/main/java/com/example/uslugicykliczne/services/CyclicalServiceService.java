@@ -1,25 +1,24 @@
 package com.example.uslugicykliczne.services;
 
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
-import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
+import com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
 import com.example.uslugicykliczne.dataTypes.StatusEnum;
+import com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection;
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.entity.CertificateEntity;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.entity.ServiceUserEntity;
-import com.example.uslugicykliczne.repo.BusinessRepo;
-import com.example.uslugicykliczne.repo.CertificateRepo;
-import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
-import com.example.uslugicykliczne.repo.ServiceUserRepo;
+import com.example.uslugicykliczne.repo.*;
+import com.example.uslugicykliczne.security.CustomUserDetails;
 import com.example.uslugicykliczne.utility.StatusUtility;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +35,7 @@ public class CyclicalServiceService {
     private final CertificateRepo certificateRepo;
     private final SchedulingService schedulingService;
     private final ServiceStatusHistoryService serviceStatusHistoryService;
+    private final StatusChangeRepo statusChangeRepo;
 
 
     public ResponseEntity<String> renewCyclicalService(ServiceRenewalRecord serviceRenewalRecord, Integer serviceId){
@@ -176,6 +176,26 @@ public class CyclicalServiceService {
         cyclicalServiceRepo.save(cyclicalService);
 
         return ResponseEntity.ok("Successfully requested renewal");
+    }
+
+    public List<StatusChangeRecordProjection> getStatusChangesRelatedToService(Integer serviceId) {
+
+        Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findCyclicalServiceAcDataJoin(serviceId);
+        if (optionalCyclicalServiceEntity.isEmpty())
+            return List.of();
+
+        CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
+
+        if (!userDetails.getRole().equals("ROLE_admin")&&!userDetails.getRole().equals("ROLE_editor")){
+            if(!authentication.getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+                return List.of();
+        }
+
+
+        return statusChangeRepo.findByServiceIdWithChronologicalOrder(serviceId);
     }
 //    public ResponseEntity<String> updateCyclicalServiceEntity(Integer id, CyclicalServiceDto cyclicalServiceDto){
 //        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findById(id);

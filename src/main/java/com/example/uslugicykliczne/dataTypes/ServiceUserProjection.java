@@ -1,5 +1,7 @@
 package com.example.uslugicykliczne.dataTypes;
 
+import com.example.uslugicykliczne.dataTypes.projections.ContactDataProjection;
+
 public interface ServiceUserProjection {
     int getIdServiceUser();
     String getName();

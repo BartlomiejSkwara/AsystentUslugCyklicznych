@@ -1,25 +1,19 @@
 package com.example.uslugicykliczne.repo;
 
-import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
+import com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.StatusEnum;
-import com.example.uslugicykliczne.entity.CertificateEntity;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.entity.StatusChangeEntity;
 import com.example.uslugicykliczne.entity.StatusTypeEntity;
-import com.example.uslugicykliczne.utility.TimeUtility;
 import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+import java.util.*;
 
 interface CustomServiceRepo{
     List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDays(int nDays);
@@ -29,20 +23,23 @@ interface CustomServiceRepo{
     void customUpdateAwaitingRenewal();
 
 }
+
+@RequiredArgsConstructor
 class  CustomServiceRepoImpl implements CustomServiceRepo{
 
     @PersistenceContext
     private EntityManager entityManager;
+    private final StatusChangeRepo statusChangeRepo;
 
     @Override
     public List<CyclicalServiceProjection> customFindCyclicalProjectionsWithCancelRequest() {
         Query query = entityManager.createQuery(
-                "select  new com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection(" +
+                "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
                         "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
-                        "where floor(mod(cs.statusBitmap/:status,:status)) = 1 "
+                        "where floor(mod(cs.statusBitmap/:status,:status)) = 1 and ce.renewed=false "
         );
         query.setParameter("status", StatusEnum.MARKED_FOR_CANCEL.getMaskValue());
         return query.getResultList();
@@ -50,7 +47,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
     @Override
     public List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDays(int nDays) {
         Query query = entityManager.createQuery(
-                "select  new com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection(" +
+                "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
                         "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap)" +
@@ -104,7 +101,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                 "update  CyclicalServiceEntity cse " +
                         "set cse.statusBitmap = 1 " +
                         "where cse.idCyclicalService in (:idList) "+
-                        " and cse.statusBitmap = 256"
+                        "and cse.statusBitmap = 256"
         );
 
         query.setParameter("idList",idList);
@@ -115,16 +112,18 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
         enableSafeUpdate.executeUpdate();
 
         LocalDateTime now = LocalDateTime.now();
+        List<StatusChangeEntity> statusChangeEntities = new ArrayList<>();
         for(int id:idList){
             StatusChangeEntity statusChangeEntity = new StatusChangeEntity();
             statusChangeEntity.setChangeDate(now);
             statusChangeEntity.setStatusTypeEntity(entityManager.getReference(StatusTypeEntity.class,StatusEnum.AWAITING_RENEWAL.getMaskValue()));
             statusChangeEntity.setComment("Dokonano automatycznego zmianu stanu na \""+StatusEnum.AWAITING_RENEWAL.getStatusName()+"\"");
             statusChangeEntity.setCyclicalService(entityManager.getReference(CyclicalServiceEntity.class,id));
-            entityManager.persist(statusChangeEntity);
+            statusChangeEntities.add(statusChangeEntity);
         }
 
 
+        statusChangeRepo.saveAll(statusChangeEntities);
 
 
     }

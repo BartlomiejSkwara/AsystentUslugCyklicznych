@@ -2,7 +2,7 @@ package com.example.uslugicykliczne.controller;
 
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.BusinessDTO;
-import com.example.uslugicykliczne.dataTypes.BusinessProjection;
+import com.example.uslugicykliczne.dataTypes.projections.BusinessProjection;
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.repo.BusinessRepo;
 import com.example.uslugicykliczne.services.BusinessService;

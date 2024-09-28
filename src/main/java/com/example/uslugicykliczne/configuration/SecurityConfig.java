@@ -60,7 +60,8 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/api/cyclicalservice/getAll",
                             "/api/cyclicalservice/renewalRequest/*",
-                            "/api/cyclicalservice/cancelRequest/*"
+                            "/api/cyclicalservice/cancelRequest/*",
+                            "api/cyclicalservice/statusChangeHistory/*"
                             ).hasAnyRole("user","editor","admin")
                     .requestMatchers(
                             "/api/cyclicalservice/getAllByUser",

@@ -1,10 +1,9 @@
-package com.example.uslugicykliczne.dataTypes;
+package com.example.uslugicykliczne.dataTypes.projections;
 
-import com.example.uslugicykliczne.utility.StatusUtility;
+import com.example.uslugicykliczne.dataTypes.projections.CertificateProjectionRecord;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class CyclicalServiceProjection {

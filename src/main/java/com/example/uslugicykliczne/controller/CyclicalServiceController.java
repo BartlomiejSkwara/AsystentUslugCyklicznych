@@ -2,29 +2,28 @@ package com.example.uslugicykliczne.controller;
 
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
-import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
+import com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
 import com.example.uslugicykliczne.dataTypes.StatusEnum;
-import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
+import com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection;
+import com.example.uslugicykliczne.repo.StatusChangeRepo;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
-import com.example.uslugicykliczne.utility.StatusUtility;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.format.annotation.NumberFormat;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cyclicalservice")
+@RequiredArgsConstructor
 public class CyclicalServiceController {
 
     public record Comment(Optional<@Size(max = 255, message = "Specified comment is too long")String> comment){};
@@ -37,13 +36,12 @@ public class CyclicalServiceController {
     private final ValidationUtility validationUtility;
     private final CyclicalServiceService cyclicalServiceService;
 
-    public CyclicalServiceController(CyclicalServiceRepo cyclicalServiceRepo, ValidationUtility validationUtility, CyclicalServiceService cyclicalServiceService) {
-        this.cyclicalServiceRepo = cyclicalServiceRepo;
-        this.validationUtility = validationUtility;
-        this.cyclicalServiceService = cyclicalServiceService;
+
+
+    @GetMapping("/statusChangeHistory/{id}")
+    public List<StatusChangeRecordProjection> statusChangeRecordProjections(@PathVariable Integer id){
+        return cyclicalServiceService.getStatusChangesRelatedToService(id);
     }
-
-
     @PostMapping("/statusChange/{id}")
     public ResponseEntity<String> changeStatus(@PathVariable Integer id, @Validated @RequestBody StatusAndComment statusAndComment, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
