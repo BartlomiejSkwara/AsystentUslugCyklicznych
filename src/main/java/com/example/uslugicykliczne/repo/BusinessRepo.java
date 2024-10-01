@@ -1,6 +1,7 @@
 package com.example.uslugicykliczne.repo;
 
 import com.example.uslugicykliczne.dataTypes.projections.BusinessProjection;
+
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
@@ -8,7 +9,24 @@ import org.springframework.data.repository.ListCrudRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer> {
+public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>,CustomBusinessRepo {
+
+
+    default List<BusinessProjection> findBusinessWithProjectedContactDataFromBusinessGroup(List<BusinessEntity> businessGroup){
+        List<BusinessEntity> all = findBJoinedEmailFromIdGroupBy(businessGroup);
+        if (all != null && !all.isEmpty()){
+            return  findBJoinedPhoneBy(all);
+        }
+        return null;
+    }
+
+    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails where b in(:businessGroup)")
+    List<BusinessEntity> findBJoinedEmailFromIdGroupBy(List<BusinessEntity> businessGroup);
+
+
+    @Query("select distinct  cs.business from CyclicalServiceEntity cs where cs.serviceUser = :user")
+    List<BusinessEntity> findBusinessRelatedToUserBy(ServiceUserEntity user);
+    /////////////////
 
     default List<BusinessProjection> findBusinessesWithProjectedContactData(){
         List<BusinessEntity> all = findBJoinedEmailBy();

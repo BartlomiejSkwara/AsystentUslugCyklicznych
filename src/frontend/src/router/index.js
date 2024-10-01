@@ -1,12 +1,17 @@
 import { createMemoryHistory, createRouter } from 'vue-router'
-import ProductList from '../components/ProductList.vue'
-import HomePage from '../components/Home.vue'
-import CustomerList from "../components/Customer.vue"
-import CyclesList from "../components/CyclicalService.vue";
-import DysponentList from "../components/DysponentService.vue";
+import HomePage from '../components/views/Home.vue'
+// database pages
+import ServiceUserList from "../components/sub_pages/ServiceUser.vue"
+import CyclesList from "../components/sub_pages/CyclicalService.vue";
+import BusinessService from "../components/sub_pages/BusinessService.vue";
+import CertificateList from "../components/sub_pages/CertificateList.vue";
+// forms
 import AddCycle from '../components/forms/AddCycle.vue';
-import AddCustomer from '../components/forms/AddCustomer.vue';
-import AddDysponent from '../components/forms/AddDysponent.vue';
+import ServiceUserAdd from '../components/forms/ServiceUserAdd.vue';
+import AddBusiness from '../components/forms/AddBusiness.vue';
+import AddCertificate from "../components/forms/AddCertificate.vue";
+import UploadCertificate from "../components/forms/UploadCertificate.vue";
+import LoginComponent from "../components/forms/LoginService.vue";
 
 const routes = [
     {
@@ -14,15 +19,11 @@ const routes = [
         name: 'HomePage',
         component: HomePage
     },
+    // database pages
     {
-        path: '/Products',
-        name: 'ProductList',
-        component: ProductList
-    },
-    {
-        path: '/Customer',
-        name: 'CustomerList',
-        component: CustomerList
+        path: '/ServiceUser',
+        name: 'ServiceUserList',
+        component: ServiceUserList
     },
     {
         path: '/Cycles',
@@ -30,25 +31,52 @@ const routes = [
         component: CyclesList
     },
     {
-        path: '/Dysponents',
-        name: 'DysponentsList',
-        component: DysponentList
+        path: '/Business',
+        name: 'BusinessService',
+        component: BusinessService
     },
+    {
+        path: '/certificates',
+        name: 'CertificateList',
+        component: CertificateList
+    },
+    // forms
     {
         path: '/add-cycle',
         name: AddCycle,
         component: AddCycle
     },
     {
-        path: '/add-customer',
-        name: AddCustomer,
-        component: AddCustomer
+        path: '/add-user',
+        name: ServiceUserAdd,
+        component: ServiceUserAdd
     },
     {
-        path: '/add-dysponent',
-        name: AddDysponent,
-        component: AddDysponent
+        path: '/add-business',
+        name: AddBusiness,
+        component: AddBusiness
     },
+    {
+        path: '/add-certificate',
+        name: AddCertificate,
+        component: AddCertificate
+    },
+    {
+        path: '/upload-certificate',
+        name: UploadCertificate,
+        component: UploadCertificate
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: LoginComponent
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: LoginComponent
+    }
+
 
 ]
 

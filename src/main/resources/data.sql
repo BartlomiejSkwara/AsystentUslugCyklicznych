@@ -40,6 +40,7 @@ INSERT INTO `account_data` VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80
 /*!40000 ALTER TABLE `account_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
 --
 -- Dumping data for table `contact_data`
 --
@@ -112,6 +113,7 @@ LOCK TABLES `status_type` WRITE;
 INSERT INTO `status_type` (id_status_type,status_name) VALUES (1,"AWAITING_RENEWAL"),(2,"PRO_FORM_SENT"),(4,"MARKED_FOR_CANCEL"),(8,"CANCELED"),(16,"MARKED_AS_NON_RENEWABLE"),(32,"RENEWED_ELSEWHERE"),(64,"PAYMENT_DONE"),(128,"INVOICE_SENT"),(256,"RENEWED");
 /*!40000 ALTER TABLE `status_type` ENABLE KEYS */;
 UNLOCK TABLES;
+
 
 
 --

@@ -19,9 +19,9 @@
 </template>
 
 <script>
-import SideBar from './components/SideBar.vue';
-import FooterComponent from './components/FooterComponent.vue';
-import HeaderComponent from './components/HeaderComponent.vue';
+import SideBar from './components/views/SideBar.vue';
+import FooterComponent from './components/views/FooterComponent.vue';
+import HeaderComponent from './components/views/HeaderComponent.vue';
 
 export default {
   name: 'App',
@@ -39,13 +39,6 @@ export default {
       msg:''
     }
   },
-  mounted() {
-    fetch("/api/customer/getAll")
-      .then((response) => response.text())
-      .then((data) => {
-          this.msg = data;
-      });
-  }
 }
 </script>
 

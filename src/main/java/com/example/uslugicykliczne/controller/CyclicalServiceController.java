@@ -95,12 +95,16 @@ public class CyclicalServiceController {
     }
 
     @GetMapping("/getAll")
-    public List<CyclicalServiceProjection> getAllCustomers(@RequestParam(required = false) String days){
+    public List<CyclicalServiceProjection> getAllServices(@RequestParam(required = false) String days){
+        if(days == null)
+            return cyclicalServiceService.getAllFromNextNDays(-1);
+
         int nDays = 7;
         if (days.equals("7") || days.equals("14")||days.equals("30")||days.equals("60"))
             nDays = Integer.parseInt(days);
         return cyclicalServiceService.getAllFromNextNDays(nDays);
     }
+
 
     @PostMapping("/insertBody")
     public ResponseEntity<String> insert(@Validated @RequestBody CyclicalServiceDto cyclicalServiceDto, BindingResult bindingResult){

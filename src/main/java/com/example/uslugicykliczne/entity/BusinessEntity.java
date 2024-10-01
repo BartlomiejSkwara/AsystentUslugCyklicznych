@@ -28,7 +28,7 @@ public class BusinessEntity {
     @Column(name = "comments")
     private String comments;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "contactDataId", referencedColumnName = "idContactData", nullable = false)
     private ContactDataEntity contactData;
 

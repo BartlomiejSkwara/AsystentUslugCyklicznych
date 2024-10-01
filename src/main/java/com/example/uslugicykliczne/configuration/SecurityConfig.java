@@ -63,6 +63,7 @@ public class SecurityConfig {
                             "/api/cyclicalservice/cancelRequest/*",
                             "api/cyclicalservice/statusChangeHistory/*"
                             ).hasAnyRole("user","editor","admin")
+
                     .requestMatchers(
                             "/api/cyclicalservice/getAllByUser",
                             "/api/cyclicalservice/getAllCancelRequests",
@@ -77,6 +78,7 @@ public class SecurityConfig {
                             "/api/business/insertBody",
                             "/api/business/getAllByUser"
                             ).hasAnyRole("editor","admin")
+
                     .anyRequest().hasRole("admin")
                 );
         //httpSecurity.authenticationProvider(authenticationProvider());

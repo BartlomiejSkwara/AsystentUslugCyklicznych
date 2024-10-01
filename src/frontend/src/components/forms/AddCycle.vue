@@ -1,38 +1,63 @@
 <template>
   <div>
-    <h1>Add new cycle</h1>
+    <h1>Add New Cyclical Service</h1>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="description">Description:</label>
-        <input type="text" id="description" v-model="form.description" required />
+        <label for="agreementNumber">Agreement Number:</label>
+        <input type="text" id="agreementNumber" v-model="form.agreementNumber" required>
       </div>
       <div>
         <label for="price">Price:</label>
-        <input type="text" id="price" v-model="form.price" required pattern="^\d+(\.\d{1,2})?$" title="Please enter a valid price with up to two decimal places." />
+        <input type="number" id="price" v-model="form.price" step="0.01" required>
       </div>
       <div>
-        <label for="firstCycleStart">First Cycle Start:</label>
-        <input type="datetime-local" id="first-cycle" v-model="form.firstCycleStart" required />
+        <label for="description">Description:</label>
+        <input type="text" id="description" v-model="form.description" required>
       </div>
       <div>
-        <label for="renewalPeriod">Renewal Period (in years, months, days):</label>
-        <div>
-          <input type="number" v-model.number="form.renewalPeriod.years" placeholder="Years" />
-          <input type="number" v-model.number="form.renewalPeriod.months" placeholder="Months" />
-          <input type="number" v-model.number="form.renewalPeriod.days" placeholder="Days" />
-        </div>
+        <label for="oneTime">One Time:</label>
+        <select id="oneTime" v-model="form.oneTime">
+          <option :value="true">Yes</option>
+          <option :value="false">No</option>
+        </select>
       </div>
       <div>
-        <label for="dysponentId">Dysponent ID:</label>
-        <input type="number" id="dysponentId" v-model.number="form.dysponentId" required />
-        <span v-if="dysponentName">{{ dysponentName }}</span>
+        <label for="cycleStart">Cycle Start:</label>
+        <input type="datetime-local" id="cycleStart" v-model="form.cycleStart" required>
       </div>
       <div>
-        <label for="customerId">Customer ID:</label>
-        <input type="number" id="customerId" v-model.number="form.customerId" required />
-        <span v-if="customerName">{{ customerName }}</span>
+        <label for="cycleEnd">Cycle End:</label>
+        <input type="datetime-local" id="cycleEnd" v-model="form.cycleEnd" required>
       </div>
-      <button type="submit">Submit</button>
+      <div>
+        <label for="cardNumber">Card Number:</label>
+        <input type="text" id="cardNumber" v-model="form.cardNumber" required>
+      </div>
+      <div>
+        <label for="cardType">Card Type:</label>
+        <select id="cardType" v-model="form.cardType" required>
+          <option value="PHYSICAL">PHYSICAL</option>
+          <option value="SIMPLYSIGN">SIMPLYSIGN</option>
+        </select>
+      </div>
+      <div>
+        <label for="certSerialNumber">Certificate Serial Number:</label>
+        <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" required>
+      </div>
+      <div>
+        <label for="nameInOrganisation">Name in Organisation: (optional)</label>
+        <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation">
+      </div>
+      <div>
+        <label for="businessId">Business ID:</label>
+        <input type="number" id="businessId" v-model="form.businessId" required>
+      </div>
+      <div>
+        <label for="serviceUserId">Service User ID:</label>
+        <input type="number" id="serviceUserId" v-model="form.serviceUserId" required>
+      </div>
+      <button type="submit">Save</button>
+      <button type="button" @click="goBack">Back</button>
     </form>
   </div>
 </template>
@@ -42,118 +67,59 @@ export default {
   data() {
     return {
       form: {
-        description: '',
+        agreementNumber: '',
         price: null,
-        firstCycleStart: '',
-        renewalPeriod: {
-          years: 0,
-          months: 0,
-          days: 0
-        },
-        dysponentId: null,
-        customerId: null
-      },
-      customerName: '',
-      dysponentName: '',
-      nextRenewal: '',
-      isEdit: false, // Flag to check if it's an edit
-      cycleId: null // Store cycle id if it's an edit
+        description: '',
+        oneTime: true,
+        cycleStart: '',
+        cycleEnd: '',
+        cardNumber: '',
+        cardType: 'PHYSICAL',
+        certSerialNumber: '',
+        nameInOrganisation: '',
+        businessId: null,
+        serviceUserId: null
+      }
     };
   },
-  mounted() {
-    this.prefillForm();
-  },
   methods: {
-    async submitForm() {
-      try {
-        await this.fetchCustomerName();
-        await this.fetchDysponentName();
+    submitForm() {
+      const payload = {
+        agreementNumber: this.form.agreementNumber,
+        price: parseFloat(this.form.price),
+        description: this.form.description,
+        oneTime: this.form.oneTime,
+        cycleStart: this.form.cycleStart,
+        cycleEnd: this.form.cycleEnd,
+        cardNumber: this.form.cardNumber,
+        cardType: this.form.cardType,
+        certSerialNumber: this.form.certSerialNumber,
+        nameInOrganisation: this.form.nameInOrganisation || null,
+        businessId: this.form.businessId,
+        serviceUserId: this.form.serviceUserId
+      };
 
-        const renewalPeriod = `P${this.form.renewalPeriod.years}Y${this.form.renewalPeriod.months}M${this.form.renewalPeriod.days}D`;
-        const firstCycleStart = new Date(this.form.firstCycleStart);
-
-        const newCycle = {
-          description: this.form.description,
-          price: parseFloat(this.form.price),
-          firstCycleStart: firstCycleStart.toISOString(),
-          renewalPeriod: renewalPeriod,
-          dysponentId: this.form.dysponentId,
-          customerId: this.form.customerId,
-          nextRenewal: this.calculateNextRenewal(firstCycleStart, this.form.renewalPeriod)
-        };
-        const url = this.isEdit ? `/api/cyclicalservice/update/${this.cycleId}` : '/api/cyclicalservice/insertBody';
-        const method = this.isEdit ? 'POST' : 'POST';
-        console.log('Sending new cycle:', newCycle); // Debugging
-
-        const response = await fetch(url, {
-          method: method,
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newCycle)
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        alert('Cycle added successfully!');
-        this.$router.push('/Cycles');
-      } catch (error) {
-        console.error('There has been a problem with your fetch operation:', error);
-        alert('There has been a problem with your fetch operation: ' + error.message);
-      }
+      fetch('/api/cyclicalservice/insertBody', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+          .then(response => response.text())
+          .then(() => {
+            this.$router.push('/Cycles');
+          })
+          .catch(error => {
+            console.error('Error saving cyclical service:', error);
+          });
     },
-    async fetchCustomerName() {
-      try {
-        const response = await fetch(`/api/customer/get/${this.form.customerId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch customer name');
-        }
-        const customerData = await response.json();
-        this.customerName = customerData.name;
-      } catch (error) {
-        console.error('Error fetching customer name:', error);
-        this.customerName = 'Unknown';
-      }
-    },
-    async fetchDysponentName() {
-      try {
-        const response = await fetch(`/api/dysponent/get/${this.form.dysponentId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch dysponent name');
-        }
-        const dysponentData = await response.json();
-        this.dysponentName = dysponentData.name;
-      } catch (error) {
-        console.error('Error fetching dysponent name:', error);
-        this.dysponentName = 'Unknown';
-      }
-    },
-    calculateNextRenewal(firstCycleStart, renewalPeriod) {
-      const nextRenewal = new Date(firstCycleStart);
-      nextRenewal.setFullYear(nextRenewal.getFullYear() + renewalPeriod.years);
-      nextRenewal.setMonth(nextRenewal.getMonth() + renewalPeriod.months);
-      nextRenewal.setDate(nextRenewal.getDate() + renewalPeriod.days);
-      const nextRenewalUTC = nextRenewal.toISOString();
-      return nextRenewalUTC;
-    },
-    prefillForm() {
-      if (this.$route.query.id) {
-        this.isEdit = true;
-        this.cycleId = this.$route.query.id;
-        this.form.description = this.$route.query.description;
-        this.form.price = this.$route.query.price;
-        this.form.firstCycleStart = new Date(this.$route.query.firstCycleStart).toLocaleString();
-        this.form.renewalPeriod.years = parseInt(this.$route.query.renewalPeriodYears, 10);
-        this.form.renewalPeriod.months = parseInt(this.$route.query.renewalPeriodMonths, 10);
-        this.form.renewalPeriod.days = parseInt(this.$route.query.renewalPeriodDays, 10);
-        this.form.dysponentId = parseInt(this.$route.query.dysponentId, 10);
-        this.form.customerId = parseInt(this.$route.query.customerId, 10);
-      }
+    goBack() {
+      this.$router.push('/Cycles');
     }
   }
 };
 </script>
 
-<style src="@/assets/forms.css"></style>
+
+<style src="@/assets/style.css"></style>
