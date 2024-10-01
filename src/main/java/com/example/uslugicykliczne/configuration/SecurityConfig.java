@@ -34,19 +34,19 @@ public class SecurityConfig {
 
     private final JPAUserDetailsService userDetailsService;
     private final JWTAuthFilter jwtAuthFilter;
-//    private final CsrfCookieFilter csrfCookieFilter; todo nie zapomnij o tym
+    private final CsrfCookieFilter csrfCookieFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
-//        httpSecurity.csrf(httpSecurityCsrfConfigurer -> todo nie zapomnij o tym
-//                httpSecurityCsrfConfigurer
-//                        .ignoringRequestMatchers(
-//                            "/api/authentication/login",
-//                            "/api/authentication/logout")
-//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                        .csrfTokenRequestHandler(new SPATokenRequestHandler())
-//        );
-//        httpSecurity.addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class);
+//        httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+        httpSecurity.csrf(httpSecurityCsrfConfigurer ->
+                httpSecurityCsrfConfigurer
+                        .ignoringRequestMatchers(
+                            "/api/authentication/login",
+                            "/api/authentication/logout")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new SPATokenRequestHandler())
+        );
+        httpSecurity.addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class);
 
         httpSecurity.sessionManagement(httpSecuritySessionManagementConfigurer ->
                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
