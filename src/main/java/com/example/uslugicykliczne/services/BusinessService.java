@@ -1,8 +1,7 @@
 package com.example.uslugicykliczne.services;
 
 import com.example.uslugicykliczne.dataTypes.BusinessDTO;
-import com.example.uslugicykliczne.dataTypes.BusinessProjection;
-import com.example.uslugicykliczne.dataTypes.CyclicalServiceProjection;
+import com.example.uslugicykliczne.dataTypes.projections.BusinessProjection;
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.entity.ContactDataEntity;
 import com.example.uslugicykliczne.entity.ServiceUserEntity;

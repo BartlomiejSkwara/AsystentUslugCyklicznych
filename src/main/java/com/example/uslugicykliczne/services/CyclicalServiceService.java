@@ -5,14 +5,13 @@ import com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjecti
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
 import com.example.uslugicykliczne.dataTypes.StatusEnum;
 import com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection;
-import com.example.uslugicykliczne.entity.BusinessEntity;
-import com.example.uslugicykliczne.entity.CertificateEntity;
-import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
-import com.example.uslugicykliczne.entity.ServiceUserEntity;
+import com.example.uslugicykliczne.entity.*;
 import com.example.uslugicykliczne.repo.*;
 import com.example.uslugicykliczne.security.CustomUserDetails;
 import com.example.uslugicykliczne.utility.StatusUtility;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +35,7 @@ public class CyclicalServiceService {
     private final SchedulingService schedulingService;
     private final ServiceStatusHistoryService serviceStatusHistoryService;
     private final StatusChangeRepo statusChangeRepo;
+    private final AccountDataRepo accountDataRepo;
 
 
     public ResponseEntity<String> renewCyclicalService(ServiceRenewalRecord serviceRenewalRecord, Integer serviceId){
@@ -66,12 +66,23 @@ public class CyclicalServiceService {
         return ResponseEntity.ok().body("The task was successfully renewed");
     }
 
-    public ResponseEntity<String> insertNewCyclicalServiceEntity(CyclicalServiceDto cyclicalServiceDto){
+    public ResponseEntity<String> insertNewCyclicalServiceEntity(@NotNull CyclicalServiceDto cyclicalServiceDto){
         Optional<ServiceUserEntity> serviceUserEntityOptional = serviceUserRepo.findById(cyclicalServiceDto.getServiceUserId());
         Optional<BusinessEntity> businessEntityOptional = businessRepo.findById(cyclicalServiceDto.getBusinessId());
 
         if(businessEntityOptional.isPresent() && serviceUserEntityOptional.isPresent()){
-            CyclicalServiceEntity insertedEntity = cyclicalServiceRepo.save(createCyclicalServiceDTOFromEntity(new CyclicalServiceEntity(),cyclicalServiceDto,serviceUserEntityOptional.get(),businessEntityOptional.get()));
+
+            CyclicalServiceEntity insertedEntity = createCyclicalServiceEntityFromDTO(new CyclicalServiceEntity(),cyclicalServiceDto,serviceUserEntityOptional.get(),businessEntityOptional.get());
+            AccountDataEntity accountDataEntity = null;
+            if (cyclicalServiceDto.getRelatedAccountId().isPresent()){
+                Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId().get());
+                if(optionalAccountDataEntity.isEmpty())
+                    return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
+                accountDataEntity = optionalAccountDataEntity.get();
+            }
+
+            insertedEntity.setAssignedAccountDataEntity(accountDataEntity);
+            insertedEntity = cyclicalServiceRepo.save(insertedEntity);
             CertificateEntity certificateEntity = certificateService.insertCertificateCreatedFromCyclicalServiceDTO(insertedEntity,cyclicalServiceDto);
             //cyclicalServiceEntity.setCertificates(dto.getRenewalPeriod());
             //schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
@@ -90,7 +101,53 @@ public class CyclicalServiceService {
         return  ResponseEntity.badRequest().body(stringBuilder.toString());
     }
 
-    private CyclicalServiceEntity createCyclicalServiceDTOFromEntity(CyclicalServiceEntity cyclicalServiceEntity, CyclicalServiceDto dto, ServiceUserEntity serviceUserEntity, BusinessEntity businessEntity){
+    public ResponseEntity<String> updateCyclicalServiceEntity(Integer id, CyclicalServiceDto cyclicalServiceDto){
+        // TODO popraw wydajność wyszukiwania
+        Optional<CyclicalServiceEntity> cyclicalServiceEntityOptional = cyclicalServiceRepo.findById(id);
+        if(cyclicalServiceEntityOptional.isEmpty())
+            return  ResponseEntity.internalServerError().body("Can't update nonexistant cyclical service");
+        CyclicalServiceEntity updatedEntity = cyclicalServiceEntityOptional.get();
+
+        Optional<ServiceUserEntity> serviceUserEntityOptional = serviceUserRepo.findById(cyclicalServiceDto.getServiceUserId());
+        Optional<BusinessEntity> businessEntityOptional = businessRepo.findById(cyclicalServiceDto.getBusinessId());
+
+        if(businessEntityOptional.isPresent() && serviceUserEntityOptional.isPresent()){
+
+            updatedEntity = createCyclicalServiceEntityFromDTO(updatedEntity,cyclicalServiceDto,serviceUserEntityOptional.get(),businessEntityOptional.get());
+            AccountDataEntity accountDataEntity = null;
+            if (cyclicalServiceDto.getRelatedAccountId().isPresent()){
+                Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId().get());
+                if(optionalAccountDataEntity.isEmpty())
+                    return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
+                accountDataEntity = optionalAccountDataEntity.get();
+            }
+
+            updatedEntity.setAssignedAccountDataEntity(accountDataEntity);
+            updatedEntity = cyclicalServiceRepo.save(updatedEntity);
+//            CertificateEntity certificateEntity = certificateService.insertCertificateCreatedFromCyclicalServiceDTO(insertedEntity,cyclicalServiceDto);
+            //cyclicalServiceEntity.setCertificates(dto.getRenewalPeriod());
+            //schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
+//            if(certificateEntity!=null){
+//                schedulingService.trySchedulingReminderWhenInserted(certificateEntity,insertedEntity);
+                return ResponseEntity.ok("Successfully added the cyclical service");
+//
+//            }
+//            return  ResponseEntity.internalServerError().body("Couldn't create certificate");
+        }
+
+        StringBuilder stringBuilder = new StringBuilder("Entities :");
+        stringBuilder.append((serviceUserEntityOptional.isEmpty())?"[service user]":"");
+        stringBuilder.append((businessEntityOptional.isEmpty())?"[business]":"");
+        stringBuilder.append("with the provided ID(s) could not be found.");
+        return  ResponseEntity.badRequest().body(stringBuilder.toString());
+
+
+
+    }
+
+
+
+    private CyclicalServiceEntity createCyclicalServiceEntityFromDTO(CyclicalServiceEntity cyclicalServiceEntity, CyclicalServiceDto dto, ServiceUserEntity serviceUserEntity, BusinessEntity businessEntity){
         cyclicalServiceEntity.setServiceUser(serviceUserEntity);
         cyclicalServiceEntity.setBusiness(businessEntity);
         cyclicalServiceEntity.setDescription(dto.getDescription());
@@ -198,30 +255,5 @@ public class CyclicalServiceService {
         return statusChangeRepo.findByServiceIdWithChronologicalOrder(serviceId);
     }
 
-//    public ResponseEntity<String> updateCyclicalServiceEntity(Integer id, CyclicalServiceDto cyclicalServiceDto){
-//        Optional<CyclicalServiceEntity> cyclicalServiceEntity = cyclicalServiceRepo.findById(id);
-//        if (cyclicalServiceEntity.isEmpty())
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Can't edit nonexistent cyclical service !!!");
-//
-//
-//        Optional<CustomerEntity> customerEntity = customerRepo.findById(cyclicalServiceDto.getCustomerId());
-//        Optional<DysponentEntity> dysponentEntity = dysponentRepo.findById(cyclicalServiceDto.getDysponentId());
-//
-//        if(customerEntity.isPresent() && dysponentEntity.isPresent()){
-//            CyclicalServiceEntity cyclicalServiceEntity1 = cyclicalServiceRepo.save(convertCyclicalServiceDTOtoEntity(cyclicalServiceEntity.get(),cyclicalServiceDto,customerEntity.get(),dysponentEntity.get()));
-//            schedulingService.trySchedulingReminderWhenUpdated(cyclicalServiceEntity1);
-//            return ResponseEntity.ok("Successfully updated the cyclical service");
-//        }
-//
-//        StringBuilder stringBuilder = new StringBuilder("Entities :");
-//        stringBuilder.append((customerEntity.isEmpty())?"[customer]":"");
-//        stringBuilder.append((dysponentEntity.isEmpty())?"[dysponent]":"");
-//        stringBuilder.append("with the provided ID(s) could not be found.");
-//        return  ResponseEntity.badRequest().body(stringBuilder.toString());
-//
-//
-//
-//    }
-//
-//
+
 }

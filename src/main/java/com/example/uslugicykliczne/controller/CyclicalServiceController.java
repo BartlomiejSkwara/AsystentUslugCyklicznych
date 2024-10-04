@@ -9,6 +9,7 @@ import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection;
 import com.example.uslugicykliczne.repo.StatusChangeRepo;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -114,6 +115,14 @@ public class CyclicalServiceController {
         return cyclicalServiceService.insertNewCyclicalServiceEntity(cyclicalServiceDto);
     }
 
+//    /TODO obsłuż sytuację gdzie user podaje ujemny okres odnowienia
+    @PostMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Integer id, @Valid @RequestBody() CyclicalServiceDto cyclicalServiceDto, BindingResult bindingResult ){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
+        }
+        return cyclicalServiceService.updateCyclicalServiceEntity(id, cyclicalServiceDto);
+    }
 
     ///TODO masowe usuwanie certyfikatów
     @DeleteMapping("/delete/{id}")
@@ -135,12 +144,5 @@ public class CyclicalServiceController {
 //        }
 //    }
 //
-    ///TODO obsłuż sytuację gdzie user podaje ujemny okres odnowienia
-//    @PostMapping("/update/{id}")
-//    public ResponseEntity<String> update(@PathVariable Integer id, @Valid @RequestBody() CyclicalServiceDto cyclicalServiceDto, BindingResult bindingResult ){
-//        if(bindingResult.hasErrors()){
-//            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
-//        }
-//        return cyclicalServiceService.updateCyclicalServiceEntity(id, cyclicalServiceDto);
-//    }
+
 }

@@ -3,6 +3,7 @@ package com.example.uslugicykliczne.repo;
 import com.example.uslugicykliczne.dataTypes.projections.BusinessProjection;
 
 import com.example.uslugicykliczne.entity.BusinessEntity;
+import com.example.uslugicykliczne.entity.ServiceUserEntity;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 
