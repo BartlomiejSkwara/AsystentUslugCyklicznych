@@ -1,41 +1,41 @@
 <template>
   <div>
-    <h1>{{ isEdit ? 'Edit Certificate' : 'Add new Certificate' }}</h1>
+    <h1>{{ isEdit ? 'Edytuj certyfikat' : 'Dodaj nowy certyfikat' }}</h1>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="id_service">ID Service:</label>
+        <label for="id_service">ID Płatności:</label>
         <input type="number" id="id_service" v-model.number="form.id_service" required />
       </div>
       <div>
-        <label for="valid_from">Valid From:</label>
+        <label for="valid_from">Data rozpoczęcia:</label>
         <input type="datetime-local" id="valid_from" v-model="form.valid_from" required />
       </div>
       <div>
-        <label for="valid_to">Valid To:</label>
+        <label for="valid_to">Data zakończenia:</label>
         <input type="datetime-local" id="valid_to" v-model="form.valid_to" required />
       </div>
       <div>
-        <label for="card_number">Card Number:</label>
+        <label for="card_number">Numer karty:</label>
         <input type="text" id="card_number" v-model="form.card_number" required />
       </div>
       <div>
-        <label for="card_type">Card Type:</label>
+        <label for="card_type">Typ karty:</label>
         <select id="card_type" v-model="form.card_type" required>
-          <option value="Type A">Type A</option>
-          <option value="Type B">Type B</option>
-          <option value="Type C">Type C</option>
+          <option value="Type A">Typ A</option>
+          <option value="Type B">Typ B</option>
+          <option value="Type C">Typ C</option>
         </select>
       </div>
       <div>
-        <label for="certificate_serial_number">Certificate Serial Number:</label>
+        <label for="certificate_serial_number">Numer seryjny certyfikatu:</label>
         <input type="text" id="certificate_serial_number" v-model="form.certificate_serial_number" required />
       </div>
       <div>
-        <label for="name_in_organisation">Name in Organisation:</label>
+        <label for="name_in_organisation">Dane osobowe:</label>
         <input type="text" id="name_in_organisation" v-model="form.name_in_organisation" required />
       </div>
-      <button type="submit">{{ isEdit ? 'Update' : 'Submit' }}</button>
-      <button type="button" @click="goBack">Back</button>
+      <button type="submit">{{ isEdit ? 'Zapisz' : 'Zapisz' }}</button>
+      <button type="button" @click="goBack">Powrót</button>
     </form>
   </div>
 </template>

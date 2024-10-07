@@ -6,52 +6,58 @@
         <button @click="toggleForm('register')" :class="{ active: formType === 'register' }">Register</button>
       </div>
       <form v-if="formType === 'login'" @submit.prevent="submitLogin">
-        <h2>Login</h2>
+        <h2>Zaloguj</h2>
         <div>
-          <label for="loginUsername">Username:</label>
-          <input type="text" id="loginUsername" v-model="loginForm.username" required>
+          <label for="loginUsername">Login:</label>
+          <input type="text" id="loginUsername" v-model="loginForm.login" required>
         </div>
         <div>
-          <label for="loginPassword">Password:</label>
+          <label for="loginPassword">Hasło:</label>
           <input type="password" id="loginPassword" v-model="loginForm.password" required>
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Zaloguj</button>
       </form>
       <form v-if="formType === 'register'" @submit.prevent="submitRegister">
-        <h2>Register</h2>
+        <h2>Zarejestruj</h2>
         <div>
-          <label for="registerUsername">Username:</label>
-          <input type="text" id="registerUsername" v-model="registerForm.username" required>
+          <label for="registerLogin">Login:</label>
+          <input type="text" id="registerLogin" v-model="registerForm.login" required>
         </div>
         <div>
-          <label for="registerPassword">Password:</label>
+          <label for="registerPassword">Hasło:</label>
           <input type="password" id="registerPassword" v-model="registerForm.password" required>
         </div>
         <div>
-          <label for="registerConfirmPassword">Confirm Password:</label>
+          <label for="registerConfirmPassword">Powtórz hasło:</label>
           <input type="password" id="registerConfirmPassword" v-model="registerForm.confirmPassword" required>
         </div>
-        <button type="submit">Register</button>
+        <button type="submit">Zarejestruj się</button>
       </form>
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { eventBus } from '@/eventBus'; // Import eventBus
+
 export default {
   name: 'LoginService',
   data() {
     return {
       formType: this.$route.path === '/login' ? 'login' : 'register',
       loginForm: {
-        username: '',
+        login: '',
         password: ''
       },
       registerForm: {
-        username: '',
+        login: '',
         password: '',
         confirmPassword: ''
-      }
+      },
+      errorMessage: null
     };
   },
   methods: {
@@ -59,57 +65,140 @@ export default {
       this.formType = type;
       this.$router.push(`/${type}`);
     },
-    submitLogin() {
-      const payload = {
-        email: this.loginForm.email,
-        password: this.loginForm.password
-      };
-      fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      })
-          .then(response => response.json())
-          .then(data => {
-            console.log('Login successful', data);
-          })
-          .catch(error => {
-            console.error('Login error:', error);
-          });
+    async submitLogin() {
+      try {
+        const response = await fetch('/api/authentication/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(this.loginForm)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Network response was not ok: ${errorText}`);
+        }
+
+        const result = await response.text();
+        console.log(result);
+
+        const role = response.headers.get('frontRole');
+        const username = response.headers.get('username'); // Pobranie username z nagłówka
+
+        eventBus.emit('roleUpdate', role); // Emitowanie roli i nazwy użytkownika
+        eventBus.emit('usernameUpdate', username );
+        //eventBus.emit('roleBlock', role );
+
+        this.$router.push('/Cycles');
+      } catch (error) {
+        console.error('Login error:', error);
+        this.errorMessage = 'Złe dane logowania. Spróbuj ponownie.';
+      }
     },
-    submitRegister() {
+    async submitRegister() {
       if (this.registerForm.password !== this.registerForm.confirmPassword) {
         alert('Passwords do not match');
         return;
       }
-      const payload = {
-        email: this.registerForm.email,
-        password: this.registerForm.password
-      };
-      fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      })
-          .then(response => response.json())
-          .then(data => {
-            console.log('Registration successful', data);
+      try {
+        const response = await fetch('/api/authentication/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            login: this.registerForm.login,
+            password: this.registerForm.password
           })
-          .catch(error => {
-            console.error('Registration error:', error);
-          });
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Network response was not ok: ${errorText}`);
+        }
+
+        const result = await response.json();
+        console.log('Registration successful', result);
+        // Optional: Redirect to login page after successful registration
+        this.$router.push('/login');
+      } catch (error) {
+        console.error('Registration error:', error);
+        this.errorMessage = 'Registration failed. Please try again.';
+      }
     }
   }
 };
 </script>
 
 <style scoped>
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.button-group button.active {
+  background-color: #007bff;
+  color: white;
+}
+
 form {
   width: 100%;
 }
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  margin-top: 15px;
+}
 </style>
-<style src="@/assets/forms.css"></style>

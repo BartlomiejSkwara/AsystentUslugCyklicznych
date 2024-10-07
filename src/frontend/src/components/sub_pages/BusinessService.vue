@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h1 style="margin-bottom: 20px;">Business Services List</h1>
+    <h1 style="margin-bottom: 20px;">Lista firm oferujących płatności cykliczne</h1>
     <div class="container">
-      <router-link to="/add-business" class="add-button">Add new Business Service</router-link>
+      <router-link to="/add-business" class="add-button">Dodaj nową firmę</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
-        <input type="text" class="input" v-model="searchFields.name" placeholder="Insert name" style="margin-bottom: 10px; margin-right: 10px;">
+        <input type="text" class="input" v-model="searchFields.name" placeholder="Nazwa" style="margin-bottom: 10px; margin-right: 10px;">
         <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
-          <input type="text" class="input" v-model="searchFields.nip" placeholder="Insert NIP" style="margin-bottom: 10px; margin-right: 10px;">
-          <input type="text" class="input" v-model="searchFields.regon" placeholder="Insert REGON" style="margin-bottom: 10px; margin-right: 10px;">
+          <input type="text" class="input" v-model="searchFields.nip" placeholder="NIP" style="margin-bottom: 10px; margin-right: 10px;">
+          <input type="text" class="input" v-model="searchFields.regon" placeholder="REGON" style="margin-bottom: 10px; margin-right: 10px;">
         </div>
         <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>
       </div>
@@ -16,13 +16,13 @@
       <thead>
       <tr>
         <th>ID</th>
-        <th>Name</th>
-        <th>Address</th>
-        <th>Contact Data</th>
-        <th>Comments</th>
+        <th>Nazwa</th>
+        <th>Adres</th>
+        <th>Dane kontaktowe</th>
+        <th>Opis</th>
         <th>NIP</th>
         <th>REGON</th>
-        <th>Actions</th>
+        <th>Działania</th>
       </tr>
       </thead>
       <tbody>
@@ -38,8 +38,8 @@
         <td>{{ business.nip }}</td>
         <td>{{ business.regon }}</td>
         <td>
-          <button class="action-button edit-button" @click="editBusiness(business.idBusiness)">Edit</button>
-          <button class="action-button delete-button" @click="deleteBusiness(business.idBusiness)">Delete</button>
+          <button class="action-button edit-button" @click="editBusiness(business.idBusiness)">Edytuj</button>
+          <button class="action-button delete-button" @click="deleteBusiness(business.idBusiness)">Usuń</button>
         </td>
       </tr>
       </tbody>
@@ -51,17 +51,17 @@
         <span class="close" @click="closeModal">&times;</span>
         <h2>Contact Data Details</h2>
         <div v-if="contactDataDetails">
-          <p><strong>Emails:</strong></p>
+          <p><strong>Emaile:</strong></p>
           <ul>
             <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
           </ul>
-          <p><strong>Phone Numbers:</strong></p>
+          <p><strong>Numery telefonów:</strong></p>
           <ul>
             <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
           </ul>
         </div>
         <div v-else>
-          <p>Loading...</p>
+          <p>Wczytywanie...</p>
         </div>
       </div>
     </div>
@@ -81,7 +81,8 @@ export default {
       },
       showAdditionalFields: false,
       showModal: false,
-      contactDataDetails: null
+      contactDataDetails: null,
+
     };
   },
   computed: {

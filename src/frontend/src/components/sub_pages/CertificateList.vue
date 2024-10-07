@@ -1,30 +1,29 @@
 <template>
   <div>
-    <h1 style="margin-bottom: 20px;">Certificates List</h1>
+    <h1 style="margin-bottom: 20px;">Lista certyfikatów</h1>
     <div class="container">
-      <button @click="openAddCertificateDialog" class="add-button">Add new Certificate</button>
-      <input type="text" class="input" v-model="search" placeholder="Insert certificate serial number" style="margin-bottom: 10px;">
+      <button @click="openAddCertificateDialog" class="add-button">Dodaj nowy certifikat</button>
+      <input type="text" class="input" v-model="search" placeholder="Numer seryjny" style="margin-bottom: 10px;">
     </div>
-    <!-- Add Certificate Dialog -->
     <div v-if="showAddCertificateDialog" class="dialog-overlay">
       <div class="dialog">
-        <button class="margin" @click="chooseManualEntry">Manual Entry</button>
-        <button class="margin" @click="chooseFileUpload">Upload from File</button>
-        <button class="margin" @click="closeAddCertificateDialog">Cancel</button>
+        <button class="margin" @click="chooseManualEntry">Wprowadź ręcznie</button>
+        <button class="margin" @click="chooseFileUpload">Wgraj plik</button>
+        <button class="margin" @click="closeAddCertificateDialog">Anuluj</button>
       </div>
     </div>
     <table>
       <thead>
       <tr>
-        <th>ID Certificate</th>
-        <th>ID Service</th>
-        <th>Valid From</th>
-        <th>Valid To</th>
-        <th>Card Number</th>
-        <th>Card Type</th>
-        <th>Certificate Serial Number</th>
-        <th>Name in Organisation</th>
-        <th>Actions</th>
+        <th>ID Certyfikatu</th>
+        <th>ID Płatności</th>
+        <th>Data rozpoczęcia</th>
+        <th>Data zakończenia</th>
+        <th>Numer karty</th>
+        <th>Typ karty</th>
+        <th>Numer seryjny certyfikatu</th>
+        <th>Dane osobowe</th>
+        <th>Działania</th>
       </tr>
       </thead>
       <tbody>
@@ -38,8 +37,8 @@
         <td>{{ certificate.certificate_serial_number }}</td>
         <td>{{ certificate.name_in_organisation }}</td>
         <td>
-          <button class="action-button edit-button" @click="editCertificate(certificate.id_certificate)">Edit</button>
-          <button class="action-button delete-button" @click="deleteCertificate(certificate.id_certificate)">Delete</button>
+          <button class="action-button edit-button" @click="editCertificate(certificate.id_certificate)">Edytuj</button>
+          <button class="action-button delete-button" @click="deleteCertificate(certificate.id_certificate)">Usuń</button>
         </td>
       </tr>
       </tbody>
@@ -79,38 +78,38 @@ export default {
           console.error("There has been a problem with your fetch operation:", error);
         });
 
-    this.certificates = [
-      {
-        id_certificate: 1,
-        id_service: 101,
-        valid_from: '2023-01-01T00:00:00Z',
-        valid_to: '2024-01-01T00:00:00Z',
-        card_number: '1234567890',
-        card_type: 'Type A',
-        certificate_serial_number: 'ABC123',
-        name_in_organisation: 'John Doe'
-      },
-      {
-        id_certificate: 2,
-        id_service: 102,
-        valid_from: '2022-05-15T00:00:00Z',
-        valid_to: '2023-05-15T00:00:00Z',
-        card_number: '0987654321',
-        card_type: 'Type B',
-        certificate_serial_number: 'DEF456',
-        name_in_organisation: 'Jane Smith'
-      },
-      {
-        id_certificate: 3,
-        id_service: 103,
-        valid_from: '2021-08-20T00:00:00Z',
-        valid_to: '2022-08-20T00:00:00Z',
-        card_number: '1122334455',
-        card_type: 'Type C',
-        certificate_serial_number: 'GHI789',
-        name_in_organisation: 'Jim Beam'
-      }
-    ];
+    // this.certificates = [
+    //   {
+    //     id_certificate: 1,
+    //     id_service: 101,
+    //     valid_from: '2023-01-01T00:00:00Z',
+    //     valid_to: '2024-01-01T00:00:00Z',
+    //     card_number: '1234567890',
+    //     card_type: 'Type A',
+    //     certificate_serial_number: 'ABC123',
+    //     name_in_organisation: 'John Doe'
+    //   },
+    //   {
+    //     id_certificate: 2,
+    //     id_service: 102,
+    //     valid_from: '2022-05-15T00:00:00Z',
+    //     valid_to: '2023-05-15T00:00:00Z',
+    //     card_number: '0987654321',
+    //     card_type: 'Type B',
+    //     certificate_serial_number: 'DEF456',
+    //     name_in_organisation: 'Jane Smith'
+    //   },
+    //   {
+    //     id_certificate: 3,
+    //     id_service: 103,
+    //     valid_from: '2021-08-20T00:00:00Z',
+    //     valid_to: '2022-08-20T00:00:00Z',
+    //     card_number: '1122334455',
+    //     card_type: 'Type C',
+    //     certificate_serial_number: 'GHI789',
+    //     name_in_organisation: 'Jim Beam'
+    //   }
+    // ];
   },
   methods: {
     formatDate(date) {

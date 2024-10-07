@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1>Your site to manage recurring payments!</h1>
+    <h1>Twoja strona do zarządzania płatnościami cyklicznymi</h1>
+    <br>
+    <h3>Zaloguj się aby kontynuować</h3>
   </div>
 </template>
 

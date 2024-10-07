@@ -1,48 +1,48 @@
 <template>
   <div>
-    <h1>{{ formMode === 'edit' ? 'Edit User' : 'Add New User' }}</h1>
+    <h1>{{ formMode === 'edit' ? 'Edytuj użytkownika' : 'Dodaj nowego użytkownika' }}</h1>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="name">Name:</label>
+        <label for="name">Imię:</label>
         <input type="text" id="name" v-model="form.name" required />
       </div>
       <div>
-        <label for="surname">Surname:</label>
+        <label for="surname">Nazwisko:</label>
         <input type="text" id="surname" v-model="form.surname" required />
       </div>
       <div>
-        <label>Emails:</label>
+        <label>Emaile:</label>
         <div v-for="(email, index) in form.emails" :key="index">
-          <input type="email" v-model="form.emails[index]" placeholder="Enter email" required />
-          <button type="button" @click="removeEmail(index)">Remove</button>
+          <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" required />
+          <button type="button" @click="removeEmail(index)">Usuń</button>
         </div>
-        <button type="button" @click="addEmail">Add Email</button>
+        <button type="button" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
-        <label>Phone Numbers: (max 16 digits)</label>
+        <label>Numery telefonów: (max 16 znaków)</label>
         <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Enter phone number" required />
-          <button type="button" @click="removePhoneNumber(index)">Remove</button>
+          <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" required />
+          <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
-        <button type="button" @click="addPhoneNumber">Add Phone Number</button>
+        <button type="button" @click="addPhoneNumber">Dodaj nowy telefon</button>
       </div>
       <div>
-        <label for="hasPolishPESEL">Has Polish PESEL:</label>
+        <label for="hasPolishPESEL">Polski PESEL?:</label>
         <select id="hasPolishPESEL" v-model="form.hasPolishPESEL">
-          <option :value="true">Yes</option>
-          <option :value="false">No</option>
+          <option :value="true">Tak</option>
+          <option :value="false">Nie</option>
         </select>
       </div>
       <div v-if="form.hasPolishPESEL">
-        <label for="taxIdentificationNumber">Tax ID (exactly 11 digits):</label>
+        <label for="taxIdentificationNumber">PESEL (dokładnie 11 znaków):</label>
         <input type="text" id="taxIdentificationNumber" v-model="form.taxId" />
       </div>
       <div>
-        <label for="comments">Comments:</label>
+        <label for="comments">Dodatkowy opis:</label>
         <input type="text" id="comments" v-model="form.comments" />
       </div>
-      <button type="submit">Save</button>
-      <button type="button" @click="goBack">Back</button>
+      <button type="submit">Zapisz</button>
+      <button type="button" @click="goBack">Powrót</button>
     </form>
   </div>
 </template>
@@ -52,15 +52,15 @@ export default {
   name: 'UserForm',
   data() {
     return {
-      formMode: 'add', // 'edit' for editing existing user
+      formMode: 'add',
       form: {
         idServiceUser: null,
         name: '',
         surname: '',
-        emails: [''], // Initialize with one empty field
-        phoneNumbers: [''], // Initialize with one empty field
-        hasPolishPESEL: false, // Default value for select dropdown (boolean)
-        taxId: '', // Initialize as empty string for consistency
+        emails: [''],
+        phoneNumbers: [''],
+        hasPolishPESEL: false,
+        taxId: '',
         comments: ''
       }
     };
@@ -74,7 +74,7 @@ export default {
   watch: {
     'form.hasPolishPESEL': function(newValue) {
       if (!newValue) {
-        this.form.taxId = null; // Set taxId to null if hasPolishPESEL is set to false
+        this.form.taxId = null;
       }
     }
   },
@@ -87,7 +87,7 @@ export default {
             this.form.name = user.name || '';
             this.form.surname = user.surname || '';
             this.form.hasPolishPESEL = user.hasPolishPESEL !== undefined ? user.hasPolishPESEL : false;
-            this.form.taxId = user.taxId || null; // Ensure taxId is properly handled as null or actual value
+            this.form.taxId = user.taxId || null;
             this.form.comments = user.comments || '';
 
             if (user.contactData) {
@@ -119,15 +119,14 @@ export default {
       }
     },
     submitForm() {
-      // Prepare the payload
       const payload = {
         name: this.form.name,
         surname: this.form.surname,
-        hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0, // Convert boolean to bit (1/0)
+        hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
         comments: this.form.comments,
         emails: this.form.emails,
         phoneNumbers: this.form.phoneNumbers,
-        taxId: this.form.hasPolishPESEL ? this.form.taxId : null // Ensure taxId is null if hasPolishPESEL is false
+        taxId: this.form.hasPolishPESEL ? this.form.taxId : null
       };
 
       const url = this.formMode === 'add'
@@ -143,7 +142,7 @@ export default {
       })
           .then(response => response.text())
           .then(() => {
-            this.$router.push('/ServiceUser'); // Redirect to user list
+            this.$router.push('/ServiceUser');
           })
           .catch(error => {
             console.error('Error saving user:', error);
