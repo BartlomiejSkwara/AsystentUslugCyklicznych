@@ -143,6 +143,7 @@
 </template>
 
 <script>
+import { getCookie, refreshCSRF } from '@/utility';
 export default {
   name: 'ServiceUserList',
   data() {
@@ -192,6 +193,7 @@ export default {
     editUser(id) {
       const user = this.users.find(u => u.idServiceUser === id);
       if (user) {
+      
         this.$router.push({
           path: '/add-user',
           query: {
@@ -206,26 +208,47 @@ export default {
         });
       }
     },
-    deleteUser(id) {
+
+    async deleteUser(id) {
+
       if (confirm("Are you sure you want to delete this user?")) {
-        fetch(`/api/serviceUser/delete/${id}`, {
-          method: 'DELETE'
-        })
-            .then(response => {
-              if (!response.ok) {
-                if (response.status === 409) {
-                  throw new Error('Cannot delete, assigned cycle');
-                } else {
-                  throw new Error('Network response was not ok');
-                }
-              }
-              this.users = this.users.filter(user => user.idServiceUser !== id);
-            })
-            .catch(error => {
-              console.error('There has been a problem with your fetch operation:', error);
-              alert(error.message);
-            });
+        
+        try{
+          const cookie = getCookie("XSRF-TOKEN");
+          const response = await fetch(`/api/serviceUser/delete/${id}`, {
+            method: 'DELETE',
+            headers:{
+              'X-XSRF-TOKEN':cookie
+            }
+          });
+                  
+          // .then(response => {
+          if (!response.ok) {
+            if (response.status === 409) {
+              throw new Error('Cannot delete, assigned cycle');
+            } else {
+              throw new Error('Network response was not ok');
+            }
+          }
+          this.users = this.users.filter(user => user.idServiceUser !== id);
+          alert('Service user deleted successfully!');
+
+            // })
+        }catch (error){
+          console.error('There has been a problem with your fetch operation:', error);
+          alert(error.message);
+        }
+        refreshCSRF()
+
+
+            // .catch(error => {
+
+            // });
+      
+      
       }
+
+
     },
     // TO JUŻ BEZ SENSU JAK NIE MA /api/cyclicalservice/getAllByUser?userID=${userId}
     // toggleCycles(userId) {

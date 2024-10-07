@@ -28,6 +28,11 @@ public class AuthenticationController {
     private final ValidationUtility validationUtility;
     private final JWTService jwtService;
     private final AccountManagementService accountManagementService;
+
+    @GetMapping("/requestToken")
+    public ResponseEntity<String> requestToken(){
+        return ResponseEntity.ok("ok");
+    }
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody() LoginValidationRecord loginValidationRecord, BindingResult bindingResult, HttpServletResponse httpServletResponse){
         if(bindingResult.hasErrors()){

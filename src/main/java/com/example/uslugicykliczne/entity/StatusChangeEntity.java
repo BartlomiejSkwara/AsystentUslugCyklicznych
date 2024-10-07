@@ -28,7 +28,7 @@ public class StatusChangeEntity {
     private StatusTypeEntity statusTypeEntity;
 
 
-    @ManyToOne
-    @JoinColumn(name = "idCyclicalService", nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "idCyclicalService", nullable = true)
     private CyclicalServiceEntity cyclicalService;
 }

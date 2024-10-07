@@ -5,10 +5,13 @@ import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
 import com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
 import com.example.uslugicykliczne.dataTypes.StatusEnum;
+import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection;
 import com.example.uslugicykliczne.repo.StatusChangeRepo;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +30,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CyclicalServiceController {
 
+
+
     public record Comment(Optional<@Size(max = 255, message = "Specified comment is too long")String> comment){};
     public record StatusAndComment(Optional<@Size(max = 255, message = "Specified comment is too long")String> comment,
                                    @NotNull(message = "Nie określono statusu")
@@ -36,6 +41,8 @@ public class CyclicalServiceController {
     private final CyclicalServiceRepo cyclicalServiceRepo;
     private final ValidationUtility validationUtility;
     private final CyclicalServiceService cyclicalServiceService;
+    private final StatusChangeRepo statusChangeRepo;
+
 
 
 
@@ -127,6 +134,7 @@ public class CyclicalServiceController {
     ///TODO masowe usuwanie certyfikatów
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete (@PathVariable Integer id ){
+        statusChangeRepo.deleteByCyclicalService(id);
         cyclicalServiceRepo.deleteById(id);
         return ResponseEntity.ok().body("Cyclical service was deleted");
 

@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { refreshCSRF } from '@/utility';
+
 export default {
   name: 'CertificateList',
   data() {
@@ -151,7 +153,9 @@ export default {
             .catch(error => {
               console.error('There has been a problem with your fetch operation:', error);
             });
+        refreshCSRF()      
       }
+
     },
     openAddCertificateDialog() {
       this.showAddCertificateDialog = true;

@@ -5,6 +5,7 @@ import com.example.uslugicykliczne.security.JPAUserDetailsService;
 import com.example.uslugicykliczne.security.JWTAuthFilter;
 import com.example.uslugicykliczne.security.SPATokenRequestHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,8 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
+import java.time.Duration;
+
 @RequiredArgsConstructor
 @Configuration
 //@EnableWebSecurity(debug = true)
@@ -38,15 +41,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 //        httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+        final CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+
+        repo.setCookieCustomizer((x) ->
+                x
+                    .sameSite(Cookie.SameSite.LAX.attributeValue())
+//                x.maxAge(Duration.ofMinutes(30))
+//                        .httpOnly(true)
+        );
+
+//        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwt",token);
+//        cookie.setHttpOnly(true);
+//        cookie.setAttribute("SameSite","Strict");
+//        cookie.setPath("/");
+//        httpServletResponse.addCookie(cookie);
+
         httpSecurity.csrf(httpSecurityCsrfConfigurer ->
                 httpSecurityCsrfConfigurer
                         .ignoringRequestMatchers(
                             "/api/authentication/login",
                             "/api/authentication/logout")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRepository(repo)
                         .csrfTokenRequestHandler(new SPATokenRequestHandler())
         );
         httpSecurity.addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class);
+
+
 
         httpSecurity.sessionManagement(httpSecuritySessionManagementConfigurer ->
                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -62,7 +82,8 @@ public class SecurityConfig {
                             "/api/cyclicalservice/getAll",
                             "/api/cyclicalservice/renewalRequest/*",
                             "/api/cyclicalservice/cancelRequest/*",
-                            "api/cyclicalservice/statusChangeHistory/*"
+                            "/api/cyclicalservice/statusChangeHistory/*",
+                            "/api/authentication/requestToken"
                             ).hasAnyRole("user","editor","admin")
 
                     .requestMatchers(

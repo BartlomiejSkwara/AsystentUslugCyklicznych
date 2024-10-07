@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { getCookie, refreshCSRF } from '@/utility';
 export default {
   name: 'BusinessService',
   data() {
@@ -121,26 +122,36 @@ export default {
         }
       });
     },
-    deleteBusiness(idBusiness) {
+    async deleteBusiness(idBusiness) {
       if (confirm('Are you sure you want to delete this business service?')) {
-        fetch(`/api/business/delete/${idBusiness}`, {
-          method: 'DELETE'
-        })
-            .then(response => {
-              if (!response.ok) {
-                if (response.status === 409) {
-                  throw new Error('Cannot delete, assigned cycle');
-                } else {
-                  throw new Error('Network response was not ok');
-                }
-              }
-              this.businesses = this.businesses.filter(business => business.idBusiness !== idBusiness);
-              alert('Business deleted successfully!');
-            })
-            .catch(error => {
+
+        try{
+          const cookie = getCookie("XSRF-TOKEN");
+          const response = await fetch(`/api/business/delete/${idBusiness}`, {
+            method: 'DELETE',
+            headers:{
+              'X-XSRF-TOKEN':cookie
+            }
+          })
+
+          //.then(response => {
+          if (!response.ok) {
+            if (response.status === 409) {
+              throw new Error('Cannot delete, assigned cycle');
+            } else {
+              throw new Error('Network response was not ok');
+            }
+          }
+          this.businesses = this.businesses.filter(business => business.idBusiness !== idBusiness);
+          alert('Business deleted successfully!');
+          //})
+        }catch(error){
+          // .catch(error => {
               console.error('There has been a problem with your fetch operation:', error);
               alert(error.message);
-            });
+            // });
+        }
+        refreshCSRF();
       }
     },
     viewContactData(id) {

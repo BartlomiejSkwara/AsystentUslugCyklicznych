@@ -36,7 +36,7 @@ SET SQL_SAFE_UPDATES = 1;
 
 LOCK TABLES `account_data` WRITE;
 /*!40000 ALTER TABLE `account_data` DISABLE KEYS */;
-INSERT INTO `account_data` VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_editor','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO'),(3,'ROLE_user','user','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO');
+INSERT INTO `account_data` (id_login_credentials,role,username,hashed_password) VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_editor','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO'),(3,'ROLE_user','user','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO');
 /*!40000 ALTER TABLE `account_data` ENABLE KEYS */;
 UNLOCK TABLES;
 

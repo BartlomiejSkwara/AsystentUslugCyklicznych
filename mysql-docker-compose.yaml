@@ -5,7 +5,7 @@ services:
     container_name: mysql-uslugi-8.0.33
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 123
+        MYSQL_ROOT_PASSWORD: p2lain4old67java39fil8e
       MYSQL_DATABASE: uslugi_cykliczne
       MYSQL_USER: krisent
       MYSQL_PASSWORD: krisent

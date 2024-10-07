@@ -64,6 +64,8 @@
 </template>
 
 <script>
+import { getCookie, refreshCSRF } from '@/utility';
+
 export default {
   data() {
     return {
@@ -83,6 +85,9 @@ export default {
       }
     };
   },
+  mounted() {
+    refreshCSRF()
+  },
   methods: {
     submitForm() {
       const payload = {
@@ -99,11 +104,13 @@ export default {
         businessId: this.form.businessId,
         serviceUserId: this.form.serviceUserId
       };
+      const cookie = getCookie("XSRF-TOKEN");
 
       fetch('/api/cyclicalservice/insertBody', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN':cookie
         },
         body: JSON.stringify(payload)
       })

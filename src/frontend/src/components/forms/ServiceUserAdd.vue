@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { getCookie, refreshCSRF } from '@/utility';
 export default {
   name: 'UserForm',
   data() {
@@ -68,12 +69,16 @@ export default {
   mounted() {
     if (this.$route.query.idServiceUser) {
       this.formMode = 'edit';
+
       this.fetchUser();
+    }else{
+      refreshCSRF()
     }
   },
   watch: {
     'form.hasPolishPESEL': function(newValue) {
       if (!newValue) {
+        
         this.form.taxId = null;
       }
     }
@@ -128,15 +133,22 @@ export default {
         phoneNumbers: this.form.phoneNumbers,
         taxId: this.form.hasPolishPESEL ? this.form.taxId : null
       };
-
+      
       const url = this.formMode === 'add'
           ? '/api/serviceUser/insertBody'
           : `/api/serviceUser/update/${this.form.idServiceUser}`;
 
+      const cookie = getCookie("XSRF-TOKEN");
+      // console.log("Fetched cookie:");
+      // console.log(document.cookie);
+      // console.log(cookie);
+
+    
       fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN':cookie
         },
         body: JSON.stringify(payload)
       })

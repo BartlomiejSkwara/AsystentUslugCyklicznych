@@ -59,9 +59,11 @@
 
 <script>
 import { eventBus } from '@/eventBus.js'; // Import eventBus
+import { getCookie, refreshCSRF } from '@/utility';
 
 export default {
   name: 'CyclesList',
+  
   data() {
     return {
       cycles: [],
@@ -87,6 +89,7 @@ export default {
   beforeUnmount() {
     eventBus.off('roleUpdate', this.updateUserRole);
   },
+
   methods: {
     toggleSearchFields() {
       this.showAdditionalFields = !this.showAdditionalFields;
@@ -140,10 +143,18 @@ export default {
           });
     },
     async deleteCycle(id) {
+
       if (confirm("Are you sure you want to delete this cycle?")) {
+       
+
         try {
+          const cookie = getCookie("XSRF-TOKEN");
+
           const response = await fetch(`/api/cyclicalservice/delete/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{
+            'X-XSRF-TOKEN':cookie
+            }
           });
 
           if (!response.ok) {
@@ -156,6 +167,8 @@ export default {
           console.error('There has been a problem with your fetch operation:', error);
           alert('There has been a problem with your fetch operation: ' + error.message);
         }
+
+       refreshCSRF()  
       }
     },
     updateUserRole(role) {
