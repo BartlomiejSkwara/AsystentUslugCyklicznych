@@ -1,6 +1,5 @@
 package com.example.uslugicykliczne.repo;
 
-import com.example.uslugicykliczne.dataTypes.BusinessProjection;
 import com.example.uslugicykliczne.entity.CertificateEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;

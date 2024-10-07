@@ -29,7 +29,6 @@ public interface ServiceUserRepo  extends ListCrudRepository<ServiceUserEntity,I
 
 
 
-
     default Optional<ServiceUserEntity> findUserWithContactDataById(int id){
         Optional<ServiceUserEntity> entity = findSingleJoinedEmailBy(id);
         if (entity != null && entity.isPresent()){

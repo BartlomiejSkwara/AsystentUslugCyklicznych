@@ -2,7 +2,6 @@ package com.example.uslugicykliczne.controller;
 
 
 import com.example.uslugicykliczne.ValidationUtility;
-import com.example.uslugicykliczne.dataTypes.BusinessProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceUserDTO;
 import com.example.uslugicykliczne.dataTypes.ServiceUserProjection;
 import com.example.uslugicykliczne.entity.ServiceUserEntity;

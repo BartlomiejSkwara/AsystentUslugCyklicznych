@@ -9,6 +9,8 @@ delete from cyclical_service;
 delete from business;
 delete from service_user;
 delete from contact_data;
+delete from status_type;
+delete from status_change;
 SET SQL_SAFE_UPDATES = 1;
 
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
@@ -34,7 +36,7 @@ SET SQL_SAFE_UPDATES = 1;
 
 LOCK TABLES `account_data` WRITE;
 /*!40000 ALTER TABLE `account_data` DISABLE KEYS */;
-INSERT INTO `account_data` VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_user','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO');
+INSERT INTO `account_data` VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_editor','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO'),(3,'ROLE_user','user','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO');
 /*!40000 ALTER TABLE `account_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -87,7 +89,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `cyclical_service` WRITE;
 /*!40000 ALTER TABLE `cyclical_service` DISABLE KEYS */;
-INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach'),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu'),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego'),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej'),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu'),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu');
+INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description,status,assigned_account_data_entity_id_login_credentials) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach',256,1),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu',256,1),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego',256,1),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej',256,1),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu',256,1),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu',256,1);
 /*!40000 ALTER TABLE `cyclical_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,10 +100,19 @@ UNLOCK TABLES;
 
 LOCK TABLES `certificate` WRITE;
 /*!40000 ALTER TABLE `certificate` DISABLE KEYS */;
-INSERT INTO `certificate` (id_certificate,id_cyclical_service,renewal_message_sent,renewed,valid_from,valid_to,card_number,card_type,certificate_serial_number,name_in_organisation) VALUES (1,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','15213412421142214',NULL),(2,2,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 5 day,'945322155213','PHYSICAL','32623523632',NULL),(3,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(4,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(5,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(6,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(7,1,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 4 day,'4215213','PHYSICAL','15213412421142214','CEO'),(8,3,_binary '',_binary '','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','15213412421142214',NULL),(9,3,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(10,3,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 6 day,'4215213','PHYSICAL','15213412421142214','CEO'),(11,4,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 9 day,'4215213','PHYSICAL','15213412421142214',NULL),(12,5,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 15 day,'251235132','PHYSICAL','1613451',NULL),(13,6,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 31 day,'8675987','PHYSICAL','4123124',NULL);
+INSERT INTO `certificate` (id_certificate,id_cyclical_service,renewal_message_sent,renewed,valid_from,valid_to,card_number,card_type,certificate_serial_number,name_in_organisation) VALUES (1,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','15213412421142214',NULL),(2,2,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 70 day,'945322155213','PHYSICAL','32623523632',NULL),(3,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(4,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(5,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(6,1,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(7,1,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 4 day,'4215213','PHYSICAL','15213412421142214','CEO'),(8,3,_binary '',_binary '','2024-12-31 15:53:16.000000','2026-12-31 15:53:16.000000','4215213','PHYSICAL','15213412421142214',NULL),(9,3,_binary '',_binary '','2024-12-31 15:53:16.000000','2024-08-10 15:53:16.000000','4215213','PHYSICAL','15213412421142214','CEO'),(10,3,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 6 day,'4215213','PHYSICAL','15213412421142214','CEO'),(11,4,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 9 day,'4215213','PHYSICAL','15213412421142214',NULL),(12,5,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 15 day,'251235132','PHYSICAL','1613451',NULL),(13,6,_binary '\0',_binary '\0','2024-12-31 15:53:16.000000',current_date+interval 31 day,'8675987','PHYSICAL','4123124',NULL);
 /*!40000 ALTER TABLE `certificate` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+--
+-- Dumping data for table `status_type`
+--
+LOCK TABLES `status_type` WRITE;
+/*!40000 ALTER TABLE `status_type` DISABLE KEYS */;
+INSERT INTO `status_type` (id_status_type,status_name) VALUES (1,"AWAITING_RENEWAL"),(2,"PRO_FORM_SENT"),(4,"MARKED_FOR_CANCEL"),(8,"CANCELED"),(16,"MARKED_AS_NON_RENEWABLE"),(32,"RENEWED_ELSEWHERE"),(64,"PAYMENT_DONE"),(128,"INVOICE_SENT"),(256,"RENEWED");
+/*!40000 ALTER TABLE `status_type` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 

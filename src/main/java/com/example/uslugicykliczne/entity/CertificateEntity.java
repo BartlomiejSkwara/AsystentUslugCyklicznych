@@ -44,4 +44,5 @@ public class CertificateEntity {
     private CyclicalServiceEntity cyclicalServiceEntity;
 
 
+
 }

@@ -12,10 +12,10 @@ public class AccountDataEntity {
     @Column(name = "idLoginCredentials")
     private int idLoginCredentials;
     @Basic
-    @Column(name = "username",nullable = false, length = 40)
+    @Column(name = "username",nullable = false, length = 40, unique = true)
     private String username;
     @Basic
-    @Column(name = "hashedPassword",nullable = false, length = 120) /// TODO ustal maks dlugosc gdy bedziesz wiedział jaki algorytm hashowania uzyjesz
+    @Column(name = "hashedPassword",nullable = false, length = 120)
     private String hashedPassword;
     @Basic
     @Column(name = "role",nullable = false, length = 40)

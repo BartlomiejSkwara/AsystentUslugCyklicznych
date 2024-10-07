@@ -37,6 +37,7 @@ public class SecurityConfig {
     private final CsrfCookieFilter csrfCookieFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//        httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
         httpSecurity.csrf(httpSecurityCsrfConfigurer ->
                 httpSecurityCsrfConfigurer
                         .ignoringRequestMatchers(
@@ -60,8 +61,10 @@ public class SecurityConfig {
                             "/api/cyclicalservice/getAll?days=${days}",
                             "/api/cyclicalservice/getAll",
                             "/api/cyclicalservice/renewalRequest/*",
-                            "/api/cyclicalservice/cancelRequest/*"
-                    ).hasAnyRole("user","editor","admin")
+                            "/api/cyclicalservice/cancelRequest/*",
+                            "api/cyclicalservice/statusChangeHistory/*"
+                            ).hasAnyRole("user","editor","admin")
+
                     .requestMatchers(
                             "/api/cyclicalservice/getAllByUser",
                             "/api/cyclicalservice/getAllCancelRequests",
@@ -75,7 +78,8 @@ public class SecurityConfig {
                             "/api/business/get/**",
                             "/api/business/insertBody",
                             "/api/business/getAllByUser"
-                    ).hasAnyRole("editor","admin")
+                            ).hasAnyRole("editor","admin")
+
                     .anyRequest().hasRole("admin")
                 );
         //httpSecurity.authenticationProvider(authenticationProvider());
