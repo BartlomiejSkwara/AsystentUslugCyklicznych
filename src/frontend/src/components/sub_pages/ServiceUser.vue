@@ -1,12 +1,12 @@
 <template>
   <div>
-    <h1 style="margin-bottom: 20px;">User List</h1>
+    <h1 style="margin-bottom: 20px;">Lista użytkowników</h1>
     <div class="container">
-      <router-link to="/add-user" class="add-button">Add new User</router-link>
+      <router-link to="/add-user" class="add-button">Dodaj nowego użytkownika</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
-        <input type="text" class="input" v-model="searchFields.surname" placeholder="Insert surname" style="margin-bottom: 10px; margin-right: 10px;">
+        <input type="text" class="input" v-model="searchFields.surname" placeholder="Nazwisko" style="margin-bottom: 10px; margin-right: 10px;">
         <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
-          <input type="text" class="input" v-model="searchFields.name" placeholder="Insert name" style="margin-bottom: 10px; margin-right: 10px;">
+          <input type="text" class="input" v-model="searchFields.name" placeholder="Imię" style="margin-bottom: 10px; margin-right: 10px;">
         </div>
         <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>
       </div>
@@ -15,13 +15,13 @@
       <thead>
       <tr>
         <th>ID</th>
-        <th>Name</th>
-        <th>Surname</th>
-        <th>Contact Data ID</th>
-        <th>Has Polish PESEL</th>
-        <th>Tax ID</th>
-        <th>Comments</th>
-        <th>Actions</th>
+        <th>Imię</th>
+        <th>Nazwisko</th>
+        <th>Kontakt</th>
+        <th>Polski PESEL?</th>
+        <th>PESEL</th>
+        <th>Dodatkowy opis</th>
+        <th>Działania</th>
       </tr>
       </thead>
       <tbody>
@@ -37,19 +37,19 @@
         <td>{{ user.taxIdentificationNumber }}</td>
         <td>{{ user.comments }}</td>
         <td>
-          <button class="action-button edit-button" @click="editUser(user.idServiceUser)">Edit</button>
-          <button class="action-button delete-button" @click="deleteUser(user.idServiceUser)">Delete</button>
-          <button class="action-button data-button" @click="toggleCycles(user.idServiceUser)">Cycles</button>
-          <button class="action-button data-button" @click="toggleBusinesses(user.idServiceUser)">Businesses</button>
+          <button class="action-button edit-button" @click="editUser(user.idServiceUser)">Edytuj</button>
+          <button class="action-button delete-button" @click="deleteUser(user.idServiceUser)">Usuń</button>
+<!--          <button class="action-button data-button" @click="toggleCycles(user.idServiceUser)">Cykle</button>-->
+<!--          <button class="action-button data-button" @click="toggleBusinesses(user.idServiceUser)">Firmy</button>-->
         </td>
       </tr>
       </tbody>
     </table>
 
     <div class="pagination">
-      <button :disabled="currentPage === 1" @click="prevPage">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button :disabled="currentPage === totalPages" @click="nextPage">Next</button>
+      <button :disabled="currentPage === 1" @click="prevPage">Poprzednia</button>
+      <span>Strona {{ currentPage }} z {{ totalPages }}</span>
+      <button :disabled="currentPage === totalPages" @click="nextPage">Następna</button>
     </div>
 
     <div v-if="showContactDataModal" class="modal">
@@ -227,46 +227,47 @@ export default {
             });
       }
     },
-    toggleCycles(userId) {
-      console.log('Toggling cycles for user ID:', userId); // Debugging
-      if (this.selectedUser === userId) {
-        this.selectedUser = null;
-        this.cyclicalServices = [];
-      } else {
-        this.selectedUser = userId;
-        fetch(`/api/cyclicalservice/getAllByUser?userID=${userId}`)
-            .then(response => response.json())
-            .then(data => {
-              console.log('Cyclical services data:', data); // Debugging
-              // Map the services to include businessName directly from the response
-              this.cyclicalServices = data.map(service => ({
-                ...service,
-                businessName: service.business.businessName
-              }));
-            })
-            .catch(error => {
-              console.error('Error fetching cyclical services:', error);
-            });
-      }
-    },
-    toggleBusinesses(userId) {
-      console.log('Toggling businesses for user ID:', userId); // Debugging
-      if (this.selectedBusinessUser === userId) {
-        this.selectedBusinessUser = null;
-        this.businesses = [];
-      } else {
-        this.selectedBusinessUser = userId;
-        fetch(`/api/business/getAllByUser?userID=${userId}`)
-            .then(response => response.json())
-            .then(data => {
-              console.log('Businesses data:', data); // Debugging
-              this.businesses = data;
-            })
-            .catch(error => {
-              console.error('Error fetching businesses:', error);
-            });
-      }
-    },
+    // TO JUŻ BEZ SENSU JAK NIE MA /api/cyclicalservice/getAllByUser?userID=${userId}
+    // toggleCycles(userId) {
+    //   console.log('Toggling cycles for user ID:', userId); // Debugging
+    //   if (this.selectedUser === userId) {
+    //     this.selectedUser = null;
+    //     this.cyclicalServices = [];
+    //   } else {
+    //     this.selectedUser = userId;
+    //     fetch(`/api/cyclicalservice/getAllByUser?userID=${userId}`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //           console.log('Cyclical services data:', data); // Debugging
+    //           // Map the services to include businessName directly from the response
+    //           this.cyclicalServices = data.map(service => ({
+    //             ...service,
+    //             businessName: service.business.businessName
+    //           }));
+    //         })
+    //         .catch(error => {
+    //           console.error('Error fetching cyclical services:', error);
+    //         });
+    //   }
+    // },
+    // toggleBusinesses(userId) {
+    //   console.log('Toggling businesses for user ID:', userId); // Debugging
+    //   if (this.selectedBusinessUser === userId) {
+    //     this.selectedBusinessUser = null;
+    //     this.businesses = [];
+    //   } else {
+    //     this.selectedBusinessUser = userId;
+    //     fetch(`/api/business/getAllByUser?userID=${userId}`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //           console.log('Businesses data:', data); // Debugging
+    //           this.businesses = data;
+    //         })
+    //         .catch(error => {
+    //           console.error('Error fetching businesses:', error);
+    //         });
+    //   }
+    // },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;

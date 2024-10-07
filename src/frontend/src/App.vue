@@ -3,7 +3,7 @@
     <SideBar class="col-3 sidebar"></SideBar>
     <div class="container-fluid ms-0 me-0">
       <div class="row">
-        <div class="col-3">s</div>
+        <div class="col-3">test</div>
         <div class="col-9 mx-auto p-4 py-md-5">
           <HeaderComponent></HeaderComponent>
             <router-view>

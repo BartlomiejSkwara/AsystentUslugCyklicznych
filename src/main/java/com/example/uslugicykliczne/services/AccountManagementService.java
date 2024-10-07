@@ -63,6 +63,7 @@ public class AccountManagementService {
 
         jwtService.addTokenToResponse(httpServletResponse, jwt);
         httpServletResponse.setHeader("frontRole",jwtService.retrieveSpecificClaim(jwt,claims -> claims.get("frontPerm")).toString());
+        httpServletResponse.setHeader("username", userDetails.getUsername());
 
     }
 

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h1>{{ formMode === 'edit' ? 'Edit Business Service' : 'Add New Business Service' }}</h1>
+    <h1>{{ formMode === 'edit' ? 'Edytuja dane firmy' : 'Dodaj nową firmę' }}</h1>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="name">Name:</label>
+        <label for="name">Nazwa:</label>
         <input type="text" id="name" v-model="form.name" required>
       </div>
       <div>
-        <label for="address">Address:</label>
+        <label for="address">Adres:</label>
         <input type="text" id="address" v-model="form.adres" required>
       </div>
       <div>
@@ -19,27 +19,27 @@
         <input type="text" id="regon" v-model="form.regon" required>
       </div>
       <div>
-        <label for="comments">Comments:</label>
+        <label for="comments">Opis:</label>
         <input type="text" id="comments" v-model="form.comments">
       </div>
       <div>
-        <label>Emails:</label>
+        <label>Emaile:</label>
         <div v-for="(email, index) in form.emails" :key="index">
-          <input type="text" v-model="form.emails[index]" placeholder="Enter email">
-          <button type="button" @click="removeEmail(index)">Remove</button>
+          <input type="text" v-model="form.emails[index]" placeholder="Wpisz email">
+          <button type="button" @click="removeEmail(index)">Usuń</button>
         </div>
-        <button type="button" @click="addEmail">Add Email</button>
+        <button type="button" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
-        <label>Phone Numbers: (max 16 digits)</label>
+        <label>Numer telefonu: (max 16 cyfr)</label>
         <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="text" v-model="form.phoneNumbers[index]" placeholder="Enter phone number">
-          <button type="button" @click="removePhoneNumber(index)">Remove</button>
+          <input type="text" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu">
+          <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
-        <button type="button" @click="addPhoneNumber">Add Phone Number</button>
+        <button type="button" @click="addPhoneNumber">Dodaj nowy numer telefonu</button>
       </div>
-      <button type="submit">Save</button>
-      <button type="button" @click="goBack">Back</button>
+      <button type="submit">Zapisz</button>
+      <button type="button" @click="goBack">Powrót</button>
     </form>
   </div>
 </template>

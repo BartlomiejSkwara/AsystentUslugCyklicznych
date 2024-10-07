@@ -1,60 +1,73 @@
 <template>
   <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark">
     <router-link to="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <svg class="bi pe-none me-2" width="40" height="32">
-      </svg>
-      <span class="fs-4">Your Virtual Assistant</span>
+      <svg class="bi pe-none me-2" width="40" height="32"></svg>
+      <span class="fs-4">Twój wirtualny asystent</span>
     </router-link>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
-      <li>
-        <router-link to="/ServiceUser" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Users
-        </router-link>
-      </li>
-      <li>
-        <router-link to="/Business" class="nav-link text-white">
-          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Businesses
-        </router-link>
-      </li>
-      <li>
+      <!-- Link do Cycles widoczny dla wszystkich zalogowanych użytkowników -->
+      <li v-if="hasRole(['ROLE_admin', 'ROLE_editor', 'ROLE_user'])">
         <router-link to="/Cycles" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Cycles
+          Cykle
         </router-link>
       </li>
-<!--      <li>-->
+      <!-- Link do ServiceUser widoczny tylko dla ROLE_admin i ROLE_editor -->
+      <li v-if="hasRole(['ROLE_admin', 'ROLE_editor'])">
+        <router-link to="/ServiceUser" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+          Użytkownicy
+        </router-link>
+      </li>
+      <!-- Link do Business widoczny tylko dla ROLE_admin i ROLE_editor -->
+      <li v-if="hasRole(['ROLE_admin', 'ROLE_editor'])">
+        <router-link to="/Business" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+          Firmy
+        </router-link>
+      </li>
+<!--  PODRZUCAMY PODSTRONĘ POD TO CZY NIE? (tyle że trzeba by było mnóstwo przerobić)-->
+<!--      <li v-if="hasRole(['ROLE_admin', 'ROLE_editor'])">-->
 <!--        <router-link to="/certificates" class="nav-link text-white">-->
 <!--          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>-->
-<!--          Certificates-->
+<!--          Certyfikaty-->
 <!--        </router-link>-->
 <!--      </li>-->
+
     </ul>
-<!--    <hr>-->
-<!--    <div class="dropdown">-->
-<!--      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">-->
-<!--        <strong>Current User</strong>-->
-<!--      </a>-->
-<!--      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">-->
-<!--        <li><a class="dropdown-item" href="#">Add new payment...</a></li>-->
-<!--        <li><hr class="dropdown-divider"></li>-->
-<!--        <li><a class="dropdown-item" href="#">Sign out</a></li>-->
-<!--      </ul>-->
-<!--    </div>-->
   </div>
 </template>
 
 <script>
+import { eventBus } from '@/eventBus';
+
 export default {
-  name:'SideBar',
-}
+  name: 'SideBar',
+  data() {
+    return {
+      userRole: 'ROLE_nobody' // Domyślna rola
+    };
+  },
+  methods: {
+    hasRole(roles) {
+      //console.log('Checking roles:', roles, 'User role:', this.userRole); // Debugging role check
+      return roles.includes(this.userRole);
+    }
+  },
+  created() {
+    //console.log('Sidebar created');
+    // Nasłuchuj zmiany roli z eventBus
+    eventBus.on('roleUpdate', (newRole) => {
+      this.userRole = newRole;
+      console.log('Role updated to:', this.userRole); // Debugging role update
+    });
+    // eventBus.emit('roleUpdate', this.userRole)
+    // console.log('Role emit:', this.userRole);
+  }
+};
 </script>
 
-<style>
+<style scoped>
+/* Twoje style */
 </style>
-
-
-

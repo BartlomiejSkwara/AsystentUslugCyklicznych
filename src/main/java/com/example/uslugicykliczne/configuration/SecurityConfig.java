@@ -57,6 +57,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/authentication/login").permitAll()
                     .requestMatchers("/api/authentication/logout").hasAnyRole("user","editor","admin")
                     .requestMatchers(
+                            "/api/cyclicalservice/getAll?days=${days}",
                             "/api/cyclicalservice/getAll",
                             "/api/cyclicalservice/renewalRequest/*",
                             "/api/cyclicalservice/cancelRequest/*"
