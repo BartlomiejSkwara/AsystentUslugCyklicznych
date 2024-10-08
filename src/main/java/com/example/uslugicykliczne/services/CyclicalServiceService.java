@@ -159,7 +159,17 @@ public class CyclicalServiceService {
     }
 
     public List<CyclicalServiceProjection> getAllFromNextNDays(int nDays) {
-        return cyclicalServiceRepo.customFindCyclicalProjectionsInNextNDays(nDays);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
+
+        if (userDetails.getRole().equals("ROLE_admin")||userDetails.getRole().equals("ROLE_editor")){
+            return cyclicalServiceRepo.customFindCyclicalProjectionsInNextNDays(nDays);
+        }
+
+        return  cyclicalServiceRepo.customFindCyclicalProjectionsInNextNDaysForWithUsername(nDays,authentication.getName());
+//        if(!authentication.getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+//            return List.of();
+
     }
 
 

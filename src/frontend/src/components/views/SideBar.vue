@@ -40,28 +40,28 @@
 </template>
 
 <script>
-import { eventBus } from '@/eventBus';
+// import { eventBus } from '@/eventBus';
 
 export default {
   name: 'SideBar',
   data() {
     return {
-      userRole: 'ROLE_nobody' // Domyślna rola
+      // userRole: 'ROLE_nobody' // Domyślna rola
     };
   },
   methods: {
     hasRole(roles) {
       //console.log('Checking roles:', roles, 'User role:', this.userRole); // Debugging role check
-      return roles.includes(this.userRole);
+      return roles.includes(this.$store.state.role);
     }
   },
   created() {
     //console.log('Sidebar created');
     // Nasłuchuj zmiany roli z eventBus
-    eventBus.on('roleUpdate', (newRole) => {
-      this.userRole = newRole;
-      console.log('Role updated to:', this.userRole); // Debugging role update
-    });
+    // eventBus.on('roleUpdate', (newRole) => {
+      // this.userRole = newRole;
+      // console.log('Sidebar Role updated to:', this.userRole); // Debugging role update
+    // });
     // eventBus.emit('roleUpdate', this.userRole)
     // console.log('Role emit:', this.userRole);
   }

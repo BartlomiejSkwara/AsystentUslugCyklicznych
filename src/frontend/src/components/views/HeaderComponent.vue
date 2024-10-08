@@ -1,7 +1,7 @@
 <template>
   <header class="d-flex align-items-center pb-3 mb-5 border-bottom">
     <div class="ms-auto">
-      <span style="font-size: large; margin-right: 20px" v-if="isLoggedIn" class="me-3">Witaj, {{ username }}!</span>
+      <span style="font-size: large; margin-right: 20px" v-if="isLoggedIn" class="me-3">Witaj, {{ this.$store.state.username }}!</span>
     </div>
     <div class="ms-3">
       <router-link v-if="!isLoggedIn" to="/login" class="btn btn-primary me-2">Zaloguj</router-link>
@@ -12,20 +12,21 @@
 </template>
 
 <script>
-import { eventBus } from '@/eventBus.js';
+// import { eventBus } from '@/eventBus.js';
 
 export default {
   name: 'HeaderComponent',
   data() {
     return {
       isLoggedIn: this.checkLoginStatus(),
-      username: '',
-      userRole: ''
+      // username: '',
+      // userRole: ''
     };
   },
   created() {
-    eventBus.on('roleUpdate', this.updateUserRole);
-    eventBus.on('usernameUpdate', this.updateUsername);
+    // eventBus.on('roleUpdate', this.updateUserRole);
+    // eventBus.on('usernameUpdate', this.updateUsername);
+
   },
   methods: {
     checkLoginStatus() {
@@ -66,10 +67,11 @@ export default {
             if (response.ok) {
               document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
               this.isLoggedIn = false;
-              this.userRole = 'ROLE_nobody';
-              this.username = ''; // Resetowanie username po wylogowaniu
-              eventBus.emit('roleUpdate', this.userRole); // Wyczyszczenie roli przy wylogowaniu
-              eventBus.emit('usernameUpdate', this.username); // Wyczyszczenie username przy wylogowaniu
+              this.$store.commit('setRole', 'ROLE_nobody');
+              this.$store.commit('setUsername', '');
+              // eventBus.emit('roleUpdate', this.userRole); // Wyczyszczenie roli przy wylogowaniu
+              // eventBus.emit('usernameUpdate', this.username); // Wyczyszczenie username przy wylogowaniu
+
               this.$router.push('/login');
             } else {
               throw new Error('Logout failed');
@@ -79,12 +81,15 @@ export default {
             console.error('Logout error:', error);
           });
     },
-    updateUserRole(role) {
-      this.userRole = role;
-    },
-    updateUsername(username) {
-      this.username = username;
-    }
+    // updateUserRole(role) {
+    //   this.userRole = role;
+    //   console.log("Header User role update", this.userRole);
+
+    // },
+    // updateUsername(username) {
+    //   this.username = username;
+    //   console.log("Header User name update", this.username);
+    // }
   },
   watch: {
     $route() {

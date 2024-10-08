@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import { eventBus } from '@/eventBus'; // Import eventBus
 
 export default {
   name: 'LoginService',
@@ -85,9 +84,13 @@ export default {
 
         const role = response.headers.get('frontRole');
         const username = response.headers.get('username'); // Pobranie username z nagłówka
+        console.log("Login service sets", role, username);
+        
+        this.$store.commit('setUsername', username);
+        this.$store.commit('setRole', role);
 
-        eventBus.emit('roleUpdate', role); // Emitowanie roli i nazwy użytkownika
-        eventBus.emit('usernameUpdate', username );
+        // eventBus.emit('roleUpdate', role); // Emitowanie roli i nazwy użytkownika
+        // eventBus.emit('usernameUpdate', username );
         //eventBus.emit('roleBlock', role );
 
         this.$router.push('/Cycles');

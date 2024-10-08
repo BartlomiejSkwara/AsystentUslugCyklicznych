@@ -89,7 +89,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `cyclical_service` WRITE;
 /*!40000 ALTER TABLE `cyclical_service` DISABLE KEYS */;
-INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description,status,assigned_account_data_entity_id_login_credentials) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach',256,1),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu',256,1),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego',256,1),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej',256,1),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu',256,1),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu',256,1);
+INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description,status,assigned_account_data_entity_id_login_credentials) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach',256,1),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu',256,1),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego',256,2),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej',256,2),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu',256,3),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu',256,3);
 /*!40000 ALTER TABLE `cyclical_service` ENABLE KEYS */;
 UNLOCK TABLES;
 

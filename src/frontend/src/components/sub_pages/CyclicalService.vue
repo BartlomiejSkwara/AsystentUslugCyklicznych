@@ -18,6 +18,7 @@
       <button @click="fetchCycles(60)" :class="{ active: selectedDays === 60 }">60 dni</button>
       <button @click="fetchAllCycles" :class="{ active: selectedDays === 'all' }">Wszystkie</button>
     </div>
+
     <table>
       <thead>
       <tr>
@@ -31,8 +32,8 @@
         <th>Użytkownik</th>
         <th>Certyfikat</th>
         <th>Ważne do:</th>
-        <th>Typ karty</th>
-        <th v-if="isAdminOrEditor">Działania</th>
+        <th>Typ karty </th>
+        <th>Działania</th>
       </tr>
       </thead>
       <tbody>
@@ -47,8 +48,10 @@
         </td>
         <td>{{ formatDate(cycle.certificate.validTo) }}</td>
         <td>{{ cycle.certificate.cardType }}</td>
-        <td v-if="isAdminOrEditor">
+        <td>
           <!-- Przycisk usuwania wyświetla się tylko dla roli admin lub editor -->
+          <button v-if="cycle.accountUsername == this.$store.state.username" class="action-button cancel-button" @click="requestCancel(cycle.getIdCyclicalService)">Anulowanie Prośba</button>
+          <button v-if="cycle.accountUsername == this.$store.state.username" class="action-button edit-button" @click="requestRenewal(cycle.getIdCyclicalService)">Przedłużenie Prośba</button>
           <button v-if="isAdminOrEditor" class="action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</button>
         </td>
       </tr>
@@ -58,7 +61,7 @@
 </template>
 
 <script>
-import { eventBus } from '@/eventBus.js'; // Import eventBus
+// import { eventBus } from '@/eventBus.js'; // Import eventBus
 import { getCookie, refreshCSRF } from '@/utility';
 
 export default {
@@ -77,20 +80,27 @@ export default {
       },
       showAdditionalFields: false,
       selectedDays: 60,
-      userRole: 'ROLE_test' // Przechowuje bieżącą rolę użytkownika
+      // userRole: 'ROLE_test', // Przechowuje bieżącą rolę użytkownika
+      // username: ''
     };
   },
   created() {
-    eventBus.on('roleUpdate', this.updateUserRole);
+    // this.username = this.$store.state.username;
+    // eventBus.on('roleUpdate', this.updateUserRole);
+    // eventBus.on('usernameUpdate', this.updateUsername)
   },
   mounted() {
+    // console.log(this.$store.state.role);
+
     this.fetchCycles(this.selectedDays);
   },
   beforeUnmount() {
-    eventBus.off('roleUpdate', this.updateUserRole);
+    // eventBus.off('roleUpdate', this.updateUserRole);
+    // eventBus.off('usernameUpdate', this.updateUsername)
   },
 
   methods: {
+
     toggleSearchFields() {
       this.showAdditionalFields = !this.showAdditionalFields;
     },
@@ -112,8 +122,9 @@ export default {
               throw new Error("Network response was not ok " + response.statusText);
             }
             const role = response.headers.get('frontRole');
-            eventBus.emit('roleUpdate', role);
-            this.updateUserRole(role);
+            this.$store.commit('setRole', role);
+            // eventBus.emit('roleUpdate', role);
+            // this.updateUserRole(role);
             return response.json();
           })
           .then((data) => {
@@ -124,6 +135,7 @@ export default {
           });
     },
     async fetchAllCycles() {
+      
       this.selectedDays = 'all';
        await fetch(`/api/cyclicalservice/getAll`)
           .then((response) => {
@@ -131,8 +143,10 @@ export default {
               throw new Error("Network response was not ok " + response.statusText);
             }
             const role = response.headers.get('frontRole');
-            eventBus.emit('roleUpdate', role);
-            this.updateUserRole(role);
+            this.$store.commit('setRole', role);
+
+            // eventBus.emit('Cyclical Service emits changes', role);
+            // this.updateUserRole(role);
             return response.json();
           })
           .then((data) => {
@@ -171,9 +185,77 @@ export default {
        refreshCSRF()  
       }
     },
-    updateUserRole(role) {
-      this.userRole = role;
+
+    //TODO zapytanie sie nigdy nie powiedzie bo nie ma kiedy dodać komentarza 
+    async requestCancel(id) {
+
+      if (confirm("Czy na pewno chcesz wysłać prośbę o anulowanie tej usługi cyklicznej ?")) {
+      
+
+        try {
+          const cookie = getCookie("XSRF-TOKEN");
+
+          const response = await fetch(`/api/cyclicalservice/cancelRequest/${id}`, {
+            method: 'POST',
+            headers:{
+            'X-XSRF-TOKEN':cookie
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          this.cycles = this.cycles.filter(cycle => cycle.getIdCyclicalService !== id);
+          alert('Wysłano prośbę o anulowanie!');
+        } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+          alert('There has been a problem with your fetch operation: ' + error.message);
+        }
+
+      refreshCSRF()  
+      }
     },
+
+    async requestRenewal(id) {
+
+      if (confirm("Czy na pewno chcesz wysłać prośbę o odnowienie tej usługi cyklicznej ?")) {
+
+
+        try {
+          const cookie = getCookie("XSRF-TOKEN");
+
+          const response = await fetch(`/api/cyclicalservice/renewalRequest/${id}`, {
+            method: 'POST',
+            headers:{
+            'X-XSRF-TOKEN':cookie
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          this.cycles = this.cycles.filter(cycle => cycle.getIdCyclicalService !== id);
+          alert('Wysłano odnowienie o anulowanie!');
+        } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+          alert('There has been a problem with your fetch operation: ' + error.message);
+        }
+
+      refreshCSRF()  
+      }
+    },
+    
+    // updateUserRole(role) {
+    //   console.log("Cyc ser Role = ",role);
+    //   this.userRole = role;
+    // },
+    // updateUsername(username){
+    //   console.log("Cyc ser Username = ", username);
+      
+    //   this.username = username;
+    // },
     formatDate(date) {
       const d = new Date(date);
       const year = d.getFullYear();
@@ -187,8 +269,9 @@ export default {
   },
   computed: {
     isAdminOrEditor() {
-      return this.userRole !== "ROLE_user";
+      return this.$store.state.role !== "ROLE_user";
       },
+
     filteredCycles() {
       const searchAgreementLower = this.searchFields.agreementNumber.toLowerCase();
       const searchDescriptionLower = this.searchFields.description.toLowerCase();

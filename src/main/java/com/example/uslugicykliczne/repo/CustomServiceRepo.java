@@ -18,7 +18,7 @@ import java.util.*;
 interface CustomServiceRepo{
     List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDays(int nDays);
     List<CyclicalServiceProjection> customFindCyclicalProjectionsWithCancelRequest();
-
+    List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDaysForWithUsername(int nDays, String username);
     Optional<CyclicalServiceEntity> customFindNameOfAccountAssignedToService(int serviceID);
     void customUpdateAwaitingRenewal();
 
@@ -37,20 +37,42 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                 "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
                         "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
-                        "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap)" +
+                        "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
+                        "cs.assignedAccountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                         "where floor(mod(cs.statusBitmap/:status,:status)) = 1 and ce.renewed=false "
         );
         query.setParameter("status", StatusEnum.MARKED_FOR_CANCEL.getMaskValue());
         return query.getResultList();
     }
+
+    @Override
+    public List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDaysForWithUsername(int nDays, String username) {
+        Query query = entityManager.createQuery(
+                "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
+                        "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
+                        "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
+                        "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap," +
+                        "cs.assignedAccountDataEntity.username)" +
+                        "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
+                        "where ce.renewed = false  and ce.validTo<:desiredTime and cs.assignedAccountDataEntity.username = :username "
+        );
+        if(nDays==-1)
+            query.setParameter("desiredTime", LocalDateTime.now().plusYears(100));
+        else
+            query.setParameter("desiredTime", LocalDateTime.now().plusDays(nDays));
+        return query.getResultList();
+
+    }
+
     @Override
     public List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDays(int nDays) {
         Query query = entityManager.createQuery(
                 "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
                         "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
-                        "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap)" +
+                        "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
+                        "cs.assignedAccountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                         "where ce.renewed = false  and ce.validTo<:desiredTime"
         );
