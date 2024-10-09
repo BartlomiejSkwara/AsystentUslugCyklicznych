@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ formMode === 'edit' ? 'Edytuja dane firmy' : 'Dodaj nową firmę' }}</h1>
+    <h1>{{ formMode === 'edit' ? 'Edytuj dane firmy' : 'Dodaj nową firmę' }}</h1>
     <form @submit.prevent="submitForm">
       <div>
         <label for="name">Nazwa:</label>

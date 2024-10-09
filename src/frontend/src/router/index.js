@@ -12,6 +12,7 @@ import AddBusiness from '../components/forms/AddBusiness.vue';
 import AddCertificate from "../components/forms/AddCertificate.vue";
 import UploadCertificate from "../components/forms/UploadCertificate.vue";
 import LoginComponent from "../components/forms/LoginService.vue";
+import RenewCycle from "../components/forms/RenewCycle.vue";
 
 const routes = [
     {
@@ -75,6 +76,11 @@ const routes = [
         path: '/register',
         name: 'Register',
         component: LoginComponent
+    },
+    {
+        path: '/renew-cycle/:id',
+        name: 'RenewCycle',
+        component: RenewCycle
     }
 
 

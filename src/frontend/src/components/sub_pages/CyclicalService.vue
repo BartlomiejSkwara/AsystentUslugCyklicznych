@@ -50,18 +50,18 @@
         <td>{{ cycle.certificate.cardType }}</td>
         <td>
           <!-- Przycisk usuwania wyświetla się tylko dla roli admin lub editor -->
+
+
           <button v-if="isAdminOrEditor" class="action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)">Zmiana Statusu</button>
           <button v-if="cancelRequestElligable(cycle.accountUsername,cycle.statusBitmask)" class="action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)">Anulowanie Prośba</button>
           <button v-if="requestRenewalElligable(cycle.accountUsername,cycle.statusBitmask)" class="action-button edit-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)">Odnowienie Prośba</button>
-          <button v-if="isAdminOrEditor" class="action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</button>
+          <button v-if="isAdmin" class="action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</button>
+          <button v-if="!cycle.oneTime" class="action-button renew-button"><router-link :to="`/renew-cycle/${cycle.getIdCyclicalService}`" class="renew">Odnów</router-link></button>
+
         </td>
       </tr>
       </tbody>
     </table>
-
-<!-- requestCancel -->
-<!-- requestRenewal -->
-
   </div>
 
       <!-- Comment modal -->
@@ -75,7 +75,7 @@
 
           </div>
           <div class="modal-body ">
-            
+
               <label for="Komentarz">Komentarz:</label>
               <br>
               <textarea name="Komentarz" v-model="comment"></textarea>
@@ -171,9 +171,9 @@ export default {
           mVal : 256,
           desc : "Odnowione"
         },
-        
+
       },
-      comment:'', 
+      comment:'',
       // userRole: 'ROLE_test', // Przechowuje bieżącą rolę użytkownika
       // username: ''
     };
@@ -197,7 +197,7 @@ export default {
 
     requestRenewalElligable(uname,statusBitmask){
       return (uname == this.$store.state.username)&&(this.hasStatus(statusBitmask,this.STATUS_TYPES.RENEWED.mVal))
-    }, 
+    },
     cancelRequestElligable(uname,statusBitmask){
       return (uname == this.$store.state.username)&&
         (!this.hasStatus(statusBitmask,this.STATUS_TYPES.CANCEL_REQUEST.mVal)&&!this.hasStatus(statusBitmask,this.STATUS_TYPES.CANCELED.mVal))
@@ -208,7 +208,7 @@ export default {
     async submitRequest() {
 
       // if (confirm("Are you sure you want to delete this cycle?")) {
-      
+
 
       try {
         const cookie = getCookie("XSRF-TOKEN");
@@ -221,16 +221,16 @@ export default {
             operation = "cancelRequest";
             break;
           default:
-            operation = "statusChange"; 
+            operation = "statusChange";
             break;
         }
-        
+
         let payload = {
             b:"322"
         };
         if(this.comment!=''){
           payload.comment = this.comment;
-          
+
         }
         if(operation == "statusChange"){
 
@@ -263,7 +263,7 @@ export default {
         if (cycle) {
           let newMask = parseInt(await response.text(), 10);
           cycle.statusBitmask = newMask;
-        } 
+        }
         // this.cycles = this.cycles.filter(cycle => cycle.getIdCyclicalService !== id);
 
         alert(`Z powodzeniem dokonano operacji ${this.requestType.desc}!`);
@@ -280,7 +280,7 @@ export default {
 
     switchRequestModalVisibility(serviceId,requestType,bitmask){
       if(this.showRequestModal){
-        this.showRequestModal = false;      
+        this.showRequestModal = false;
       }else{
         this.showRequestModal = true;
       }
@@ -405,18 +405,22 @@ export default {
       nonAvailable.push(this.STATUS_TYPES.AWAITING_RENEWAL);
       nonAvailable.push(this.STATUS_TYPES.RENEWED);
       let bitmask = this.bitmaskReferencedByModal;
-      
+
       return Object.values(this.STATUS_TYPES).filter(curr => {
         if(nonAvailable.findIndex(blocked => {return blocked==curr}) == -1)
           return true;
-          
+
         return !this.hasStatus(bitmask,curr.mVal);
-         
+
       })
     },
     isAdminOrEditor() {
       return this.$store.state.role !== "ROLE_user";
-      },
+    },
+    isAdmin() {
+      return this.$store.state.role === "ROLE_admin";
+    },
+
 
     filteredCycles() {
       const searchAgreementLower = this.searchFields.agreementNumber.toLowerCase();
@@ -436,3 +440,9 @@ export default {
   }
 };
 </script>
+<style>
+.renew{
+  color: white;
+  text-decoration: none;
+}
+</style>

@@ -41,7 +41,7 @@
         <td>{{ user.comments }}</td>
         <td>
           <button class="action-button edit-button" @click="editUser(user.idServiceUser)">Edytuj</button>
-          <button class="action-button delete-button" @click="deleteUser(user.idServiceUser)">Usuń</button>
+          <button v-if="isAdmin" class="action-button delete-button" @click="deleteUser(user.idServiceUser)">Usuń</button>
 <!--          <button class="action-button data-button" @click="toggleCycles(user.idServiceUser)">Cykle</button>-->
 <!--          <button class="action-button data-button" @click="toggleBusinesses(user.idServiceUser)">Firmy</button>-->
         </td>
@@ -58,19 +58,19 @@
     <div v-if="showContactDataModal" class="modal">
       <div class="modal-content">
         <span class="close" @click="closeContactDataModal">&times;</span>
-        <h2>Contact Data Details</h2>
+        <h2>Dane kontaktowe</h2>
         <div v-if="contactDataDetails">
-          <p><strong>Emails:</strong></p>
+          <p><strong>Emaile:</strong></p>
           <ul>
             <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
           </ul>
-          <p><strong>Phone Numbers:</strong></p>
+          <p><strong>Numery telefonów:</strong></p>
           <ul>
             <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
           </ul>
         </div>
         <div v-else>
-          <p>No data available</p>
+          <p>Brak danych</p>
         </div>
       </div>
     </div>
@@ -171,6 +171,9 @@ export default {
     };
   },
   computed: {
+    isAdmin() {
+      return this.$store.state.role === "ROLE_admin";
+    },
     filteredUsers() {
       return this.users.filter(user => {
         return (
