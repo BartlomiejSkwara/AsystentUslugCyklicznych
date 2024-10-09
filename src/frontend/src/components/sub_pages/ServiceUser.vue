@@ -1,5 +1,8 @@
 <template>
   <div>
+
+
+
     <h1 style="margin-bottom: 20px;">Lista użytkowników</h1>
     <div class="container">
       <router-link to="/add-user" class="add-button">Dodaj nowego użytkownika</router-link>
@@ -72,6 +75,7 @@
       </div>
     </div>
 
+
     <div v-if="selectedUser && cyclicalServices.length">
       <h2 style="margin-top: 30px;">Cyclical Services for User ID: {{ selectedUser }}</h2>
       <table>
@@ -143,7 +147,7 @@
 </template>
 
 <script>
-import { getCookie, refreshCSRF } from '@/utility';
+import { getCookie } from '@/utility';
 export default {
   name: 'ServiceUserList',
   data() {
@@ -238,7 +242,6 @@ export default {
           console.error('There has been a problem with your fetch operation:', error);
           alert(error.message);
         }
-        refreshCSRF()
 
 
             // .catch(error => {

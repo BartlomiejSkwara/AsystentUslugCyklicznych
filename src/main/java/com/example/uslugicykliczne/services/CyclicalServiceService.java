@@ -173,7 +173,7 @@ public class CyclicalServiceService {
     }
 
 
-    public ResponseEntity<String> changeServiceStatusAndUpdateDB(Integer id,Integer requestedStatusChange, String statusChangeComment) {
+    public ResponseEntity<?> changeServiceStatusAndUpdateDB(Integer id,Integer requestedStatusChange, String statusChangeComment) {
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findById(id);
         if(optionalCyclicalServiceEntity.isEmpty())
             return ResponseEntity.badRequest().body("Nie można zmienić statusu nie istniejącej usługi");
@@ -183,7 +183,7 @@ public class CyclicalServiceService {
 
         serviceStatusHistoryService.addNewStatusHistoryRecord(null,requestedStatusChange,statusChangeComment,cyclicalService.getIdCyclicalService());
         cyclicalServiceRepo.save(cyclicalService);
-        return ResponseEntity.ok("Zmiana statusu dokonana z powodzeniem");
+        return ResponseEntity.ok(cyclicalService.getStatusBitmap());
     }
 
     public void changeServiceStatus(CyclicalServiceEntity cyclicalService,Integer requestedStatusChange) {
@@ -205,7 +205,7 @@ public class CyclicalServiceService {
     }
 
 
-    public ResponseEntity<String> cancelRequest(Integer serviceId,String statusChangeComment) {
+    public ResponseEntity<?> cancelRequest(Integer serviceId,String statusChangeComment) {
 
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findCyclicalServiceAcDataJoin(serviceId);
         if(optionalCyclicalServiceEntity.isEmpty())
@@ -222,10 +222,10 @@ public class CyclicalServiceService {
         serviceStatusHistoryService.addNewStatusHistoryRecord(null,StatusEnum.MARKED_FOR_CANCEL.getMaskValue(),statusChangeComment,cyclicalService.getIdCyclicalService());
         cyclicalServiceRepo.save(cyclicalService);
 
-        return ResponseEntity.ok("Successfully requested service cancellation");
+        return ResponseEntity.ok(cyclicalService.getStatusBitmap());
     }
 
-    public ResponseEntity<String> requestRenewal(Integer serviceId, String statusChangeComment){
+    public ResponseEntity<?> requestRenewal(Integer serviceId, String statusChangeComment){
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.customFindNameOfAccountAssignedToService(serviceId);
         if(optionalCyclicalServiceEntity.isEmpty())
             return ResponseEntity.badRequest().body("Can't renew nonexistent service");
@@ -240,9 +240,10 @@ public class CyclicalServiceService {
         }
         changeServiceStatus(cyclicalService,StatusEnum.AWAITING_RENEWAL.getMaskValue());
         serviceStatusHistoryService.addNewStatusHistoryRecord(null,StatusEnum.AWAITING_RENEWAL.getMaskValue(),statusChangeComment,cyclicalService.getIdCyclicalService());
+//        CyclicalServiceProjection cycSerProjection =
         cyclicalServiceRepo.save(cyclicalService);
 
-        return ResponseEntity.ok("Successfully requested renewal");
+        return ResponseEntity.ok(cyclicalService.getStatusBitmap());
     }
 
     public List<StatusChangeRecordProjection> getStatusChangesRelatedToService(Integer serviceId) {

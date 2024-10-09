@@ -12,6 +12,7 @@ import com.example.uslugicykliczne.repo.StatusChangeRepo;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -51,7 +52,7 @@ public class CyclicalServiceController {
         return cyclicalServiceService.getStatusChangesRelatedToService(id);
     }
     @PostMapping("/statusChange/{id}")
-    public ResponseEntity<String> changeStatus(@PathVariable Integer id, @Validated @RequestBody StatusAndComment statusAndComment, BindingResult bindingResult){
+    public ResponseEntity<?> changeStatus(@PathVariable Integer id, @Validated @RequestBody StatusAndComment statusAndComment, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
@@ -74,7 +75,7 @@ public class CyclicalServiceController {
     }
 
     @PostMapping("/renewalRequest/{id}")
-    public ResponseEntity<String> requestRenewal(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){
+    public ResponseEntity<?> requestRenewal(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
@@ -82,7 +83,7 @@ public class CyclicalServiceController {
     }
 
     @PostMapping("/cancelRequest/{id}")
-    public ResponseEntity<String> cancelRequest(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){
+    public ResponseEntity<?> cancelRequest(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
@@ -103,7 +104,7 @@ public class CyclicalServiceController {
     }
 
     @GetMapping("/getAll")
-    public List<CyclicalServiceProjection> getAllServices(@RequestParam(required = false) String days){
+    public List<CyclicalServiceProjection> getAllServices(@RequestParam(required = false) String days, HttpServletResponse httpServletResponse){
         if(days == null)
             return cyclicalServiceService.getAllFromNextNDays(-1);
 

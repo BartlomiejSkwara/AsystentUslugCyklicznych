@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
@@ -46,15 +47,8 @@ public class SecurityConfig {
         repo.setCookieCustomizer((x) ->
                 x
                     .sameSite(Cookie.SameSite.LAX.attributeValue())
-//                x.maxAge(Duration.ofMinutes(30))
-//                        .httpOnly(true)
-        );
 
-//        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("jwt",token);
-//        cookie.setHttpOnly(true);
-//        cookie.setAttribute("SameSite","Strict");
-//        cookie.setPath("/");
-//        httpServletResponse.addCookie(cookie);
+        );
 
         httpSecurity.csrf(httpSecurityCsrfConfigurer ->
                 httpSecurityCsrfConfigurer
@@ -63,6 +57,7 @@ public class SecurityConfig {
                             "/api/authentication/logout")
                         .csrfTokenRepository(repo)
                         .csrfTokenRequestHandler(new SPATokenRequestHandler())
+                        .sessionAuthenticationStrategy(new NullAuthenticatedSessionStrategy())
         );
         httpSecurity.addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class);
 

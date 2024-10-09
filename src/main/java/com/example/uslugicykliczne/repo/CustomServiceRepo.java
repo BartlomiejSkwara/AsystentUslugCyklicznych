@@ -21,7 +21,7 @@ interface CustomServiceRepo{
     List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDaysForWithUsername(int nDays, String username);
     Optional<CyclicalServiceEntity> customFindNameOfAccountAssignedToService(int serviceID);
     void customUpdateAwaitingRenewal();
-
+    CyclicalServiceProjection saveAndReturnProjection(CyclicalServiceEntity cyclicalServiceEntity);
 }
 
 @RequiredArgsConstructor
@@ -151,6 +151,12 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
         statusChangeRepo.saveAll(statusChangeEntities);
 
 
+    }
+
+    @Override
+    public CyclicalServiceProjection saveAndReturnProjection(CyclicalServiceEntity cyclicalServiceEntity) {
+//        Query update = entityManager.createQuery("i")
+        return null;
     }
 
 }

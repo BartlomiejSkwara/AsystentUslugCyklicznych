@@ -27,7 +27,7 @@
           <span :class="getSortIcon('getIdCyclicalService')"></span>
         </th>
         <th>Numer dokumentu</th>
-        <th>Opis</th>
+        <th>Status</th>
         <th>Firma</th>
         <th>Użytkownik</th>
         <th>Certyfikat</th>
@@ -40,7 +40,7 @@
       <tr v-for="cycle in filteredCycles" :key="cycle.getIdCyclicalService">
         <td>{{ cycle.getIdCyclicalService }}</td>
         <td>{{ cycle.agreementNumber }}</td>
-        <td>{{ cycle.description }}</td>
+        <td>{{ cycle.statusBitmask }}</td>
         <td>{{ cycle.business.businessName }}</td>
         <td>{{ cycle.serviceUser.name + ' ' + cycle.serviceUser.getSurname }}</td>
         <td>
@@ -50,19 +50,60 @@
         <td>{{ cycle.certificate.cardType }}</td>
         <td>
           <!-- Przycisk usuwania wyświetla się tylko dla roli admin lub editor -->
-          <button v-if="cycle.accountUsername == this.$store.state.username" class="action-button cancel-button" @click="requestCancel(cycle.getIdCyclicalService)">Anulowanie Prośba</button>
-          <button v-if="cycle.accountUsername == this.$store.state.username" class="action-button edit-button" @click="requestRenewal(cycle.getIdCyclicalService)">Przedłużenie Prośba</button>
+          <button v-if="isAdminOrEditor" class="action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)">Zmiana Statusu</button>
+          <button v-if="cancelRequestElligable(cycle.accountUsername,cycle.statusBitmask)" class="action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)">Anulowanie Prośba</button>
+          <button v-if="requestRenewalElligable(cycle.accountUsername,cycle.statusBitmask)" class="action-button edit-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)">Odnowienie Prośba</button>
           <button v-if="isAdminOrEditor" class="action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</button>
         </td>
       </tr>
       </tbody>
     </table>
+
+<!-- requestCancel -->
+<!-- requestRenewal -->
+
   </div>
+
+      <!-- Comment modal -->
+      <!--  -->
+<!--  -->
+    <div v-if="showRequestModal" class="modal" tabindex="-1" style="display: block ;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Doprecyzuj szczegóły operacji {{requestType.desc}} na usłudze nr. {{serviceReferencedByModal}}</h2>
+
+          </div>
+          <div class="modal-body ">
+            
+              <label for="Komentarz">Komentarz:</label>
+              <br>
+              <textarea name="Komentarz" v-model="comment"></textarea>
+              <span v-if="requestType == STATUS_TYPES.BLANK">
+                <br>
+                <label for="Stan">Stan:</label>
+                <br>
+                <select id="Stan" v-model="newStatus">
+                  <option v-for="(status,key) in availableStatuses" :key="key" :value="status.mVal">
+                    {{ status.desc }}
+                  </option>
+                </select>
+              </span>
+              <p class="text-danger">{{ errorMessage }}</p>
+          </div>
+
+          <div class="modal-footer">
+            <button @click="submitRequest">Submit</button>
+            <button @click="switchRequestModalVisibility(-1,-1,-1)">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
 // import { eventBus } from '@/eventBus.js'; // Import eventBus
-import { getCookie, refreshCSRF } from '@/utility';
+import { getCookie } from '@/utility';
 
 export default {
   name: 'CyclesList',
@@ -80,6 +121,59 @@ export default {
       },
       showAdditionalFields: false,
       selectedDays: 60,
+      showRequestModal: false,
+      serviceReferencedByModal:0,
+      bitmaskReferencedByModal:0,
+      newStatus:0,
+      errorMessage:'',
+      requestType:{
+          mVal : -1,
+          desc : "BLANK"
+      },
+      STATUS_TYPES: {
+        BLANK: {
+          mVal : -1,
+          desc : "Zmiana Stanu"
+        },
+        AWAITING_RENEWAL: {
+          mVal : 1,
+          desc : "Prośba o Odnowienie"
+        },
+        PRO_FORM_SENT: {
+          mVal : 2,
+          desc : "Pro Forma Wysłana "
+        },
+        CANCEL_REQUEST: {
+          mVal : 4,
+          desc : "Prośba o Anulowanie"
+        },
+        CANCELED:{
+          mVal : 8,
+          desc : "Anulowane"
+        },
+        MARKED_AS_NON_RENEWABLE:{
+          mVal : 16,
+          desc : "Nieodnawialny"
+        },
+        RENEWED_ELSEWHERE:{
+          mVal : 32,
+          desc : "Odnowiony gdzie indziej"
+        },
+        PAYMENT_DONE:{
+          mVal : 64,
+          desc : "Zapłata Otrzymana"
+        },
+        INVOICE_SENT:{
+          mVal : 128,
+          desc : "Faktura wystawiona kod otrzymany"
+        },
+        RENEWED:{
+          mVal : 256,
+          desc : "Odnowione"
+        },
+        
+      },
+      comment:'', 
       // userRole: 'ROLE_test', // Przechowuje bieżącą rolę użytkownika
       // username: ''
     };
@@ -100,6 +194,102 @@ export default {
   },
 
   methods: {
+
+    requestRenewalElligable(uname,statusBitmask){
+      return (uname == this.$store.state.username)&&(this.hasStatus(statusBitmask,this.STATUS_TYPES.RENEWED.mVal))
+    }, 
+    cancelRequestElligable(uname,statusBitmask){
+      return (uname == this.$store.state.username)&&
+        (!this.hasStatus(statusBitmask,this.STATUS_TYPES.CANCEL_REQUEST.mVal)&&!this.hasStatus(statusBitmask,this.STATUS_TYPES.CANCELED.mVal))
+    },
+    hasStatus(statusBitmask, status) {
+      return (statusBitmask & status) !== 0;
+    },
+    async submitRequest() {
+
+      // if (confirm("Are you sure you want to delete this cycle?")) {
+      
+
+      try {
+        const cookie = getCookie("XSRF-TOKEN");
+        let operation = "";
+        switch (this.requestType.mVal) {
+          case 1:
+            operation = "renewalRequest";
+            break;
+          case 4:
+            operation = "cancelRequest";
+            break;
+          default:
+            operation = "statusChange"; 
+            break;
+        }
+        
+        let payload = {
+            b:"322"
+        };
+        if(this.comment!=''){
+          payload.comment = this.comment;
+          
+        }
+        if(operation == "statusChange"){
+
+          payload.requestedStateChange = this.newStatus;
+          if(this.newStatus<=0){
+            this.errorMessage = "Nie uzupełniono pola stan !!!"
+            return;
+
+          }
+        }
+        console.log(payload);
+
+        /// todo poprawka
+        const response = await fetch(`/api/cyclicalservice/${operation}/${this.serviceReferencedByModal}`, {
+          method: 'POST',
+          headers:{
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN':cookie
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+
+        const cycle = this.cycles.find(cycle => cycle.getIdCyclicalService === this.serviceReferencedByModal);
+
+        if (cycle) {
+          let newMask = parseInt(await response.text(), 10);
+          cycle.statusBitmask = newMask;
+        } 
+        // this.cycles = this.cycles.filter(cycle => cycle.getIdCyclicalService !== id);
+
+        alert(`Z powodzeniem dokonano operacji ${this.requestType.desc}!`);
+        this.switchRequestModalVisibility(-1,-1,-1);
+
+      } catch (error) {
+        // próba odświeżenia a w wypadku X
+        console.error('There has been a problem with your fetch operation:', error);
+        alert('There has been a problem with your fetch operation: ' + error.message);
+      }
+
+      // }
+    },
+
+    switchRequestModalVisibility(serviceId,requestType,bitmask){
+      if(this.showRequestModal){
+        this.showRequestModal = false;      
+      }else{
+        this.showRequestModal = true;
+      }
+      this.serviceReferencedByModal=serviceId;
+      this.bitmaskReferencedByModal = bitmask;
+      this.requestType = requestType;
+      this.comment = '';
+      this.errorMessage = '';
+    },
 
     toggleSearchFields() {
       this.showAdditionalFields = !this.showAdditionalFields;
@@ -137,24 +327,24 @@ export default {
     async fetchAllCycles() {
       
       this.selectedDays = 'all';
-       await fetch(`/api/cyclicalservice/getAll`)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok " + response.statusText);
-            }
-            const role = response.headers.get('frontRole');
-            this.$store.commit('setRole', role);
+      try {
+        const response = await fetch(`/api/cyclicalservice/getAll`, {
+            method: 'GET',
+        });
 
-            // eventBus.emit('Cyclical Service emits changes', role);
-            // this.updateUserRole(role);
-            return response.json();
-          })
-          .then((data) => {
-            this.cycles = data;
-          })
-          .catch((error) => {
-            console.error("There has been a problem with your fetch operation:", error);
-          });
+        if (!response.ok) {
+            throw new Error("Network response was not ok " + response.statusText);
+        }
+
+        const role = response.headers.get('frontRole');
+        this.$store.commit('setRole', role);
+        const data = await response.json();
+        this.cycles = data;
+      } catch (error) {
+          console.error("There has been a problem with your fetch operation:", error);
+      }
+
+
     },
     async deleteCycle(id) {
 
@@ -182,70 +372,10 @@ export default {
           alert('There has been a problem with your fetch operation: ' + error.message);
         }
 
-       refreshCSRF()  
       }
     },
 
-    //TODO zapytanie sie nigdy nie powiedzie bo nie ma kiedy dodać komentarza 
-    async requestCancel(id) {
 
-      if (confirm("Czy na pewno chcesz wysłać prośbę o anulowanie tej usługi cyklicznej ?")) {
-      
-
-        try {
-          const cookie = getCookie("XSRF-TOKEN");
-
-          const response = await fetch(`/api/cyclicalservice/cancelRequest/${id}`, {
-            method: 'POST',
-            headers:{
-            'X-XSRF-TOKEN':cookie
-            }
-          });
-
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-
-          this.cycles = this.cycles.filter(cycle => cycle.getIdCyclicalService !== id);
-          alert('Wysłano prośbę o anulowanie!');
-        } catch (error) {
-          console.error('There has been a problem with your fetch operation:', error);
-          alert('There has been a problem with your fetch operation: ' + error.message);
-        }
-
-      refreshCSRF()  
-      }
-    },
-
-    async requestRenewal(id) {
-
-      if (confirm("Czy na pewno chcesz wysłać prośbę o odnowienie tej usługi cyklicznej ?")) {
-
-
-        try {
-          const cookie = getCookie("XSRF-TOKEN");
-
-          const response = await fetch(`/api/cyclicalservice/renewalRequest/${id}`, {
-            method: 'POST',
-            headers:{
-            'X-XSRF-TOKEN':cookie
-            }
-          });
-
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-
-          this.cycles = this.cycles.filter(cycle => cycle.getIdCyclicalService !== id);
-          alert('Wysłano odnowienie o anulowanie!');
-        } catch (error) {
-          console.error('There has been a problem with your fetch operation:', error);
-          alert('There has been a problem with your fetch operation: ' + error.message);
-        }
-
-      refreshCSRF()  
-      }
-    },
     
     // updateUserRole(role) {
     //   console.log("Cyc ser Role = ",role);
@@ -268,6 +398,22 @@ export default {
     }
   },
   computed: {
+    availableStatuses(){
+      let nonAvailable = [];
+      nonAvailable.push(this.STATUS_TYPES.BLANK);
+      nonAvailable.push(this.STATUS_TYPES.CANCEL_REQUEST);
+      nonAvailable.push(this.STATUS_TYPES.AWAITING_RENEWAL);
+      nonAvailable.push(this.STATUS_TYPES.RENEWED);
+      let bitmask = this.bitmaskReferencedByModal;
+      
+      return Object.values(this.STATUS_TYPES).filter(curr => {
+        if(nonAvailable.findIndex(blocked => {return blocked==curr}) == -1)
+          return true;
+          
+        return !this.hasStatus(bitmask,curr.mVal);
+         
+      })
+    },
     isAdminOrEditor() {
       return this.$store.state.role !== "ROLE_user";
       },
