@@ -72,7 +72,7 @@ th {
 }
 
 .renew-button {
-    background-color: #505950;
+    background-color: #368ebc;
     color: white;
 }
 
@@ -130,7 +130,7 @@ button[type="button"].add-input:hover {
 }
 
 button[type="button"].renew-button {
-    background-color: #505950;
+    background-color: #285c87;
 }
 
 button[type="submit"] {

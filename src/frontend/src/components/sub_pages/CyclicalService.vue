@@ -27,7 +27,7 @@
           <span :class="getSortIcon('getIdCyclicalService')"></span>
         </th>
         <th>Numer dokumentu</th>
-        <th>Opis</th>
+<!--        <th>Opis</th>-->
         <th>Firma</th>
         <th>Użytkownik</th>
         <th>Certyfikat</th>
@@ -40,7 +40,7 @@
       <tr v-for="cycle in filteredCycles" :key="cycle.getIdCyclicalService">
         <td>{{ cycle.getIdCyclicalService }}</td>
         <td>{{ cycle.agreementNumber }}</td>
-        <td>{{ cycle.description }}</td>
+<!--        <td>{{ cycle.description }}</td>-->
         <td>{{ cycle.business.businessName }}</td>
         <td>{{ cycle.serviceUser.name + ' ' + cycle.serviceUser.getSurname }}</td>
         <td>
@@ -52,7 +52,9 @@
           <!-- Przycisk usuwania wyświetla się tylko dla roli admin lub editor -->
           <button v-if="cycle.accountUsername == this.$store.state.username" class="action-button cancel-button" @click="requestCancel(cycle.getIdCyclicalService)">Anulowanie Prośba</button>
           <button v-if="cycle.accountUsername == this.$store.state.username" class="action-button edit-button" @click="requestRenewal(cycle.getIdCyclicalService)">Przedłużenie Prośba</button>
-          <button v-if="isAdminOrEditor" class="action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</button>
+          <button v-if="isAdmin" class="action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</button>
+          <button v-if="!cycle.oneTime" class="action-button renew-button"><router-link :to="`/renew-cycle/${cycle.getIdCyclicalService}`" class="renew">Odnów</router-link></button>
+
         </td>
       </tr>
       </tbody>
@@ -268,8 +270,8 @@ export default {
     }
   },
   computed: {
-    isAdminOrEditor() {
-      return this.$store.state.role !== "ROLE_user";
+    isAdmin() {
+      return this.$store.state.role === "ROLE_admin";
       },
 
     filteredCycles() {
@@ -290,3 +292,9 @@ export default {
   }
 };
 </script>
+<style>
+.renew{
+  color: white;
+  text-decoration: none;
+}
+</style>

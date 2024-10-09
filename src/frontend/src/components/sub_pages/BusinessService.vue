@@ -39,7 +39,7 @@
         <td>{{ business.regon }}</td>
         <td>
           <button class="action-button edit-button" @click="editBusiness(business.idBusiness)">Edytuj</button>
-          <button class="action-button delete-button" @click="deleteBusiness(business.idBusiness)">Usuń</button>
+          <button v-if="isAdmin" class="action-button delete-button" @click="deleteBusiness(business.idBusiness)">Usuń</button>
         </td>
       </tr>
       </tbody>
@@ -49,7 +49,7 @@
     <div v-if="showModal" class="modal">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <h2>Contact Data Details</h2>
+        <h2>Dane kontaktowe</h2>
         <div v-if="contactDataDetails">
           <p><strong>Emaile:</strong></p>
           <ul>
@@ -61,7 +61,7 @@
           </ul>
         </div>
         <div v-else>
-          <p>Wczytywanie...</p>
+          <p>Brak danych</p>
         </div>
       </div>
     </div>
@@ -87,6 +87,9 @@ export default {
     };
   },
   computed: {
+    isAdmin() {
+      return this.$store.state.role === "ROLE_admin";
+    },
     filteredBusinesses() {
       return this.businesses.filter(business => {
         return (

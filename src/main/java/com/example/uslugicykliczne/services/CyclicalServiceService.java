@@ -51,9 +51,11 @@ public class CyclicalServiceService {
         if(certificateEntity.isRenewalMessageSent()){
             schedulingService.trySchedulingReminderWhenInserted(certificateEntity,certificateEntity.getCyclicalServiceEntity());
 
-        } else {
-            schedulingService.trySchedulingReminderWhenUpdated(certificateEntity,certificateEntity.getCyclicalServiceEntity());
         }
+        //co z tym zrobić? wywala forbidden 403
+//        else {
+//            schedulingService.trySchedulingReminderWhenUpdated(certificateEntity,certificateEntity.getCyclicalServiceEntity());
+//        }
         certificateEntity.setRenewed(true);
         certificateEntity.setRenewalMessageSent(true);
 
