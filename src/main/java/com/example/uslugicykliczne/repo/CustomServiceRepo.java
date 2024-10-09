@@ -57,6 +57,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                         "where ce.renewed = false  and ce.validTo<:desiredTime and cs.assignedAccountDataEntity.username = :username "
         );
+        query.setParameter("username", username);
         if(nDays==-1)
             query.setParameter("desiredTime", LocalDateTime.now().plusYears(100));
         else

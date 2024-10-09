@@ -56,7 +56,7 @@
           <button v-if="cancelRequestElligable(cycle.accountUsername,cycle.statusBitmask)" class="action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)">Anulowanie Prośba</button>
           <button v-if="requestRenewalElligable(cycle.accountUsername,cycle.statusBitmask)" class="action-button edit-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)">Odnowienie Prośba</button>
           <button v-if="isAdmin" class="action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</button>
-          <button v-if="!cycle.oneTime" class="action-button renew-button"><router-link :to="`/renew-cycle/${cycle.getIdCyclicalService}`" class="renew">Odnów</router-link></button>
+          <button v-if="(!cycle.oneTime)&&isAdminOrEditor" class="action-button renew-button"><router-link :to="`/renew-cycle/${cycle.getIdCyclicalService}`" class="renew">Odnów</router-link></button>
 
         </td>
       </tr>
