@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomCertificateRepo {
-    Optional<CertificateEntity> findCertificateWithNotRenewedCertBy(int serviceId);
-    Optional<CertificateEntity> findFirstCertificateWithNoRenewalAndMessageSent();
+    Optional<CertificateEntity> findMostRecentCertificate(int serviceId);
+    Optional<CertificateEntity> findFirstMostRecentCertificateWithoutMessageSent();
 }
 
 
@@ -20,9 +20,9 @@ class  CustomCertificateRepoImpl implements CustomCertificateRepo{
     private EntityManager entityManager;
 
     @Override
-    public Optional<CertificateEntity> findCertificateWithNotRenewedCertBy(int serviceId) {
+    public Optional<CertificateEntity> findMostRecentCertificate(int serviceId) {
         Query query = entityManager.createQuery(
-                "select ce from CertificateEntity ce where ce.cyclicalServiceEntity.idCyclicalService = :serviceId and ce.renewed = false"
+                "select ce from CertificateEntity ce where ce.cyclicalServiceEntity.idCyclicalService = :serviceId and ce.mostRecent = true "
         );
         query.setParameter("serviceId", serviceId);
         List<CertificateEntity> list = query.getResultList();
@@ -35,10 +35,10 @@ class  CustomCertificateRepoImpl implements CustomCertificateRepo{
     }
 //ORDER BY e.nextRenewal ASC LIMIT 1
     @Override
-    public Optional<CertificateEntity> findFirstCertificateWithNoRenewalAndMessageSent() {
+    public Optional<CertificateEntity> findFirstMostRecentCertificateWithoutMessageSent() {
         Query query = entityManager.createQuery(
                 "select ce from CertificateEntity ce join CyclicalServiceEntity cs on ce.cyclicalServiceEntity = cs " +
-                        "where ce.renewalMessageSent = false and ce.renewed = false " +
+                        "where ce.renewalMessageSent = false and ce.mostRecent = true " +
                         "order by ce.validTo asc limit 1"
         );
         List<CertificateEntity> list = query.getResultList();

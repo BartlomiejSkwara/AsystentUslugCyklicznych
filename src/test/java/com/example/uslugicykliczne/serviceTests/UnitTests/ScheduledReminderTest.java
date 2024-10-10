@@ -65,7 +65,7 @@ public class ScheduledReminderTest {
         CyclicalServiceEntity cs1 = TestUtilityService.createCyclicalServiceEntity(false,null,null);
         CertificateEntity ce1 = TestUtilityService.createCertificateEntity(cs1,LocalDateTime.now().plusDays(10),false,false);
 
-        when(mockCerRepo.findFirstCertificateWithNoRenewalAndMessageSent()).thenReturn(Optional.of(ce1));
+        when(mockCerRepo.findFirstMostRecentCertificateWithoutMessageSent()).thenReturn(Optional.of(ce1));
 
         schedulingService.findNextServiceAndScheduleIt();
         verify(schedulingService).findNextServiceAndScheduleIt();
@@ -79,7 +79,7 @@ public class ScheduledReminderTest {
     @Test()
     @DisplayName("Find next and schedule failure")
     public void testTryFindingNextAndScheduling2(){
-        when(mockCerRepo.findFirstCertificateWithNoRenewalAndMessageSent()).thenReturn(Optional.empty());
+        when(mockCerRepo.findFirstMostRecentCertificateWithoutMessageSent()).thenReturn(Optional.empty());
 
         schedulingService.findNextServiceAndScheduleIt();
         verify(schedulingService).findNextServiceAndScheduleIt();

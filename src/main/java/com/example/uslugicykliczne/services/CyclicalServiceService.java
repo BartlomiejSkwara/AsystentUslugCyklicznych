@@ -39,7 +39,7 @@ public class CyclicalServiceService {
 
 
     public ResponseEntity<String> renewCyclicalService(ServiceRenewalRecord serviceRenewalRecord, Integer serviceId){
-        Optional<CertificateEntity> certificateEntityOptional = certificateRepo.findCertificateWithNotRenewedCertBy(serviceId);
+        Optional<CertificateEntity> certificateEntityOptional = certificateRepo.findMostRecentCertificate(serviceId);
         if(certificateEntityOptional.isEmpty())
             return ResponseEntity.badRequest().body("Can't renew nonexistent service");
         CertificateEntity certificateEntity = certificateEntityOptional.get();
@@ -49,14 +49,14 @@ public class CyclicalServiceService {
 
 
         if(certificateEntity.isRenewalMessageSent()){
-            schedulingService.trySchedulingReminderWhenInserted(certificateEntity,certificateEntity.getCyclicalServiceEntity());
-
+//            schedulingService.trySchedulingReminderWhenInserted(certificateEntity,certificateEntity.getCyclicalServiceEntity());
+//Todo może w przyszłości przywrócę remindery ale na razie zostają zablokowane
         }
         //co z tym zrobić? wywala forbidden 403
 //        else {
 //            schedulingService.trySchedulingReminderWhenUpdated(certificateEntity,certificateEntity.getCyclicalServiceEntity());
 //        }
-        certificateEntity.setRenewed(true);
+        certificateEntity.setMostRecent(false);
         certificateEntity.setRenewalMessageSent(true);
 
         CyclicalServiceEntity cyclicalService = certificateEntity.getCyclicalServiceEntity();
@@ -196,7 +196,7 @@ public class CyclicalServiceService {
 
 
         if (requestedStatusChange.equals(StatusEnum.RENEWED.getMaskValue())||
-                requestedStatusChange.equals(StatusEnum.AWAITING_RENEWAL.getMaskValue())||
+//                requestedStatusChange.equals(StatusEnum.AWAITING_RENEWAL.getMaskValue())||
                 requestedStatusChange.equals(StatusEnum.CANCELED.getMaskValue())||
                 requestedStatusChange.equals(StatusEnum.RENEWED_ELSEWHERE.getMaskValue()))
             statusBitmap = requestedStatusChange;

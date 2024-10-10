@@ -21,7 +21,7 @@ public class TestUtilityService {
         certificateEntity.setValidTo(validTo);
         certificateEntity.setValidFrom(LocalDateTime.now());
         certificateEntity.setNameInOrganisation("CEO");
-        certificateEntity.setRenewed(renewed);
+        certificateEntity.setMostRecent(renewed);
         certificateEntity.setRenewalMessageSent(renewalMessageSent);
         return certificateEntity;
     }
@@ -138,21 +138,21 @@ public class TestUtilityService {
         return testEntityManager.persist(new ContactDataEntity());
     }
 
-    static public CertificateEntity quickInsertCertificateEntity(TestEntityManager testEntityManager, LocalDateTime validTo,boolean renewed, boolean renewalMessageSent,CyclicalServiceEntity cyclicalServiceEntity){
+    static public CertificateEntity quickInsertCertificateEntity(TestEntityManager testEntityManager, LocalDateTime validTo,boolean mostRecent, boolean renewalMessageSent,CyclicalServiceEntity cyclicalServiceEntity){
         CyclicalServiceEntity cse;
         if (cyclicalServiceEntity == null)
             cse = quickInsertCyclicalServiceEntity(testEntityManager);
         else
             cse = cyclicalServiceEntity;
-        CertificateEntity certificateEntity = createCertificateEntity(cse,validTo,renewed,renewalMessageSent);
+        CertificateEntity certificateEntity = createCertificateEntity(cse,validTo,mostRecent,renewalMessageSent);
         return testEntityManager.persist(certificateEntity);
     }
-    static public CertificateEntity quickRenewCertificate(TestEntityManager testEntityManager, CertificateEntity oldCert,LocalDateTime validTo,boolean renewed, boolean renewalMessageSent){
-        oldCert.setRenewed(true);
+    static public CertificateEntity quickRenewCertificate(TestEntityManager testEntityManager, CertificateEntity oldCert,LocalDateTime validTo,boolean mostRecent, boolean renewalMessageSent){
+        oldCert.setMostRecent(false);
         testEntityManager.persist(oldCert);
 
 
-        return quickInsertCertificateEntity(testEntityManager,validTo,renewed,renewalMessageSent,oldCert.getCyclicalServiceEntity());
+        return quickInsertCertificateEntity(testEntityManager,validTo,mostRecent,renewalMessageSent,oldCert.getCyclicalServiceEntity());
     }
 
 }

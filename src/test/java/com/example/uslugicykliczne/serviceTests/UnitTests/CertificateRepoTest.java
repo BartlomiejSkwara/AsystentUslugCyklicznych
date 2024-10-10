@@ -42,27 +42,27 @@ public class CertificateRepoTest {
         autoCloseable.close();
     }
     @Test
-    void findFirstCertificateWithNoRenewalAndMessageSent(){
-        TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(1),true,true,null);
-        Optional<CertificateEntity> answer;
-        answer =  certificateRepo.findFirstCertificateWithNoRenewalAndMessageSent();
-        assertTrue(answer.isEmpty());
-
-        TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(1),true,false,null);
-        answer =  certificateRepo.findFirstCertificateWithNoRenewalAndMessageSent();
-        assertTrue(answer.isEmpty());
-
+    void findFirstCertificateWithNoRenewalAndWithoutMessageSent(){
         TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(1),false,true,null);
-        answer =  certificateRepo.findFirstCertificateWithNoRenewalAndMessageSent();
+        Optional<CertificateEntity> answer;
+        answer =  certificateRepo.findFirstMostRecentCertificateWithoutMessageSent();
         assertTrue(answer.isEmpty());
 
-        CertificateEntity newCert = TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(10),false,false,null);
-        answer =  certificateRepo.findFirstCertificateWithNoRenewalAndMessageSent();
+        TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(1),false,false,null);
+        answer =  certificateRepo.findFirstMostRecentCertificateWithoutMessageSent();
+        assertTrue(answer.isEmpty());
+
+        TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(1),true,true,null);
+        answer =  certificateRepo.findFirstMostRecentCertificateWithoutMessageSent();
+        assertTrue(answer.isEmpty());
+
+        CertificateEntity newCert = TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(10),true,false,null);
+        answer =  certificateRepo.findFirstMostRecentCertificateWithoutMessageSent();
         assertTrue(answer.isPresent());
         assertEquals(newCert,answer.get());
 
-        newCert = TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(9),false,false,null);
-        answer =  certificateRepo.findFirstCertificateWithNoRenewalAndMessageSent();
+        newCert = TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(9),true,false,null);
+        answer =  certificateRepo.findFirstMostRecentCertificateWithoutMessageSent();
         assertTrue(answer.isPresent());
         assertEquals(newCert,answer.get());
 
@@ -76,19 +76,19 @@ public class CertificateRepoTest {
     void findFirstDateBeforeTestFailure(){
 
 
-        CertificateEntity newCert = TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(11),true,true,null);
+        CertificateEntity newCert = TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(11),false,true,null);
         Integer serviceId = newCert.getCyclicalServiceEntity().getIdCyclicalService();
         Optional<CertificateEntity> answer;
-        answer =  certificateRepo.findCertificateWithNotRenewedCertBy(serviceId);
+        answer =  certificateRepo.findMostRecentCertificate(serviceId);
         assertTrue(answer.isEmpty());
 
-        newCert = TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(11),true,false,null);
+        newCert = TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(11),false,false,null);
         serviceId = newCert.getCyclicalServiceEntity().getIdCyclicalService();
-        answer =  certificateRepo.findCertificateWithNotRenewedCertBy(serviceId);
+        answer =  certificateRepo.findMostRecentCertificate(serviceId);
         assertTrue(answer.isEmpty());
 
-        newCert = TestUtilityService.quickRenewCertificate(testEntityManager,newCert,LocalDateTime.now().plusYears(12),false,false);
-        answer = certificateRepo.findCertificateWithNotRenewedCertBy(serviceId);
+        newCert = TestUtilityService.quickRenewCertificate(testEntityManager,newCert,LocalDateTime.now().plusYears(12),true,false);
+        answer = certificateRepo.findMostRecentCertificate(serviceId);
         assertTrue(answer.isPresent());
         assertEquals(newCert,answer.get());
 

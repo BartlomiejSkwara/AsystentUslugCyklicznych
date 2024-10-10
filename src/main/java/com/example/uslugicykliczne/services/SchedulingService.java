@@ -43,7 +43,7 @@ public class SchedulingService {
     }
 
     public void findNextServiceAndScheduleIt(){
-        Optional<CertificateEntity> certificateEntity = certificateRepo.findFirstCertificateWithNoRenewalAndMessageSent();
+        Optional<CertificateEntity> certificateEntity = certificateRepo.findFirstMostRecentCertificateWithoutMessageSent();
         if(certificateEntity.isPresent())
             trySchedulingReminderWhenInserted(certificateEntity.get(),certificateEntity.get().getCyclicalServiceEntity());
     }

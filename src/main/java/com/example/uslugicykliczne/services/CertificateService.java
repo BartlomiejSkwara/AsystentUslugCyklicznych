@@ -40,7 +40,7 @@ public class CertificateService {
         certificateEntity.setValidTo(cyclicalServiceDto.getCycleEnd());
         certificateEntity.setValidFrom(cyclicalServiceDto.getCycleStart());
         certificateEntity.setNameInOrganisation(cyclicalServiceDto.getNameInOrganisation().orElse(null));
-        certificateEntity.setRenewed(false);
+        certificateEntity.setMostRecent(true);
         certificateEntity.setRenewalMessageSent(false);
         return certificateRepo.save(certificateEntity);
     }
@@ -55,7 +55,7 @@ public class CertificateService {
         certificateEntity.setValidTo(serviceRenewalRecord.cycleEnd());
         certificateEntity.setValidFrom(serviceRenewalRecord.cycleStart());
         certificateEntity.setNameInOrganisation(serviceRenewalRecord.nameInOrganisation().orElse(null));
-        certificateEntity.setRenewed(false);
+        certificateEntity.setMostRecent(true);
         certificateEntity.setRenewalMessageSent(false);
         return certificateRepo.save(certificateEntity);
     }

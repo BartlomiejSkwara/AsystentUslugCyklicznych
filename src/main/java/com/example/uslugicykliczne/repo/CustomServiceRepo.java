@@ -40,7 +40,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
                         "cs.assignedAccountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
-                        "where floor(mod(cs.statusBitmap/:status,:status)) = 1 and ce.renewed=false "
+                        "where floor(mod(cs.statusBitmap/:status,:status)) = 1 and ce.mostRecent=true "
         );
         query.setParameter("status", StatusEnum.MARKED_FOR_CANCEL.getMaskValue());
         return query.getResultList();
@@ -55,7 +55,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap," +
                         "cs.assignedAccountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
-                        "where ce.renewed = false  and ce.validTo<:desiredTime and cs.assignedAccountDataEntity.username = :username "
+                        "where ce.mostRecent = true  and ce.validTo<:desiredTime and cs.assignedAccountDataEntity.username = :username "
         );
         query.setParameter("username", username);
         if(nDays==-1)
@@ -75,7 +75,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
                         "cs.assignedAccountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
-                        "where ce.renewed = false  and ce.validTo<:desiredTime"
+                        "where ce.mostRecent = true  and ce.validTo<:desiredTime"
         );
         if(nDays==-1)
             query.setParameter("desiredTime", LocalDateTime.now().plusYears(100));

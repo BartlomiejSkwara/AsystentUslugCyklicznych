@@ -40,7 +40,13 @@
       <tr v-for="cycle in filteredCycles" :key="cycle.getIdCyclicalService">
         <td>{{ cycle.getIdCyclicalService }}</td>
         <td>{{ cycle.agreementNumber }}</td>
-        <td>{{ cycle.statusBitmask }}</td>
+        <td>
+          <!-- {{statusesList.length}} -->
+          <!-- tak wiem, to nie jest optymalne, ale szkoda mi pamięci XD -->
+          {{pickPriorityStatus(cycle.statusBitmask).result}}
+          <button  v-if ="pickPriorityStatus(cycle.statusBitmask).moreThanOne"
+          @click="switchStatusModalVisibility(cycle.statusBitmask)" class="view-button">...</button>
+        </td>
         <td>{{ cycle.business.businessName }}</td>
         <td>{{ cycle.serviceUser.name + ' ' + cycle.serviceUser.getSurname }}</td>
         <td>
@@ -64,9 +70,7 @@
     </table>
   </div>
 
-      <!-- Comment modal -->
-      <!--  -->
-<!--  -->
+    <!-- Status change modal -->
     <div v-if="showRequestModal" class="modal" tabindex="-1" style="display: block ;">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -81,9 +85,9 @@
               <textarea name="Komentarz" v-model="comment"></textarea>
               <span v-if="requestType == STATUS_TYPES.BLANK">
                 <br>
-                <label for="Stan">Stan:</label>
+                <label for="Status">Status:</label>
                 <br>
-                <select id="Stan" v-model="newStatus">
+                <select id="Status" v-model="newStatus">
                   <option v-for="(status,key) in availableStatuses" :key="key" :value="status.mVal">
                     {{ status.desc }}
                   </option>
@@ -97,6 +101,21 @@
             <button @click="switchRequestModalVisibility(-1,-1,-1)">Cancel</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Status Display Modal -->
+    <div v-if="statusModalData.showStatusModal" class="modal" tabindex="-1" style="display: block ;" >
+      <div class="modal-content">
+        <span class="close" @click="switchStatusModalVisibility(-1)">&times;</span>
+          <h1>Lista obecnych statusów: </h1>
+          <br>
+          <ul>
+            <li v-for="(status, index) in statusesList" :key="index">
+              {{ status }}
+            </li>
+          </ul>
+    
       </div>
     </div>
 </template>
@@ -119,6 +138,13 @@ export default {
         agreementNumber: '',
         description: '',
       },
+      statusModalData:{
+        showStatusModal: false,
+        bitmask: 0
+      },
+      requestModalData:{
+
+      },
       showAdditionalFields: false,
       selectedDays: 60,
       showRequestModal: false,
@@ -127,12 +153,12 @@ export default {
       newStatus:0,
       errorMessage:'',
       requestType:{
-          mVal : -1,
+          mVal : 0,
           desc : "BLANK"
       },
       STATUS_TYPES: {
         BLANK: {
-          mVal : -1,
+          mVal : 0,
           desc : "Zmiana Stanu"
         },
         AWAITING_RENEWAL: {
@@ -194,6 +220,10 @@ export default {
   },
 
   methods: {
+    switchStatusModalVisibility(selectedBitmask){
+      this.statusModalData.showStatusModal = !this.statusModalData.showStatusModal;
+      this.statusModalData.bitmask = selectedBitmask;
+    },
 
     requestRenewalElligable(uname,statusBitmask){
       return (uname == this.$store.state.username)&&(this.hasStatus(statusBitmask,this.STATUS_TYPES.RENEWED.mVal))
@@ -266,7 +296,7 @@ export default {
         }
         // this.cycles = this.cycles.filter(cycle => cycle.getIdCyclicalService !== id);
 
-        alert(`Z powodzeniem dokonano operacji ${this.requestType.desc}!`);
+        // alert(`Z powodzeniem dokonano operacji ${this.requestType.desc}!`);
         this.switchRequestModalVisibility(-1,-1,-1);
 
       } catch (error) {
@@ -395,9 +425,48 @@ export default {
       const minutes = String(d.getMinutes()).padStart(2, '0');
       const seconds = String(d.getSeconds()).padStart(2, '0');
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    },
+
+    pickPriorityStatus(bitmask){
+      let list = Object.values(this.STATUS_TYPES);
+      let answ = {
+        result: "Blank",
+        moreThanOne: true
+      }
+      for (let i = list.length-1; i > 0; i--) {
+        if(this.hasStatus(bitmask, list[i].mVal)){
+          if(answ.moreThanOne == true){
+            answ.result = list[i].desc;
+            answ.moreThanOne = false;
+          }
+          else{
+            answ.moreThanOne = true;
+            break;
+          } 
+        } 
+      }
+      return answ;
     }
+
   },
   computed: {
+    
+    statusesList(){
+      let bitmask = this.statusModalData.bitmask;
+      let statusesList = [];
+
+
+      Object.values(this.STATUS_TYPES).forEach(curr => {
+        console.log(curr.mVal," ",bitmask);
+        console.log(this.hasStatus(bitmask,curr.mVal));
+        
+        if(this.hasStatus(bitmask,curr.mVal)){
+          bitmask-=curr.mVal;
+          statusesList.push(curr.desc);
+        }
+      })
+      return statusesList;
+    },
     availableStatuses(){
       let nonAvailable = [];
       nonAvailable.push(this.STATUS_TYPES.BLANK);
@@ -407,10 +476,12 @@ export default {
       let bitmask = this.bitmaskReferencedByModal;
 
       return Object.values(this.STATUS_TYPES).filter(curr => {
-        if(nonAvailable.findIndex(blocked => {return blocked==curr}) == -1)
-          return true;
+        let ok = true;
+        if(nonAvailable.findIndex(blocked => {return blocked.mVal==curr.mVal}) != -1)
+          return false;
+        ok = !this.hasStatus(bitmask,curr.mVal);
 
-        return !this.hasStatus(bitmask,curr.mVal);
+        return ok;
 
       })
     },

@@ -46,7 +46,7 @@
     </table>
 
     <!-- TESTYYY -->
-    <div v-if="showModal" class="modal">
+    <div v-if="showModal" class="modal" tabindex="-1" style="display: block ;">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>Dane kontaktowe</h2>

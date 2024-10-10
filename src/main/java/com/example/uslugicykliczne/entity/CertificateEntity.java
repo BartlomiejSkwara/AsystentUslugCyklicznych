@@ -37,8 +37,8 @@ public class CertificateEntity {
     @Column(nullable = false)
     private boolean renewalMessageSent;
     @Basic
-    @Column(name = "renewed",nullable = false)
-    private boolean renewed;
+    @Column(name = "mostRecent",nullable = false)
+    private boolean mostRecent;
     @ManyToOne
     @JoinColumn(name = "idCyclicalService",nullable = false)
     private CyclicalServiceEntity cyclicalServiceEntity;

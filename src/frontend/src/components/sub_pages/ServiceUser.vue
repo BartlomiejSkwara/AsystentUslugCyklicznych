@@ -55,7 +55,7 @@
       <button :disabled="currentPage === totalPages" @click="nextPage">Następna</button>
     </div>
 
-    <div v-if="showContactDataModal" class="modal">
+    <div v-if="showContactDataModal" class="modal" tabindex="-1" style="display: block ;" >
       <div class="modal-content">
         <span class="close" @click="closeContactDataModal">&times;</span>
         <h2>Dane kontaktowe</h2>
@@ -245,12 +245,6 @@ export default {
           console.error('There has been a problem with your fetch operation:', error);
           alert(error.message);
         }
-
-
-            // .catch(error => {
-
-            // });
-      
       
       }
 
