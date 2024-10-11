@@ -5,6 +5,8 @@ import ServiceUserList from "../components/sub_pages/ServiceUser.vue"
 import CyclesList from "../components/sub_pages/CyclicalService.vue";
 import BusinessService from "../components/sub_pages/BusinessService.vue";
 import CertificateList from "../components/sub_pages/CertificateList.vue";
+import Accounts from "../components/sub_pages/Accounts.vue";
+
 // forms
 import AddCycle from '../components/forms/AddCycle.vue';
 import ServiceUserAdd from '../components/forms/ServiceUserAdd.vue';
@@ -35,6 +37,11 @@ const routes = [
         path: '/Business',
         name: 'BusinessService',
         component: BusinessService
+    },
+    {
+        path: '/Accounts',
+        name: 'AccountsList',
+        component: Accounts
     },
     {
         path: '/certificates',

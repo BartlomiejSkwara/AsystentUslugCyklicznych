@@ -3,9 +3,9 @@
 
 
 
-    <h1 style="margin-bottom: 20px;">Lista użytkowników</h1>
+    <h1 style="margin-bottom: 20px;">Lista użytkowników usług</h1>
     <div class="container">
-      <router-link to="/add-user" class="add-button">Dodaj nowego użytkownika</router-link>
+      <router-link to="/add-user" class="add-button">Dodaj nowego użytkownika usługi</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
         <input type="text" class="input" v-model="searchFields.surname" placeholder="Nazwisko" style="margin-bottom: 10px; margin-right: 10px;">
         <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import { getCookie } from '@/utility';
+import { getCookie, fetchWrapper } from '@/utility';
 export default {
   name: 'ServiceUserList',
   data() {
@@ -222,7 +222,7 @@ export default {
         
         try{
           const cookie = getCookie("XSRF-TOKEN");
-          const response = await fetch(`/api/serviceUser/delete/${id}`, {
+          const response = await fetchWrapper(this,`/api/serviceUser/delete/${id}`, {
             method: 'DELETE',
             headers:{
               'X-XSRF-TOKEN':cookie
@@ -258,7 +258,7 @@ export default {
     //     this.cyclicalServices = [];
     //   } else {
     //     this.selectedUser = userId;
-    //     fetch(`/api/cyclicalservice/getAllByUser?userID=${userId}`)
+    //     fetchWrapper(this,`/api/cyclicalservice/getAllByUser?userID=${userId}`)
     //         .then(response => response.json())
     //         .then(data => {
     //           console.log('Cyclical services data:', data); // Debugging
@@ -280,7 +280,7 @@ export default {
     //     this.businesses = [];
     //   } else {
     //     this.selectedBusinessUser = userId;
-    //     fetch(`/api/business/getAllByUser?userID=${userId}`)
+    //     fetchWrapper(this,`/api/business/getAllByUser?userID=${userId}`)
     //         .then(response => response.json())
     //         .then(data => {
     //           console.log('Businesses data:', data); // Debugging
@@ -305,7 +305,7 @@ export default {
       console.log('Fetching contact data for ID:', contactDataId); // Debugging
       this.showContactDataModal = true;
       this.contactDataDetails = null; // Reset details
-      fetch(`/api/serviceUser/get/${contactDataId}`)
+      fetchWrapper(this,`/api/serviceUser/get/${contactDataId}`)
           .then(response => response.json())
           .then(data => {
             console.log('Contact data received:', data); // Debugging
@@ -322,7 +322,7 @@ export default {
       console.log('Fetching contact data for business ID:', businessId); // Debugging
       this.showBusinessContactModal = true;
       this.businessContactDetails = null; // Reset details
-      fetch(`/api/business/get/${businessId}`)
+      fetchWrapper(this,`/api/business/get/${businessId}`)
           .then(response => response.json())
           .then(data => {
             console.log('Business contact data received:', data); // Debugging
@@ -337,7 +337,7 @@ export default {
     }
   },
   mounted() {
-    fetch("/api/serviceUser/getAll")
+    fetchWrapper(this,"/api/serviceUser/getAll")
         .then(response => {
           if (!response.ok) {
             throw new Error("Network response was not ok " + response.statusText);

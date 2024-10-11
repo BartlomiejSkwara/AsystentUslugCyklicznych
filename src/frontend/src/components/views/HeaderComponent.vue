@@ -1,24 +1,25 @@
 <template>
   <header class="d-flex align-items-center pb-3 mb-5 border-bottom">
     <div class="ms-auto">
-      <span style="font-size: large; margin-right: 20px" v-if="isLoggedIn" class="me-3">Witaj, {{ this.$store.state.username }}!</span>
+      <span style="font-size: large; margin-right: 20px" v-if="hasRole"  class="me-3">Witaj, {{ this.$store.state.username }}!</span>
     </div>
     <div class="ms-3">
-      <router-link v-if="!isLoggedIn" to="/login" class="btn btn-primary me-2">Zaloguj</router-link>
-      <router-link v-if="!isLoggedIn" to="/register" class="btn btn-secondary">Zarejestruj się</router-link>
-      <button v-if="isLoggedIn" @click="logout" class="btn btn-danger">Wyloguj się</button>
+      <router-link v-if="!hasRole" to="/login" class="btn btn-primary me-2">Zaloguj</router-link>
+      <button v-if="hasRole" @click="logout" class="btn btn-danger">Wyloguj się</button>
     </div>
   </header>
 </template>
 
 <script>
+import { fetchWrapper } from '@/utility';
+
 // import { eventBus } from '@/eventBus.js';
 
 export default {
   name: 'HeaderComponent',
   data() {
     return {
-      isLoggedIn: this.checkLoginStatus(),
+      // isLoggedIn: this.checkLoginStatus(),
       // username: '',
       // userRole: ''
     };
@@ -28,12 +29,19 @@ export default {
     // eventBus.on('usernameUpdate', this.updateUsername);
 
   },
+  computed:{
+    hasRole (){
+      console.log(this.$store.state.role);
+      
+      return this.$store.state.role!='ROLE_nobody'
+    }
+  },
   methods: {
-    checkLoginStatus() {
-      return document.cookie.split(';').some((item) => item.trim().startsWith('XSRF-TOKEN='));
-    },
+    // checkLoginStatus() {
+    //   return document.cookie.split(';').some((item) => item.trim().startsWith('XSRF-TOKEN='));
+    // },
     getRole() {
-      fetch('/api/authentication/login', {
+      fetchWrapper(this,'/api/authentication/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -55,7 +63,7 @@ export default {
       // });
     },
     logout() {
-      fetch('/api/authentication/logout', {
+      fetchWrapper(this,'/api/authentication/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -73,9 +81,7 @@ export default {
               // eventBus.emit('usernameUpdate', this.username); // Wyczyszczenie username przy wylogowaniu
 
               this.$router.push('/login');
-            } else {
-              throw new Error('Logout failed');
-            }
+            } 
           })
           .catch(error => {
             console.error('Logout error:', error);
@@ -93,7 +99,7 @@ export default {
   },
   watch: {
     $route() {
-      this.isLoggedIn = this.checkLoginStatus();
+      this.isLoggedIn = this.hasRole;
       document.cookie = 'XSRF-TOKEN=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
   }

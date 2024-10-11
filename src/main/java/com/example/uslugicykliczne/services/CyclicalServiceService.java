@@ -75,13 +75,14 @@ public class CyclicalServiceService {
         if(businessEntityOptional.isPresent() && serviceUserEntityOptional.isPresent()){
 
             CyclicalServiceEntity insertedEntity = createCyclicalServiceEntityFromDTO(new CyclicalServiceEntity(),cyclicalServiceDto,serviceUserEntityOptional.get(),businessEntityOptional.get());
+            insertedEntity.setStatusBitmap(StatusEnum.RENEWED.getMaskValue());
             AccountDataEntity accountDataEntity = null;
-            if (cyclicalServiceDto.getRelatedAccountId().isPresent()){
-                Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId().get());
-                if(optionalAccountDataEntity.isEmpty())
-                    return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
-                accountDataEntity = optionalAccountDataEntity.get();
-            }
+
+            Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId());
+            if(optionalAccountDataEntity.isEmpty())
+                return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
+            accountDataEntity = optionalAccountDataEntity.get();
+
 
             insertedEntity.setAssignedAccountDataEntity(accountDataEntity);
             insertedEntity = cyclicalServiceRepo.save(insertedEntity);
@@ -117,12 +118,12 @@ public class CyclicalServiceService {
 
             updatedEntity = createCyclicalServiceEntityFromDTO(updatedEntity,cyclicalServiceDto,serviceUserEntityOptional.get(),businessEntityOptional.get());
             AccountDataEntity accountDataEntity = null;
-            if (cyclicalServiceDto.getRelatedAccountId().isPresent()){
-                Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId().get());
-                if(optionalAccountDataEntity.isEmpty())
-                    return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
-                accountDataEntity = optionalAccountDataEntity.get();
-            }
+
+            Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId());
+            if(optionalAccountDataEntity.isEmpty())
+                return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
+            accountDataEntity = optionalAccountDataEntity.get();
+
 
             updatedEntity.setAssignedAccountDataEntity(accountDataEntity);
             updatedEntity = cyclicalServiceRepo.save(updatedEntity);

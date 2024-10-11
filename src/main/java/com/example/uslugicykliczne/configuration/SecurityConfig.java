@@ -93,7 +93,8 @@ public class SecurityConfig {
                             "/api/business/getAll",
                             "/api/business/get/**",
                             "/api/business/insertBody",
-                            "/api/business/getAllByUser"
+                            "/api/business/getAllByUser",
+                            "/api/accountData/getAll"
                             ).hasAnyRole("editor","admin")
 
                     .anyRequest().hasRole("admin")

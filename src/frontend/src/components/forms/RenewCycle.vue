@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { getCookie, refreshCSRF } from '@/utility';
+import { getCookie,fetchWrapper } from '@/utility';
 
 export default {
   name: 'RenewCycle',
@@ -56,7 +56,6 @@ export default {
   mounted() {
     this.cycleId = this.$route.params.id; // Pobieramy ID cyklu z parametrów trasy
     this.setDefaultData();
-    refreshCSRF();
   },
   methods: {
     setDefaultData() {
@@ -78,7 +77,7 @@ export default {
       const cookie = getCookie("XSRF-TOKEN");
 
 
-      fetch(`/api/cyclicalservice/renew/${this.cycleId}`, {
+      fetchWrapper(this,`/api/cyclicalservice/renew/${this.cycleId}`, {
         method: 'POST',
 
         headers: {

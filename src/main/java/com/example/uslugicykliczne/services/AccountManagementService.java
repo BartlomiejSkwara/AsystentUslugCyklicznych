@@ -7,6 +7,8 @@ import com.example.uslugicykliczne.repo.AccountDataRepo;
 import com.example.uslugicykliczne.security.CustomUserDetails;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,9 +30,23 @@ public class AccountManagementService {
 
 
     @Transactional
-    public void register(RegistrationValidationRecord registrationValidationRecord, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<?> register(RegistrationValidationRecord registrationValidationRecord, HttpServletResponse httpServletResponse) {
         AccountDataEntity accountDataEntity = new AccountDataEntity();
-        accountDataEntity.setRole("ROLE_user");
+
+        String role = "ROLE_user";
+        switch (registrationValidationRecord.role()){
+            case 1:
+                role = "ROLE_editor";
+                break;
+            case 2:
+                role = "ROLE_admin";
+                break;
+            default:
+                role = "ROLE_user";
+                break;
+        }
+
+        accountDataEntity.setRole(role);
         accountDataEntity.setUsername(registrationValidationRecord.login());
         accountDataEntity.setHashedPassword(passwordEncoder.encode(registrationValidationRecord.password()));
 
@@ -48,6 +64,8 @@ public class AccountManagementService {
 //        }
 //
 //        return true;
+        return ResponseEntity.ok("Registration was successfull");
+
     }
 
     public void login(LoginValidationRecord loginValidationRecord,HttpServletResponse httpServletResponse){

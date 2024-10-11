@@ -51,15 +51,7 @@ public class AuthenticationController {
         return ResponseEntity.ok("Logging out was successfull");
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegistrationValidationRecord registrationValidationRecord, BindingResult bindingResult, HttpServletResponse httpServletResponse){
-        if(bindingResult.hasErrors()){
-            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
-        }
-        accountManagementService.register(registrationValidationRecord,httpServletResponse);
-        return ResponseEntity.ok("Registration was successfull");
 
-    }
 
 
 

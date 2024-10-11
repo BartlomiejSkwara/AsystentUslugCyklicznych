@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { refreshCSRF } from '@/utility';
+import { fetchWrapper } from '@/utility';
 
 export default {
   name: 'CertificateList',
@@ -66,7 +66,7 @@ export default {
     }
   },
   mounted() {
-    fetch("/api/certificate/getAll")
+    fetchWrapper(this,"/api/certificate/getAll")
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok " + response.statusText);
@@ -141,7 +141,7 @@ export default {
     },
     deleteCertificate(id_certificate) {
       if (confirm("Are you sure you want to delete this certificate?")) {
-        fetch(`/api/certificate/delete/${id_certificate}`, {
+        fetchWrapper(this,`/api/certificate/delete/${id_certificate}`, {
           method: 'DELETE'
         })
             .then(response => {
@@ -153,7 +153,6 @@ export default {
             .catch(error => {
               console.error('There has been a problem with your fetch operation:', error);
             });
-        refreshCSRF()      
       }
 
     },

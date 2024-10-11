@@ -46,7 +46,7 @@
 
 
 <script>
-import { getCookie, refreshCSRF } from '@/utility';
+import { fetchWrapper, getCookie } from '@/utility';
 export default {
   name: 'BusinessForm',
   data() {
@@ -68,13 +68,11 @@ export default {
     if (this.$route.query.idBusiness) {
       this.formMode = 'edit';
       this.fetchBusiness();
-    }else{
-      refreshCSRF();
     }
   },
   methods: {
     fetchBusiness() {
-      fetch(`/api/business/get/${this.$route.query.idBusiness}`)
+      fetchWrapper(this,`/api/business/get/${this.$route.query.idBusiness}`)
           .then(response => response.json())
           .then(business => {
             this.form.idBusiness = business.idBusiness;
@@ -128,7 +126,7 @@ export default {
           : `/api/business/update/${this.form.idBusiness}`;
 
       const cookie = getCookie("XSRF-TOKEN");
-      fetch(url, {
+      fetchWrapper(this,url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -20,5 +20,22 @@ export function getCookie(cname){
 }
 
 export  function refreshCSRF(){
-     fetch(`/api/authentication/requestToken`)
+     fetchWrapper(this,`/api/authentication/requestToken`)
+}
+
+export async function fetchWrapper(context, url, init={}){
+
+    const response = await fetch(url,init)
+    if(response.status === 403){
+        context.$store.commit('setRole', 'ROLE_nobody');
+        context.$store.commit('setUsername', '');
+        context.$router.push(
+            {
+                path: '/login',
+                query: { message: 'Twój żeton wygasł z powodu nieaktywności, proszę zaloguj się ponownie.' }
+            }
+        )
+        return;
+    }
+    return response;
 }

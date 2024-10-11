@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ formMode === 'edit' ? 'Edytuj użytkownika' : 'Dodaj nowego użytkownika' }}</h1>
+    <h1>{{ formMode === 'edit' ? 'Edytuj użytkownika' : 'Dodaj nowego użytkownika usługi' }}</h1>
     <form @submit.prevent="submitForm">
       <div>
         <label for="name">Imię:</label>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { getCookie, refreshCSRF } from '@/utility';
+import { getCookie,fetchWrapper } from '@/utility';
 export default {
   name: 'UserForm',
   data() {
@@ -71,8 +71,6 @@ export default {
       this.formMode = 'edit';
 
       this.fetchUser();
-    }else{
-      refreshCSRF()
     }
   },
   watch: {
@@ -85,7 +83,7 @@ export default {
   },
   methods: {
     fetchUser() {
-      fetch(`/api/serviceUser/get/${this.$route.query.idServiceUser}`)
+      fetchWrapper(this,`/api/serviceUser/get/${this.$route.query.idServiceUser}`)
           .then(response => response.json())
           .then(user => {
             this.form.idServiceUser = user.idServiceUser || null;
@@ -144,7 +142,7 @@ export default {
       // console.log(cookie);
 
     
-      fetch(url, {
+      fetchWrapper(this,url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

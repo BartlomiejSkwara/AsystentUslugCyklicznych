@@ -66,7 +66,7 @@ public class JWTService {
         return jwtBuilder
                 .subject(userDetails.getUsername())
                 .issuedAt(now)
-                .expiration(Date.from(now.toInstant().plusSeconds(10*60)))
+                .expiration(Date.from(now.toInstant().plusSeconds(30*60)))
                 .signWith(getSecretKey())
                 .compact();
 

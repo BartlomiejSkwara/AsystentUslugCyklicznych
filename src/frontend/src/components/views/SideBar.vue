@@ -17,7 +17,7 @@
       <li v-if="hasRole(['ROLE_admin', 'ROLE_editor'])">
         <router-link to="/ServiceUser" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Użytkownicy
+          Użytkownicy Usług
         </router-link>
       </li>
       <!-- Link do Business widoczny tylko dla ROLE_admin i ROLE_editor -->
@@ -25,6 +25,12 @@
         <router-link to="/Business" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
           Firmy
+        </router-link>
+      </li>
+      <li v-if="hasRole(['ROLE_admin'])">
+        <router-link to="/Accounts" class="nav-link text-white">
+          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+          Konta użytkowników systemu
         </router-link>
       </li>
 <!--  PODRZUCAMY PODSTRONĘ POD TO CZY NIE? (tyle że trzeba by było mnóstwo przerobić)-->

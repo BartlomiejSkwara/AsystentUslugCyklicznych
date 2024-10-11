@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { fetchWrapper } from '@/utility';
 export default {
   data() {
     return {
@@ -30,7 +31,7 @@ export default {
       formData.append('file', this.file);
 
       try {
-        const response = await fetch('/api/certificate/upload', {
+        const response = await fetchWrapper(this,'/api/certificate/upload', {
           method: 'POST',
           body: formData
         });

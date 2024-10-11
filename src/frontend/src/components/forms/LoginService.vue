@@ -1,10 +1,7 @@
 <template>
   <div class="login-container">
     <div class="form-container">
-      <div class="button-group">
-        <button @click="toggleForm('login')" :class="{ active: formType === 'login' }">Login</button>
-        <button @click="toggleForm('register')" :class="{ active: formType === 'register' }">Register</button>
-      </div>
+
       <form v-if="formType === 'login'" @submit.prevent="submitLogin">
         <h2>Zaloguj</h2>
         <div>
@@ -17,22 +14,7 @@
         </div>
         <button type="submit">Zaloguj</button>
       </form>
-      <form v-if="formType === 'register'" @submit.prevent="submitRegister">
-        <h2>Zarejestruj</h2>
-        <div>
-          <label for="registerLogin">Login:</label>
-          <input type="text" id="registerLogin" v-model="registerForm.login" required>
-        </div>
-        <div>
-          <label for="registerPassword">Hasło:</label>
-          <input type="password" id="registerPassword" v-model="registerForm.password" required>
-        </div>
-        <div>
-          <label for="registerConfirmPassword">Powtórz hasło:</label>
-          <input type="password" id="registerConfirmPassword" v-model="registerForm.confirmPassword" required>
-        </div>
-        <button type="submit">Zarejestruj się</button>
-      </form>
+     
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
@@ -41,23 +23,25 @@
 </template>
 
 <script>
+import { fetchWrapper } from '@/utility';
+
 
 export default {
   name: 'LoginService',
   data() {
     return {
-      formType: this.$route.path === '/login' ? 'login' : 'register',
+      formType: 'login' ,
       loginForm: {
         login: '',
         password: ''
       },
-      registerForm: {
-        login: '',
-        password: '',
-        confirmPassword: ''
-      },
+
       errorMessage: null
     };
+  },
+  created(){
+    this.errorMessage = this.$route.query.message || null
+
   },
   methods: {
     toggleForm(type) {
@@ -66,7 +50,7 @@ export default {
     },
     async submitLogin() {
       try {
-        const response = await fetch('/api/authentication/login', {
+        const response = await fetchWrapper(this,'/api/authentication/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -99,37 +83,7 @@ export default {
         this.errorMessage = 'Złe dane logowania. Spróbuj ponownie.';
       }
     },
-    async submitRegister() {
-      if (this.registerForm.password !== this.registerForm.confirmPassword) {
-        alert('Passwords do not match');
-        return;
-      }
-      try {
-        const response = await fetch('/api/authentication/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            login: this.registerForm.login,
-            password: this.registerForm.password
-          })
-        });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Network response was not ok: ${errorText}`);
-        }
-
-        const result = await response.json();
-        console.log('Registration successful', result);
-        // Optional: Redirect to login page after successful registration
-        this.$router.push('/login');
-      } catch (error) {
-        console.error('Registration error:', error);
-        this.errorMessage = 'Registration failed. Please try again.';
-      }
-    }
   }
 };
 </script>

@@ -72,9 +72,8 @@ public class CyclicalServiceDto {
     @Size(max=255, message = "Description is too long !!!")
     private final String description;
 
-    private final Optional<
-            @Min(value = 0L, message = "Specified relatedAccountId must be a positive Integer")
-            Integer> relatedAccountId;
+    @Min(value = 0L, message = "Specified relatedAccountId must be a positive Integer")
+    private final Integer relatedAccountId;
 
 
 

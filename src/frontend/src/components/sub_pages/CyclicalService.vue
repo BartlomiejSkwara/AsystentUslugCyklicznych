@@ -33,7 +33,7 @@
         <th>Certyfikat</th>
         <th>Ważne do:</th>
         <th>Typ karty </th>
-        <th>Działania</th>
+        <th></th>
       </tr>
       </thead>
       <tbody>
@@ -57,12 +57,33 @@
         <td>
           <!-- Przycisk usuwania wyświetla się tylko dla roli admin lub editor -->
 
+          <div class="dropdown ">
+            <button class="btn btn-primary dropdown-toggle" style="background-color: gray;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Działania 
+            </button>
+            <ul class="dropdown-menu">
+              <li v-if="isAdminOrEditor" >
+                <a   class="dropdown-item action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)">Zmiana Statusu</a>
+              </li>
 
-          <button v-if="isAdminOrEditor" class="action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)">Zmiana Statusu</button>
-          <button v-if="cancelRequestElligable(cycle.accountUsername,cycle.statusBitmask)" class="action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)">Anulowanie Prośba</button>
-          <button v-if="requestRenewalElligable(cycle.accountUsername,cycle.statusBitmask)" class="action-button edit-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)">Odnowienie Prośba</button>
-          <button v-if="isAdmin" class="action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</button>
-          <button v-if="(!cycle.oneTime)&&isAdminOrEditor" class="action-button renew-button"><router-link :to="`/renew-cycle/${cycle.getIdCyclicalService}`" class="renew">Odnów</router-link></button>
+              <li v-if="cancelRequestElligable(cycle.accountUsername,cycle.statusBitmask)">
+                <a  class="dropdown-item action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)">Anulowanie Prośba</a>
+              </li>
+
+              <li v-if="requestRenewalElligable(cycle.accountUsername,cycle.statusBitmask)">
+                <a  class="dropdown-item action-button edit-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)">Odnowienie Prośba</a>
+              </li>
+
+              <li v-if="isAdmin">
+                <a  class="dropdown-item action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</a>
+              </li>
+
+              <li v-if="(!cycle.oneTime)&&isAdminOrEditor" >
+                <a class="dropdown-item action-button renew-button" @click="renewCycle(cycle.getIdCyclicalService)">Odnów</a>
+              </li>
+
+            </ul>
+          </div>
 
         </td>
       </tr>
@@ -97,8 +118,8 @@
           </div>
 
           <div class="modal-footer">
-            <button @click="submitRequest">Submit</button>
-            <button @click="switchRequestModalVisibility(-1,-1,-1)">Cancel</button>
+            <button @click="submitRequest" class="btn btn-outline-success">Submit</button>
+            <button @click="switchRequestModalVisibility(-1,-1,-1)" class="btn btn-outline-secondary" >Cancel</button>
           </div>
         </div>
       </div>
@@ -122,7 +143,7 @@
 
 <script>
 // import { eventBus } from '@/eventBus.js'; // Import eventBus
-import { getCookie } from '@/utility';
+import { getCookie,fetchWrapper } from '@/utility';
 
 export default {
   name: 'CyclesList',
@@ -220,6 +241,11 @@ export default {
   },
 
   methods: {
+
+    renewCycle(cycSerId){
+      this.$router.push(`/renew-cycle/${cycSerId}`)
+    },
+
     switchStatusModalVisibility(selectedBitmask){
       this.statusModalData.showStatusModal = !this.statusModalData.showStatusModal;
       this.statusModalData.bitmask = selectedBitmask;
@@ -274,7 +300,7 @@ export default {
         console.log(payload);
 
         /// todo poprawka
-        const response = await fetch(`/api/cyclicalservice/${operation}/${this.serviceReferencedByModal}`, {
+        const response = await fetchWrapper(this,`/api/cyclicalservice/${operation}/${this.serviceReferencedByModal}`, {
           method: 'POST',
           headers:{
           'Content-Type': 'application/json',
@@ -336,7 +362,7 @@ export default {
     },
     fetchCycles(days) {
       this.selectedDays = days;
-      fetch(`/api/cyclicalservice/getAll?days=${days}`)
+      fetchWrapper(this,`/api/cyclicalservice/getAll?days=${days}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error("Network response was not ok " + response.statusText);
@@ -358,7 +384,7 @@ export default {
       
       this.selectedDays = 'all';
       try {
-        const response = await fetch(`/api/cyclicalservice/getAll`, {
+        const response = await fetchWrapper(this,`/api/cyclicalservice/getAll`, {
             method: 'GET',
         });
 
@@ -384,7 +410,7 @@ export default {
         try {
           const cookie = getCookie("XSRF-TOKEN");
 
-          const response = await fetch(`/api/cyclicalservice/delete/${id}`, {
+          const response = await fetchWrapper(this,`/api/cyclicalservice/delete/${id}`, {
             method: 'DELETE',
             headers:{
             'X-XSRF-TOKEN':cookie

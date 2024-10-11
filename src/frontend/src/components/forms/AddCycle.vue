@@ -46,7 +46,7 @@
         <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" required>
       </div>
       <div>
-        <label for="nameInOrganisation">Stawnowisko w organizacji: (opcjonalne)</label>
+        <label for="nameInOrganisation">Stanowisko w organizacji: (opcjonalne)</label>
         <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation">
       </div>
       <div>
@@ -54,9 +54,24 @@
         <input type="number" id="businessId" v-model="form.businessId" required>
       </div>
       <div>
-        <label for="serviceUserId">ID użytkownika:</label>
+        <label for="serviceUserId">ID użytkownika usługi:</label>
         <input type="number" id="serviceUserId" v-model="form.serviceUserId" required>
       </div>
+      <div>
+        <label for="accounts">Konto w systemie powiązane z usługą:</label>
+
+        <input list="accounts"  name="accounts" v-model="form.accountDataUsername"/>
+        <datalist id="accounts">
+          <option v-for="(account,key) in accounts" :key="key" :value="account.username"></option>
+        </datalist>
+
+      </div>
+
+
+
+
+
+
       <button type="submit">Zapisz</button>
       <button type="button" @click="goBack">Powrót</button>
     </form>
@@ -64,11 +79,12 @@
 </template>
 
 <script>
-import { getCookie, refreshCSRF } from '@/utility';
+import { fetchWrapper, getCookie } from '@/utility';
 
 export default {
   data() {
     return {
+      accounts: [],
       form: {
         agreementNumber: '',
         price: null,
@@ -81,14 +97,35 @@ export default {
         certSerialNumber: '',
         nameInOrganisation: '',
         businessId: null,
-        serviceUserId: null
+        serviceUserId: null,
+        accountDataUsername: null
       }
     };
   },
   mounted() {
-    refreshCSRF()
+    this.fetchAccounts();
+    
   },
   methods: {
+    async fetchAccounts(){
+      try {
+        const response = await fetchWrapper(this,`/api/accountData/getAll`, {
+            method: 'GET',
+        });
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok " + response.statusText);
+        }
+
+        const role = response.headers.get('frontRole');
+        this.$store.commit('setRole', role);
+        const data = await response.json();
+        this.accounts = data;
+      } catch (error) {
+          console.error("There has been a problem with your fetch operation:", error);
+      }
+    },
+
     submitForm() {
       const payload = {
         agreementNumber: this.form.agreementNumber,
@@ -102,11 +139,12 @@ export default {
         certSerialNumber: this.form.certSerialNumber,
         nameInOrganisation: this.form.nameInOrganisation || null,
         businessId: this.form.businessId,
-        serviceUserId: this.form.serviceUserId
+        serviceUserId: this.form.serviceUserId,
+        relatedAccountId: this.getAccountID(this.form.accountDataUsername)
       };
       const cookie = getCookie("XSRF-TOKEN");
 
-      fetch('/api/cyclicalservice/insertBody', {
+      fetchWrapper(this,'/api/cyclicalservice/insertBody', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,8 +162,12 @@ export default {
     },
     goBack() {
       this.$router.push('/Cycles');
-    }
+    },
+    getAccountID(username){
+      return this.accounts.find(acc=>{return acc.username == username}).idLoginCredentials;
+    },
   }
+
 };
 </script>
 

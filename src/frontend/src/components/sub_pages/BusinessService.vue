@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { getCookie, refreshCSRF } from '@/utility';
+import { getCookie, fetchWrapper } from '@/utility';
 export default {
   name: 'BusinessService',
   data() {
@@ -108,7 +108,7 @@ export default {
       this.showAdditionalFields = !this.showAdditionalFields;
     },
     fetchBusinesses() {
-      fetch("/api/business/getAll")
+      fetchWrapper(this,"/api/business/getAll")
           .then(response => response.json())
           .then(data => {
             this.businesses = data;
@@ -130,7 +130,7 @@ export default {
 
         try{
           const cookie = getCookie("XSRF-TOKEN");
-          const response = await fetch(`/api/business/delete/${idBusiness}`, {
+          const response = await fetchWrapper(this,`/api/business/delete/${idBusiness}`, {
             method: 'DELETE',
             headers:{
               'X-XSRF-TOKEN':cookie
@@ -154,13 +154,12 @@ export default {
               alert(error.message);
             // });
         }
-        refreshCSRF();
       }
     },
     viewContactData(id) {
       this.showModal = true;
       this.contactDataDetails = null;
-      fetch(`/api/business/get/${id}`)
+      fetchWrapper(this,`/api/business/get/${id}`)
           .then(response => response.json())
           .then(data => {
             this.contactDataDetails = data.contactData;
