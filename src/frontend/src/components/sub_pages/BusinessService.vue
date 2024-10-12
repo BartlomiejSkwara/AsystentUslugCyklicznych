@@ -46,25 +46,40 @@
     </table>
 
     <!-- TESTYYY -->
-    <div v-if="showModal" class="modal" tabindex="-1" style="display: block ;">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h2>Dane kontaktowe</h2>
-        <div v-if="contactDataDetails">
-          <p><strong>Emaile:</strong></p>
-          <ul>
-            <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
-          </ul>
-          <p><strong>Numery telefonów:</strong></p>
-          <ul>
-            <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
-          </ul>
-        </div>
-        <div v-else>
-          <p>Brak danych</p>
+
+
+    <div v-if="showModal"  class="modal " tabindex="-1" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Dane kontaktowe firmy</h2>
+            <button type="button" class="btn-close" @click="closeModal"></button>
+
+          </div>
+          <div class="modal-body ">
+            <div v-if="contactDataDetails">
+              <p><strong>Emails:</strong></p>
+              <ul>
+                <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
+              </ul>
+              <p><strong>Phone Numbers:</strong></p>
+              <ul>
+                <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
+              </ul>
+            </div>
+            <div v-else>
+              <p>No data available</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+
+
+
+
+
   </div>
 </template>
 
@@ -178,25 +193,6 @@ export default {
 <style src="@/assets/style.css"></style>
 
 <style>
-.modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: page ;
-  top: 20%;
-  left: 30%;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 600px;
-  width: 90%;
-}
 
 .close {
   color: #aaa;

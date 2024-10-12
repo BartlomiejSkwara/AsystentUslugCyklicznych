@@ -63,23 +63,23 @@
             </button>
             <ul class="dropdown-menu">
               <li v-if="isAdminOrEditor" >
-                <a   class="dropdown-item action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)">Zmiana Statusu</a>
+                <a   class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)">Zmiana Statusu</a>
               </li>
 
               <li v-if="cancelRequestElligable(cycle.accountUsername,cycle.statusBitmask)">
-                <a  class="dropdown-item action-button cancel-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)">Anulowanie Prośba</a>
+                <a  class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)">Anulowanie Prośba</a>
               </li>
 
               <li v-if="requestRenewalElligable(cycle.accountUsername,cycle.statusBitmask)">
-                <a  class="dropdown-item action-button edit-button" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)">Odnowienie Prośba</a>
+                <a  class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)">Odnowienie Prośba</a>
               </li>
 
               <li v-if="isAdmin">
-                <a  class="dropdown-item action-button delete-button" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</a>
+                <a  class="dropdown-item" href="#" @click="deleteCycle(cycle.getIdCyclicalService)">Usuń</a>
               </li>
 
               <li v-if="(!cycle.oneTime)&&isAdminOrEditor" >
-                <a class="dropdown-item action-button renew-button" @click="renewCycle(cycle.getIdCyclicalService)">Odnów</a>
+                <a class="dropdown-item " href="#" @click="renewCycle(cycle.getIdCyclicalService)">Odnów</a>
               </li>
 
             </ul>
@@ -90,9 +90,14 @@
       </tbody>
     </table>
   </div>
-
-    <!-- Status change modal -->
-    <div v-if="showRequestModal" class="modal" tabindex="-1" style="display: block ;">
+  <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#requestModal"
+    @click="switchRequestModalVisibility(0,STATUS_TYPES.BLANK,0)"
+  >
+    Launch demo modal
+  </button> -->
+  <!--  -->
+    <!-- Status change modal  fade-->
+    <div v-if="showRequestModal" id="requestModal" class="modal " tabindex="-1" style="display: block ;">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -126,17 +131,23 @@
     </div>
 
     <!-- Status Display Modal -->
-    <div v-if="statusModalData.showStatusModal" class="modal" tabindex="-1" style="display: block ;" >
-      <div class="modal-content">
-        <span class="close" @click="switchStatusModalVisibility(-1)">&times;</span>
-          <h1>Lista obecnych statusów: </h1>
-          <br>
-          <ul>
-            <li v-for="(status, index) in statusesList" :key="index">
-              {{ status }}
-            </li>
-          </ul>
-    
+    <div v-if="statusModalData.showStatusModal" class="modal " tabindex="-1" style="display: block ;" >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Lista obecnych statusów: </h2>
+            <button type="button" class="btn-close" @click="switchStatusModalVisibility(-1)"></button>
+          </div>
+          <div class="modal-body ">
+            
+            <br>
+            <ul>
+              <li v-for="(status, index) in statusesList" :key="index">
+                {{ status }}
+              </li>
+            </ul>
+          </div>       
+        </div>
       </div>
     </div>
 </template>

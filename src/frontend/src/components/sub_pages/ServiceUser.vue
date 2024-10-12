@@ -55,22 +55,31 @@
       <button :disabled="currentPage === totalPages" @click="nextPage">Następna</button>
     </div>
 
-    <div v-if="showContactDataModal" class="modal" tabindex="-1" style="display: block ;" >
-      <div class="modal-content">
-        <span class="close" @click="closeContactDataModal">&times;</span>
-        <h2>Dane kontaktowe</h2>
-        <div v-if="contactDataDetails">
-          <p><strong>Emaile:</strong></p>
-          <ul>
-            <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
-          </ul>
-          <p><strong>Numery telefonów:</strong></p>
-          <ul>
-            <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
-          </ul>
-        </div>
-        <div v-else>
-          <p>Brak danych</p>
+
+    <div v-if="showContactDataModal"  class="modal " tabindex="-1" style="display: block;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Dane kontaktowe użytkownika usługi</h3>
+            <button type="button" class="btn-close" @click="closeContactDataModal"></button>
+
+          </div>
+          <div class="modal-body ">
+
+            <div v-if="contactDataDetails">
+              <p><strong>Emails:</strong></p>
+              <ul>
+                <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
+              </ul>
+              <p><strong>Phone Numbers:</strong></p>
+              <ul>
+                <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
+              </ul>
+            </div>
+            <div v-else>
+              <p>No data available</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -355,7 +364,7 @@ export default {
 </script>
 
 <style>
-.modal {
+/* .modal {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -373,7 +382,7 @@ export default {
   padding: 20px;
   max-width: 600px;
   width: 90%;
-}
+} */
 
 .close {
   color: #aaa;
