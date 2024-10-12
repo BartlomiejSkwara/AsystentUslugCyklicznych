@@ -5,10 +5,10 @@
       <router-link v-if="isAdminOrEditor" to="/add-cycle" class="add-button">Dodaj nową płatność cykliczną</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
         <input type="text" class="input" v-model="searchFields.agreementNumber" placeholder="Numer dokumentu" style="margin-bottom: 10px; margin-right: 10px">
-        <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
-          <input type="text" class="input" v-model="searchFields.description" placeholder="Opis" style="margin-bottom: 10px; margin-right: 10px;">
-        </div>
-        <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>
+<!--        <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">-->
+<!--          <input type="text" class="input" v-model="searchFields.description" placeholder="Firma" style="margin-bottom: 10px; margin-right: 10px;">-->
+<!--        </div>-->
+<!--        <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>-->
       </div>
     </div>
     <div class="days-filter">

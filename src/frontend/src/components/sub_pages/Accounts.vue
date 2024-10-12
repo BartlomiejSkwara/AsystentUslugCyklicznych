@@ -152,7 +152,7 @@
 
           let role = 0;
           switch (this.registerForm.role) {
-            case "ROLE_user":
+            case "ROLE_editor":
               role = 1;
               break;
             case "ROLE_admin":
@@ -160,7 +160,6 @@
               break;
             default:
               role = 0;
-              this.registerForm = "ROLE_user";
               break;
           }
 
