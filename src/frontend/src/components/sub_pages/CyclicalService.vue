@@ -5,19 +5,22 @@
       <router-link v-if="isAdminOrEditor" to="/add-cycle" class="add-button">Dodaj nową płatność cykliczną</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
         <input type="text" class="input" v-model="searchFields.agreementNumber" placeholder="Numer dokumentu" style="margin-bottom: 10px; margin-right: 10px">
-<!--        <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">-->
-<!--          <input type="text" class="input" v-model="searchFields.description" placeholder="Firma" style="margin-bottom: 10px; margin-right: 10px;">-->
-<!--        </div>-->
-<!--        <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>-->
       </div>
     </div>
-    <div class="days-filter">
+    <div style="display: inline-block;" class="days-filter">
       <button @click="fetchCycles(7)" :class="{ active: selectedDays === 7 }">7 dni</button>
       <button @click="fetchCycles(14)" :class="{ active: selectedDays === 14 }">14 dni</button>
       <button @click="fetchCycles(30)" :class="{ active: selectedDays === 30 }">30 dni</button>
       <button @click="fetchCycles(60)" :class="{ active: selectedDays === 60 }">60 dni</button>
       <button @click="fetchAllCycles" :class="{ active: selectedDays === 'all' }">Wszystkie</button>
-    </div>
+
+    <select v-model="selectedStatus">
+      <option value="all">Wszystkie statusy</option>
+      <option v-for="status in filteredStatusTypes" :key="status.mVal" :value="status.mVal">
+        {{ status.desc }}
+      </option>
+    </select>
+  </div>
 
     <table>
       <thead>
@@ -177,6 +180,7 @@ export default {
           mVal : 0,
           desc : "BLANK"
       },
+      selectedStatus: 'all',
       STATUS_TYPES: {
         BLANK: {
           mVal : 0,
@@ -472,10 +476,14 @@ export default {
         } 
       }
       return answ;
-    }
+    },
+
 
   },
   computed: {
+    filteredStatusTypes() {
+      return Object.values(this.STATUS_TYPES).filter(status => status.mVal !== 0); // 0 to wartość mVal dla BLANK
+    },
     
     statusesList(){
       let bitmask = this.statusModalData.bitmask;
@@ -522,11 +530,24 @@ export default {
     filteredCycles() {
       const searchAgreementLower = this.searchFields.agreementNumber.toLowerCase();
       const searchDescriptionLower = this.searchFields.description.toLowerCase();
+
       return this.cycles
-          .filter(cycle =>
-              cycle.agreementNumber.toLowerCase().includes(searchAgreementLower) &&
-              cycle.description.toLowerCase().includes(searchDescriptionLower)
-          )
+          .filter(cycle => {
+            const matchesSearch = cycle.agreementNumber.toLowerCase().includes(searchAgreementLower) &&
+                cycle.description.toLowerCase().includes(searchDescriptionLower);
+
+
+            let maxStatus = 0;
+            Object.values(this.STATUS_TYPES).forEach(status => {
+              if ((cycle.statusBitmask & status.mVal) === status.mVal) {
+                maxStatus = Math.max(maxStatus, status.mVal);
+              }
+            });
+
+            const matchesStatus = this.selectedStatus === 'all' || this.selectedStatus == maxStatus;
+
+            return matchesSearch && matchesStatus;
+          })
           .sort((a, b) => {
             let order = this.sortOrders[this.sortKey] || 1;
             if (a[this.sortKey] < b[this.sortKey]) return -1 * order;
