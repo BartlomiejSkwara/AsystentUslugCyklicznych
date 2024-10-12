@@ -224,26 +224,7 @@
   <style src="@/assets/style.css"></style>
   
   <style>
-  .modal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: page ;
-    top: 20%;
-    left: 30%;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-  }
-  
-  .modal-content {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    max-width: 600px;
-    width: 90%;
-  }
-  
+
   .close {
     color: #aaa;
     float: right;

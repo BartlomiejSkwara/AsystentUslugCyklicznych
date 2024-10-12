@@ -70,6 +70,7 @@ public class SecurityConfig {
 
         httpSecurity.authorizeHttpRequests(auth ->
                 auth
+                    .requestMatchers("/","/index.html", "/js/*","/css/*","/favicon.ico").permitAll()
                     .requestMatchers("/api/authentication/login").permitAll()
                     .requestMatchers("/api/authentication/logout").hasAnyRole("user","editor","admin")
                     .requestMatchers(
