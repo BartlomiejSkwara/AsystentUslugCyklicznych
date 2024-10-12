@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { getCookie,fetchWrapper } from '@/utility';
+import { getCookie,fetchWrapper, refreshCSRF } from '@/utility';
 export default {
   name: 'UserForm',
   data() {
@@ -67,6 +67,7 @@ export default {
     };
   },
   mounted() {
+    refreshCSRF();
     if (this.$route.query.idServiceUser) {
       this.formMode = 'edit';
 

@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { fetchWrapper, getCookie } from '@/utility';
+import { fetchWrapper, getCookie, refreshCSRF } from '@/utility';
 
 export default {
   data() {
@@ -103,6 +103,7 @@ export default {
     };
   },
   mounted() {
+    refreshCSRF();
     this.fetchAccounts();
     
   },

@@ -41,6 +41,8 @@
 </template>
 
 <script>
+import { refreshCSRF } from '@/utility';
+
 export default {
   data() {
     return {
@@ -58,6 +60,7 @@ export default {
     };
   },
   mounted() {
+    refreshCSRF();
     this.prefillForm();
   },
   methods: {

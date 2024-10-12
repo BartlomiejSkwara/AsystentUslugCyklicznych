@@ -90,6 +90,8 @@ public class SecurityConfig {
                             "/api/serviceUser/getAll",
                             "/api/serviceUser/get/**",
                             "/api/serviceUser/insertBody",
+                            "/api/business/update/*",
+                            "/api/serviceUser/update/*",
                             "/api/business/getAll",
                             "/api/business/get/**",
                             "/api/business/insertBody",

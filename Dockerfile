@@ -14,7 +14,7 @@ WORKDIR /app
 LABEL authors="Krisent"
 
 
-ADD target/UslugiCykliczne-0.1.0.jar app.jar
+ADD target/UslugiCykliczne-0.2.0.jar app.jar
 EXPOSE 8081
 ENTRYPOINT ["java", "-jar","/app.jar"]
 

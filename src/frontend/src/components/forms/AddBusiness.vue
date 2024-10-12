@@ -46,7 +46,7 @@
 
 
 <script>
-import { fetchWrapper, getCookie } from '@/utility';
+import { fetchWrapper, getCookie, refreshCSRF } from '@/utility';
 export default {
   name: 'BusinessForm',
   data() {
@@ -65,6 +65,8 @@ export default {
     };
   },
   mounted() {
+    refreshCSRF();
+
     if (this.$route.query.idBusiness) {
       this.formMode = 'edit';
       this.fetchBusiness();

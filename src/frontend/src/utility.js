@@ -32,7 +32,7 @@ export async function fetchWrapper(context, url, init={}){
         context.$router.push(
             {
                 path: '/login',
-                query: { message: 'Twój żeton wygasł z powodu nieaktywności, proszę zaloguj się ponownie.' }
+                query: { message: 'Nie masz uprawnień do korzystania z danej usługi lub twój żeton stracił ważność spróbuj ponownie się zalogować.' }
             }
         )
         return;
