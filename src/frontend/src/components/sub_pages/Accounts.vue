@@ -2,7 +2,9 @@
     <div>
       <h1 style="margin-bottom: 20px;">Lista kont użytkowników systemu</h1>
       <div class="container">
-        <button  class="add-button" @click="switchRequestModalVisibility()">Dodaj nowe konto</button>
+        <button  class="add-button" @click="switchRequestModalVisibility()"
+        data-bs-toggle="modal" data-bs-target="#registerModal"        
+        >Dodaj nowe konto</button>
         <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
           <input type="text" class="input" v-model="searchFields.username" placeholder="Username" style="margin-bottom: 10px; margin-right: 10px;">
           <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
@@ -35,7 +37,7 @@
       </table>
   
       <!-- Modal rejestracji -->
-      <div v-if="showRequestModal" class="modal" tabindex="-1" style="display: block ;">
+      <div  id="registerModal" class="modal fade" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -55,18 +57,18 @@
             <label for="role">Rola:</label>
             <br>
             <select id="role"  v-model="registerForm.role"  class="form-select">                
-                <option value="ROLE_user">user</option>
+                <option value="ROLE_user" selected >user</option>
                 <option value="ROLE_editor">editor</option>
                 <option value="ROLE_admin">admin</option>
             </select >
 
             <br> 
-            <!-- <p class="text-danger">{{ errorMessage }}</p> -->
+            <p class="text-danger">{{ registerForm.errorMessage }}</p>
           </div>
 
           <div class="modal-footer">
             <button @click="register" class="btn btn-outline-success">Submit</button>
-            <button @click="switchRequestModalVisibility()" class="btn btn-outline-secondary" >Cancel</button>
+            <button id="closeRegister" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
@@ -89,11 +91,11 @@
         },
         registerForm:{
             username:'',
-            role:'user',
-            password:''
+            role:'ROLE_user',
+            password:'',
+            errorMessage:""
         },
         showAdditionalFields: false,
-        showRequestModal: false,     
         // contactDataDetails: null,
   
       };
@@ -136,13 +138,8 @@
         
 
         switchRequestModalVisibility(){
-            if(this.showRequestModal){
-                this.showRequestModal = false;
-            }else{
-                this.showRequestModal = true;
-            }
             this.registerForm.username = '';
-            this.registerForm.role = 'user';
+            this.registerForm.role = 'ROLE_user';
             this.registerForm.password = '';
         },
 
@@ -171,6 +168,11 @@
 
           };
           try{
+            if(payload.login.trim() === "")
+              throw new Error("Nie określiłeś loginu użytkownika")
+            if(payload.password.trim() === "")
+              throw new Error("Nie określiłeś hasła użytkownika")
+
             const cookie = getCookie("XSRF-TOKEN");
             const response = await fetchWrapper(this,`/api/accountData/register`, {
                 method: 'POST',
@@ -181,39 +183,29 @@
                 body: JSON.stringify(payload)
 
             })
-
+            
             //.then(response => {
             if (!response.ok) {
                 if (response.status === 409) {
                 throw new Error('Cannot register user');
                 } else {
-                throw new Error('Network response was not ok');
+                throw new Error(await response.text());
                 }
             }
 
             this.switchRequestModalVisibility();
+            document.getElementById("closeRegister").click();
+            
             this.fetchAccounts();
             //})
-            }catch(error){
+          }catch(error){
             // .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-                alert(error.message);
-                // });
+              this.registerForm.errorMessage = error.message;
+
           }
         
         },
-        viewContactData(id) {
-        this.showModal = true;
-        this.contactDataDetails = null;
-        fetchWrapper(this,`/api/business/get/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                this.contactDataDetails = data.contactData;
-            })
-            .catch(error => {
-                console.error("There has been a problem with your fetch operation:", error);
-            });
-        },
+
         closeModal() {
         this.showModal = false;
         }

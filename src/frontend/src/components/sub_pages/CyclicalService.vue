@@ -48,7 +48,11 @@
           <!-- tak wiem, to nie jest optymalne, ale szkoda mi pamięci XD -->
           {{pickPriorityStatus(cycle.statusBitmask).result}}
           <button  v-if ="pickPriorityStatus(cycle.statusBitmask).moreThanOne"
-          @click="switchStatusModalVisibility(cycle.statusBitmask)" class="view-button">...</button>
+          @click="switchStatusModalVisibility(cycle.statusBitmask)" class="view-button"
+          data-bs-toggle="modal" data-bs-target="#statusDisplayModal"
+          >...</button>
+
+          
         </td>
         <td>{{ cycle.business.businessName }}</td>
         <td>{{ cycle.serviceUser.name + ' ' + cycle.serviceUser.getSurname }}</td>
@@ -66,15 +70,15 @@
             </button>
             <ul class="dropdown-menu">
               <li v-if="isAdminOrEditor" >
-                <a   class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)">Zmiana Statusu</a>
+                <a   class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)" data-bs-toggle="modal" data-bs-target="#requestModal">Zmiana Statusu</a>
               </li>
 
               <li v-if="cancelRequestElligable(cycle.accountUsername,cycle.statusBitmask)">
-                <a  class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)">Anulowanie Prośba</a>
+                <a  class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)" data-bs-toggle="modal" data-bs-target="#requestModal">Anulowanie Prośba</a>
               </li>
 
               <li v-if="requestRenewalElligable(cycle.accountUsername,cycle.statusBitmask)">
-                <a  class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)">Odnowienie Prośba</a>
+                <a  class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)" data-bs-toggle="modal" data-bs-target="#requestModal">Odnowienie Prośba</a>
               </li>
 
               <li v-if="isAdmin">
@@ -99,8 +103,12 @@
     Launch demo modal
   </button> -->
   <!--  -->
+
+
+
+
     <!-- Status change modal  fade-->
-    <div v-if="showRequestModal" id="requestModal" class="modal " tabindex="-1" style="display: block ;">
+    <div id="requestModal" class="modal fade" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -126,20 +134,21 @@
           </div>
 
           <div class="modal-footer">
-            <button @click="submitRequest" class="btn btn-outline-success">Submit</button>
-            <button @click="switchRequestModalVisibility(-1,-1,-1)" class="btn btn-outline-secondary" >Cancel</button>
+            <button @click="submitRequest" class="btn btn-outline-success" >Submit</button>
+            <button  id="closeRequest" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <!-- @click="switchRequestModalVisibility(-1,-1,-1)" -->
           </div>
         </div>
       </div>
     </div>
 
     <!-- Status Display Modal -->
-    <div v-if="statusModalData.showStatusModal" class="modal " tabindex="-1" style="display: block ;" >
+    <div id="statusDisplayModal" class="modal fade" tabindex="-1"  >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h2>Lista obecnych statusów: </h2>
-            <button type="button" class="btn-close" @click="switchStatusModalVisibility(-1)"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body ">
             
@@ -337,7 +346,8 @@ export default {
         }
         // this.cycles = this.cycles.filter(cycle => cycle.getIdCyclicalService !== id);
 
-        // alert(`Z powodzeniem dokonano operacji ${this.requestType.desc}!`);
+        alert(`Z powodzeniem dokonano operacji ${this.requestType.desc}!`);
+        document.getElementById('closeRequest').click();
         this.switchRequestModalVisibility(-1,-1,-1);
 
       } catch (error) {

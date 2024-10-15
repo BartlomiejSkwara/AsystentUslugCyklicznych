@@ -32,7 +32,7 @@
         <td>{{ business.adres }}</td>
         <td>
           {{ business.contactData ? business.contactData.idContactData : 'N/A' }}
-          <button v-if="business.contactData" @click="viewContactData(business.idBusiness)" class="view-button">...</button>
+          <button v-if="business.contactData" @click="viewContactData(business.idBusiness)" class="view-button" data-bs-toggle="modal" data-bs-target="#contactModal">...</button>
         </td>
         <td>{{ business.comments }}</td>
         <td>{{ business.nip }}</td>
@@ -48,12 +48,12 @@
     <!-- TESTYYY -->
 
 
-    <div v-if="showModal"  class="modal " tabindex="-1" style="display: block;">
+    <div  id="contactModal"  class="modal fade" tabindex="-1" >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h2>Dane kontaktowe firmy</h2>
-            <button type="button" class="btn-close" @click="closeModal"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
           </div>
           <div class="modal-body ">
@@ -69,6 +69,7 @@
             </div>
             <div v-else>
               <p>No data available</p>
+              
             </div>
           </div>
         </div>

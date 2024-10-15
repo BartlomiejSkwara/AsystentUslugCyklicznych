@@ -31,6 +31,9 @@ public class AccountManagementService {
 
     @Transactional
     public ResponseEntity<?> register(RegistrationValidationRecord registrationValidationRecord, HttpServletResponse httpServletResponse) {
+        if(accountDataRepo.findByUsername(registrationValidationRecord.login()).isPresent()){
+            return ResponseEntity.badRequest().body("Użytkownik o takiej nazwie już istniej !!! ");
+        }
         AccountDataEntity accountDataEntity = new AccountDataEntity();
 
         String role = "ROLE_user";

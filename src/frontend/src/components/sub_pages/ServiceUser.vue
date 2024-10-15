@@ -34,7 +34,12 @@
         <td>{{ user.surname }}</td>
         <td>
           {{ user.contactData ? user.contactData.idContactData : 'N/A' }}
-          <button v-if="user.contactData" @click="viewContactData(user.idServiceUser)" class="view-button">...</button>
+          <button v-if="user.contactData" @click="viewContactData(user.idServiceUser)" class="view-button"
+             data-bs-toggle="modal" data-bs-target="#userContactData"
+          >...</button>
+          <!-- <button v-if="user.contactData" @click="viewBusinessContact(user.idServiceUser)" class="view-button"
+             data-bs-toggle="modal" data-bs-target="#businessContactData"
+          >Firma</button> -->
         </td>
         <td>{{ user.hasPolishPesel }}</td>
         <td>{{ user.taxIdentificationNumber }}</td>
@@ -54,36 +59,6 @@
       <span>Strona {{ currentPage }} z {{ totalPages }}</span>
       <button :disabled="currentPage === totalPages" @click="nextPage">Następna</button>
     </div>
-
-
-    <div v-if="showContactDataModal"  class="modal " tabindex="-1" style="display: block;">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3>Dane kontaktowe użytkownika usługi</h3>
-            <button type="button" class="btn-close" @click="closeContactDataModal"></button>
-
-          </div>
-          <div class="modal-body ">
-
-            <div v-if="contactDataDetails">
-              <p><strong>Emails:</strong></p>
-              <ul>
-                <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
-              </ul>
-              <p><strong>Phone Numbers:</strong></p>
-              <ul>
-                <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
-              </ul>
-            </div>
-            <div v-else>
-              <p>No data available</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
 
     <div v-if="selectedUser && cyclicalServices.length">
       <h2 style="margin-top: 30px;">Cyclical Services for User ID: {{ selectedUser }}</h2>
@@ -133,24 +108,62 @@
       </table>
     </div>
 
-    <div v-if="showBusinessContactModal" class="modal">
-      <div class="modal-content">
-        <span class="close" @click="closeBusinessContactModal">&times;</span>
-        <h2>Business Contact Details</h2>
-        <div v-if="businessContactDetails">
-          <p><strong>Emails:</strong></p>
-          <ul>
-            <li v-for="email in businessContactDetails.emails" :key="email.idEmail">{{ email.email }}</li>
-          </ul>
-          <p><strong>Phone Numbers:</strong></p>
-          <ul>
-            <li v-for="phone in businessContactDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
-          </ul>
-        </div>
-        <div v-else>
-          <p>No data available</p>
+    <div id="userContactData" class="modal fade" tabindex="-1" >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Dane kontaktowe użytkownika usługi</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+          </div>
+          <div class="modal-body ">
+
+            <div v-if="contactDataDetails">
+              <p><strong>Emails:</strong></p>
+              <ul>
+                <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
+              </ul>
+              <p><strong>Phone Numbers:</strong></p>
+              <ul>
+                <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
+              </ul>
+            </div>
+            <div v-else>
+              <p>No data available</p>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+
+``
+    <div  id="businessContactData" class="modal fade " tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Dane kontaktowe firmy </h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+          </div>
+          <div class="modal-body ">
+
+            <div v-if="businessContactDetails">
+            <p><strong>Emails:</strong></p>
+            <ul>
+              <li v-for="email in businessContactDetails.emails" :key="email.idEmail">{{ email.email }}</li>
+            </ul>
+            <p><strong>Phone Numbers:</strong></p>
+            <ul>
+              <li v-for="phone in businessContactDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
+            </ul>
+          </div>
+          <div v-else>
+              <p>No data available</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -364,25 +377,6 @@ export default {
 </script>
 
 <style>
-/* .modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: page ;
-  top: 20%;
-  left: 30%;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  max-width: 600px;
-  width: 90%;
-} */
 
 .close {
   color: #aaa;
