@@ -33,9 +33,10 @@
         <th>Status</th>
         <th>Firma</th>
         <th>Użytkownik</th>
-        <th>Certyfikat</th>
+
         <th>Ważne do:</th>
         <th>Typ karty </th>
+        <th></th>
         <th></th>
       </tr>
       </thead>
@@ -56,11 +57,13 @@
         </td>
         <td>{{ cycle.business.businessName }}</td>
         <td>{{ cycle.serviceUser.name + ' ' + cycle.serviceUser.getSurname }}</td>
-        <td>
-          {{ cycle.certificate.idCertificate }}
-        </td>
+
         <td>{{ formatDate(cycle.certificate.validTo) }}</td>
         <td>{{ cycle.certificate.cardType }}</td>
+        <td>
+          <!-- {{ cycle.certificate.idCertificate }} -->
+            <button class="btn btn-primary" @click="detailsScreen(cycle)">Szczegóły</button>
+        </td>
         <td>
           <!-- Przycisk usuwania wyświetla się tylko dla roli admin lub editor -->
 
@@ -166,7 +169,7 @@
 
 <script>
 // import { eventBus } from '@/eventBus.js'; // Import eventBus
-import { getCookie,fetchWrapper } from '@/utility';
+import { getCookie,fetchWrapper, STATUS_TYPES_LIST, decodeStatus, hasStatus } from '@/utility';
 
 export default {
   name: 'CyclesList',
@@ -201,49 +204,7 @@ export default {
           desc : "BLANK"
       },
       selectedStatus: 'all',
-      STATUS_TYPES: {
-        BLANK: {
-          mVal : 0,
-          desc : "Zmiana Stanu"
-        },
-        AWAITING_RENEWAL: {
-          mVal : 1,
-          desc : "Prośba o Odnowienie"
-        },
-        PRO_FORM_SENT: {
-          mVal : 2,
-          desc : "Pro Forma Wysłana "
-        },
-        CANCEL_REQUEST: {
-          mVal : 4,
-          desc : "Prośba o Anulowanie"
-        },
-        CANCELED:{
-          mVal : 8,
-          desc : "Anulowane"
-        },
-        MARKED_AS_NON_RENEWABLE:{
-          mVal : 16,
-          desc : "Nieodnawialny"
-        },
-        RENEWED_ELSEWHERE:{
-          mVal : 32,
-          desc : "Odnowiony gdzie indziej"
-        },
-        PAYMENT_DONE:{
-          mVal : 64,
-          desc : "Zapłata Otrzymana"
-        },
-        INVOICE_SENT:{
-          mVal : 128,
-          desc : "Faktura wystawiona kod otrzymany"
-        },
-        RENEWED:{
-          mVal : 256,
-          desc : "Odnowione"
-        },
-
-      },
+      STATUS_TYPES: STATUS_TYPES_LIST,
       comment:'',
       // userRole: 'ROLE_test', // Przechowuje bieżącą rolę użytkownika
       // username: ''
@@ -255,7 +216,7 @@ export default {
     // eventBus.on('usernameUpdate', this.updateUsername)
   },
   mounted() {
-    // console.log(this.$store.state.role);
+    this.$store.commit('setPassedValue', '');    
 
     this.fetchCycles(this.selectedDays);
   },
@@ -269,6 +230,11 @@ export default {
     renewCycle(cycSerId){
       this.$router.push(`/renew-cycle/${cycSerId}`)
     },
+    detailsScreen(cycleData){
+      this.$store.commit('setPassedValue', cycleData);    
+
+      this.$router.push('/cycleDetails');
+    },
 
     switchStatusModalVisibility(selectedBitmask){
       this.statusModalData.showStatusModal = !this.statusModalData.showStatusModal;
@@ -276,15 +242,14 @@ export default {
     },
 
     requestRenewalElligable(uname,statusBitmask){
-      return (uname == this.$store.state.username)&&(this.hasStatus(statusBitmask,this.STATUS_TYPES.RENEWED.mVal))
+      return (uname == this.$store.state.username)&&(hasStatus(statusBitmask,this.STATUS_TYPES.RENEWED.mVal))
     },
     cancelRequestElligable(uname,statusBitmask){
+      
       return (uname == this.$store.state.username)&&
-        (!this.hasStatus(statusBitmask,this.STATUS_TYPES.CANCEL_REQUEST.mVal)&&!this.hasStatus(statusBitmask,this.STATUS_TYPES.CANCELED.mVal))
+        (!hasStatus(statusBitmask,this.STATUS_TYPES.CANCEL_REQUEST.mVal)&&!hasStatus(statusBitmask,this.STATUS_TYPES.CANCELED.mVal))
     },
-    hasStatus(statusBitmask, status) {
-      return (statusBitmask & status) !== 0;
-    },
+
     async submitRequest() {
 
       // if (confirm("Are you sure you want to delete this cycle?")) {
@@ -321,7 +286,7 @@ export default {
 
           }
         }
-        console.log(payload);
+        // console.log(payload);
 
         /// todo poprawka
         const response = await fetchWrapper(this,`/api/cyclicalservice/${operation}/${this.serviceReferencedByModal}`, {
@@ -485,7 +450,7 @@ export default {
         moreThanOne: true
       }
       for (let i = list.length-1; i > 0; i--) {
-        if(this.hasStatus(bitmask, list[i].mVal)){
+        if(hasStatus(bitmask, list[i].mVal)){
           if(answ.moreThanOne == true){
             answ.result = list[i].desc;
             answ.moreThanOne = false;
@@ -508,19 +473,8 @@ export default {
     
     statusesList(){
       let bitmask = this.statusModalData.bitmask;
-      let statusesList = [];
 
-
-      Object.values(this.STATUS_TYPES).forEach(curr => {
-        console.log(curr.mVal," ",bitmask);
-        console.log(this.hasStatus(bitmask,curr.mVal));
-        
-        if(this.hasStatus(bitmask,curr.mVal)){
-          bitmask-=curr.mVal;
-          statusesList.push(curr.desc);
-        }
-      })
-      return statusesList;
+      return decodeStatus(bitmask);
     },
     availableStatuses(){
       let nonAvailable = [];
@@ -534,8 +488,8 @@ export default {
         let ok = true;
         if(nonAvailable.findIndex(blocked => {return blocked.mVal==curr.mVal}) != -1)
           return false;
-        ok = !this.hasStatus(bitmask,curr.mVal);
-
+        ok = !hasStatus(bitmask,curr.mVal);
+        
         return ok;
 
       })

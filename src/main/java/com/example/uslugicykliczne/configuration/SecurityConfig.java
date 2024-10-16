@@ -81,6 +81,7 @@ public class SecurityConfig {
                             "/api/cyclicalservice/renewalRequest/*",
                             "/api/cyclicalservice/cancelRequest/*",
                             "/api/cyclicalservice/statusChangeHistory/*",
+                            "/api/cyclicalservice/certificateHistory/*",
                             "/api/authentication/requestToken"
                             ).hasAnyRole("user","editor","admin")
 

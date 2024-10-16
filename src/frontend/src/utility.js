@@ -39,3 +39,69 @@ export async function fetchWrapper(context, url, init={}){
     }
     return response;
 }
+
+
+export function decodeStatus(decodedStatus){
+    let bitmask = decodedStatus;
+    let statusesList = [];
+
+
+    Object.values(STATUS_TYPES_LIST).forEach(curr => {
+    //   console.log(curr.mVal," ",bitmask);
+    //   console.log(this.hasStatus(bitmask,curr.mVal));
+      
+      if(hasStatus(bitmask,curr.mVal)){
+        bitmask-=curr.mVal;
+        statusesList.push(curr.desc);
+      }
+    })
+    return statusesList;
+}
+
+export function hasStatus(statusBitmask, status) {
+    return (statusBitmask & status) !== 0;
+}
+
+export const STATUS_TYPES_LIST = {
+    BLANK: {
+      mVal : 0,
+      desc : "Zmiana Stanu"
+    },
+    AWAITING_RENEWAL: {
+      mVal : 1,
+      desc : "Prośba o Odnowienie"
+    },
+    PRO_FORM_SENT: {
+      mVal : 2,
+      desc : "Pro Forma Wysłana "
+    },
+    CANCEL_REQUEST: {
+      mVal : 4,
+      desc : "Prośba o Anulowanie"
+    },
+    CANCELED:{
+      mVal : 8,
+      desc : "Anulowane"
+    },
+    MARKED_AS_NON_RENEWABLE:{
+      mVal : 16,
+      desc : "Nieodnawialny"
+    },
+    RENEWED_ELSEWHERE:{
+      mVal : 32,
+      desc : "Odnowiony gdzie indziej"
+    },
+    PAYMENT_DONE:{
+      mVal : 64,
+      desc : "Zapłata Otrzymana"
+    },
+    INVOICE_SENT:{
+      mVal : 128,
+      desc : "Faktura wystawiona kod otrzymany"
+    },
+    RENEWED:{
+      mVal : 256,
+      desc : "Odnowione"
+    },
+
+  }

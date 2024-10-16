@@ -1,6 +1,7 @@
 package com.example.uslugicykliczne.services;
 
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
+import com.example.uslugicykliczne.dataTypes.projections.CertificateProjectionRecord;
 import com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
 import com.example.uslugicykliczne.dataTypes.StatusEnum;
@@ -234,6 +235,20 @@ public class CyclicalServiceService {
         return ResponseEntity.ok(cyclicalService.getStatusBitmap());
     }
 
+
+
+    public List<CyclicalServiceProjection> getAllByFindingMode(int nDays,SERVICE_FINDING_MODE serviceFindingMode) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
+
+        if (userDetails.getRole().equals("ROLE_admin")||userDetails.getRole().equals("ROLE_editor")){
+            return cyclicalServiceRepo.customFindCyclicalProjectionsByParam(nDays,serviceFindingMode,null);
+        }
+
+        return  cyclicalServiceRepo.customFindCyclicalProjectionsByParam(nDays,serviceFindingMode,authentication.getName());
+
+    }
+
     public List<StatusChangeRecordProjection> getStatusChangesRelatedToService(Integer serviceId) {
 
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findCyclicalServiceAcDataJoin(serviceId);
@@ -253,18 +268,22 @@ public class CyclicalServiceService {
 
         return statusChangeRepo.findByServiceIdWithChronologicalOrder(serviceId);
     }
+    public List<CertificateProjectionRecord> getCertificatesRelatedToService(Integer serviceId) {
+        Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findCyclicalServiceAcDataJoin(serviceId);
+        if (optionalCyclicalServiceEntity.isEmpty())
+            return List.of();
 
-    public List<CyclicalServiceProjection> getAllByFindingMode(int nDays,SERVICE_FINDING_MODE serviceFindingMode) {
+        CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
 
-        if (userDetails.getRole().equals("ROLE_admin")||userDetails.getRole().equals("ROLE_editor")){
-            return cyclicalServiceRepo.customFindCyclicalProjectionsByParam(nDays,serviceFindingMode,null);
+        if (!userDetails.getRole().equals("ROLE_admin")&&!userDetails.getRole().equals("ROLE_editor")){
+            if(!authentication.getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+                return List.of();
         }
 
-        return  cyclicalServiceRepo.customFindCyclicalProjectionsByParam(nDays,serviceFindingMode,authentication.getName());
 
+        return certificateRepo.findByServiceIdWithChronologicalOrder(serviceId);
     }
-
-
 }

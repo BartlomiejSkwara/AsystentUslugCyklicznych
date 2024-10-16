@@ -2,6 +2,7 @@ package com.example.uslugicykliczne.controller;
 
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.CyclicalServiceDto;
+import com.example.uslugicykliczne.dataTypes.projections.CertificateProjectionRecord;
 import com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection;
 import com.example.uslugicykliczne.dataTypes.ServiceRenewalRecord;
 import com.example.uslugicykliczne.dataTypes.StatusEnum;
@@ -45,7 +46,6 @@ public class CyclicalServiceController {
     private final CyclicalServiceService cyclicalServiceService;
     private final StatusChangeRepo statusChangeRepo;
 
-
     @GetMapping("/getAllByUser")
     public List<CyclicalServiceProjection> getAllByUser(@RequestParam() Integer userID) {
         return cyclicalServiceService.getAllByFindingMode(userID,SERVICE_FINDING_MODE.BY_USER_ID);
@@ -71,6 +71,10 @@ public class CyclicalServiceController {
     @GetMapping("/statusChangeHistory/{id}")
     public List<StatusChangeRecordProjection> statusChangeRecordProjections(@PathVariable Integer id){
         return cyclicalServiceService.getStatusChangesRelatedToService(id);
+    }
+    @GetMapping("/certificateHistory/{id}")
+    public List<CertificateProjectionRecord> certificateRecordProjections(@PathVariable Integer id){
+        return cyclicalServiceService.getCertificatesRelatedToService(id);
     }
     @PostMapping("/statusChange/{id}")
     public ResponseEntity<?> changeStatus(@PathVariable Integer id, @Validated @RequestBody StatusAndComment statusAndComment, BindingResult bindingResult){

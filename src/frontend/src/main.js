@@ -10,6 +10,7 @@ const store = createStore({
       return {
         username: '',
         role: "ROLE_nobody",
+        passedValue: ''
       }
     },
     mutations: {
@@ -18,6 +19,9 @@ const store = createStore({
         },
         setRole(state,role){
             state.role = role;
+        },
+        setPassedValue(state,passedValue){
+            state.passedValue = passedValue;
         }
     }
 

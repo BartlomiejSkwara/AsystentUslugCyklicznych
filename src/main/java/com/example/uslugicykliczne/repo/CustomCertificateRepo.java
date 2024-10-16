@@ -1,5 +1,7 @@
 package com.example.uslugicykliczne.repo;
 
+import com.example.uslugicykliczne.dataTypes.projections.CertificateProjectionRecord;
+import com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection;
 import com.example.uslugicykliczne.entity.CertificateEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -11,6 +13,8 @@ import java.util.Optional;
 public interface CustomCertificateRepo {
     Optional<CertificateEntity> findMostRecentCertificate(int serviceId);
     Optional<CertificateEntity> findFirstMostRecentCertificateWithoutMessageSent();
+    List<CertificateProjectionRecord> findByServiceIdWithChronologicalOrder(Integer id);
+
 }
 
 
@@ -45,5 +49,19 @@ class  CustomCertificateRepoImpl implements CustomCertificateRepo{
         if (list.isEmpty())
             return Optional.empty();
         return Optional.of(list.get(0));
+    }
+
+    @Override
+    public List<CertificateProjectionRecord> findByServiceIdWithChronologicalOrder(Integer id) {
+        Query query = entityManager.createQuery(
+                "select new com.example.uslugicykliczne.dataTypes.projections.CertificateProjectionRecord(ce.idCertificate,ce.certificateSerialNumber,ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation) " +
+                        "from  CertificateEntity ce where ce.cyclicalServiceEntity.idCyclicalService=:serId order by ce.validFrom asc "
+
+        );
+        query.setParameter("serId",id);
+
+        List<CertificateProjectionRecord> resultList = query.getResultList();
+
+        return resultList;
     }
 }

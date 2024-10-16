@@ -6,7 +6,7 @@ import CyclesList from "../components/sub_pages/CyclicalService.vue";
 import BusinessService from "../components/sub_pages/BusinessService.vue";
 import CertificateList from "../components/sub_pages/CertificateList.vue";
 import Accounts from "../components/sub_pages/Accounts.vue";
-
+import CyclicalServiceDetails from '../components/sub_pages/CyclicalServiceDetails.vue';
 // forms
 import AddCycle from '../components/forms/AddCycle.vue';
 import ServiceUserAdd from '../components/forms/ServiceUserAdd.vue';
@@ -87,8 +87,16 @@ const routes = [
     {
         path: '/renew-cycle/:id',
         name: 'RenewCycle',
-        component: RenewCycle
+        component: RenewCycle,
+    },
+    {
+        path: '/cycleDetails',
+        name: 'CyclicalServiceDetails',
+        component: CyclicalServiceDetails,
+        props: true
+
     }
+
 
 
 ]
