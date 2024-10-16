@@ -8,6 +8,7 @@ import com.example.uslugicykliczne.dataTypes.StatusEnum;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection;
+import com.example.uslugicykliczne.repo.SERVICE_FINDING_MODE;
 import com.example.uslugicykliczne.repo.StatusChangeRepo;
 import com.example.uslugicykliczne.services.CyclicalServiceService;
 import jakarta.persistence.EntityManager;
@@ -45,6 +46,26 @@ public class CyclicalServiceController {
     private final StatusChangeRepo statusChangeRepo;
 
 
+    @GetMapping("/getAllByUser")
+    public List<CyclicalServiceProjection> getAllByUser(@RequestParam() Integer userID) {
+        return cyclicalServiceService.getAllByFindingMode(userID,SERVICE_FINDING_MODE.BY_USER_ID);
+    }
+
+    @GetMapping("/getAllByBusiness")
+    public List<CyclicalServiceProjection> getAllByBusiness(@RequestParam() Integer businessID) {
+        return cyclicalServiceService.getAllByFindingMode(businessID,SERVICE_FINDING_MODE.BY_BUSINESS_ID);
+    }
+
+    @GetMapping("/getAll")
+    public List<CyclicalServiceProjection> getAllServices(@RequestParam(required = false) String days, HttpServletResponse httpServletResponse){
+        if(days == null)
+            return cyclicalServiceService.getAllByFindingMode(-1, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
+
+        int nDays = 7;
+        if (days.equals("7") || days.equals("14")||days.equals("30")||days.equals("60"))
+            nDays = Integer.parseInt(days);
+        return cyclicalServiceService.getAllByFindingMode(nDays, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
+    }
 
 
     @GetMapping("/statusChangeHistory/{id}")
@@ -101,17 +122,6 @@ public class CyclicalServiceController {
     @GetMapping("/getAllCancelRequests")
     public List<CyclicalServiceProjection> getAllCancelRequests(){
         return cyclicalServiceRepo.customFindCyclicalProjectionsWithCancelRequest();
-    }
-
-    @GetMapping("/getAll")
-    public List<CyclicalServiceProjection> getAllServices(@RequestParam(required = false) String days, HttpServletResponse httpServletResponse){
-        if(days == null)
-            return cyclicalServiceService.getAllFromNextNDays(-1);
-
-        int nDays = 7;
-        if (days.equals("7") || days.equals("14")||days.equals("30")||days.equals("60"))
-            nDays = Integer.parseInt(days);
-        return cyclicalServiceService.getAllFromNextNDays(nDays);
     }
 
 

@@ -161,21 +161,6 @@ public class CyclicalServiceService {
         return cyclicalServiceEntity;
     }
 
-    public List<CyclicalServiceProjection> getAllFromNextNDays(int nDays) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
-
-        if (userDetails.getRole().equals("ROLE_admin")||userDetails.getRole().equals("ROLE_editor")){
-            return cyclicalServiceRepo.customFindCyclicalProjectionsInNextNDays(nDays);
-        }
-
-        return  cyclicalServiceRepo.customFindCyclicalProjectionsInNextNDaysForWithUsername(nDays,authentication.getName());
-//        if(!authentication.getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
-//            return List.of();
-
-    }
-
-
     public ResponseEntity<?> changeServiceStatusAndUpdateDB(Integer id,Integer requestedStatusChange, String statusChangeComment) {
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findById(id);
         if(optionalCyclicalServiceEntity.isEmpty())
@@ -267,6 +252,18 @@ public class CyclicalServiceService {
 
 
         return statusChangeRepo.findByServiceIdWithChronologicalOrder(serviceId);
+    }
+
+    public List<CyclicalServiceProjection> getAllByFindingMode(int nDays,SERVICE_FINDING_MODE serviceFindingMode) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
+
+        if (userDetails.getRole().equals("ROLE_admin")||userDetails.getRole().equals("ROLE_editor")){
+            return cyclicalServiceRepo.customFindCyclicalProjectionsByParam(nDays,serviceFindingMode,null);
+        }
+
+        return  cyclicalServiceRepo.customFindCyclicalProjectionsByParam(nDays,serviceFindingMode,authentication.getName());
+
     }
 
 

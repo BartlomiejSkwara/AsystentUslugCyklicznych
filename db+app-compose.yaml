@@ -1,0 +1,49 @@
+version: "3.7"
+services:
+  mymysql:
+    image: mysql:8.0.33
+    container_name: mymysql8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: p2lain4old67java39fil8e
+      MYSQL_DATABASE: uslugi_cykliczne
+      MYSQL_USER: krisent
+      MYSQL_PASSWORD: krisent
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin']
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mysql-db:/var/lib/mysql
+    networks:
+      - customNetwork
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      retries: 10
+      interval: 3s
+      timeout: 30s
+  spring:
+    image: bartlomiejskwara/cyclical-services:1.0
+    container_name: spring
+    restart: on-failure
+    ports:
+      - '8080:8080'
+    expose:
+      - '8080'
+    depends_on:
+      - mymysql
+    networks:
+      - customNetwork
+    environment:
+      MYSQL_HOST: mymysql8
+volumes:
+  mysql-db:
+
+networks:
+  customNetwork:
+
+
+
+
+

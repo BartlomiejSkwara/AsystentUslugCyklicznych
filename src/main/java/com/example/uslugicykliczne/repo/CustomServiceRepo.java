@@ -16,9 +16,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 interface CustomServiceRepo{
-    List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDays(int nDays);
     List<CyclicalServiceProjection> customFindCyclicalProjectionsWithCancelRequest();
-    List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDaysForWithUsername(int nDays, String username);
+
+    List<CyclicalServiceProjection> customFindCyclicalProjectionsByParam(int param1,SERVICE_FINDING_MODE serviceFindingMode,String accountUsername);
+
+
+
+
     Optional<CyclicalServiceEntity> customFindNameOfAccountAssignedToService(int serviceID);
     void customUpdateAwaitingRenewal();
     CyclicalServiceProjection saveAndReturnProjection(CyclicalServiceEntity cyclicalServiceEntity);
@@ -46,42 +50,60 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
         return query.getResultList();
     }
 
-    @Override
-    public List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDaysForWithUsername(int nDays, String username) {
-        Query query = entityManager.createQuery(
-                "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
-                        "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
-                        "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
-                        "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap," +
-                        "cs.assignedAccountDataEntity.username)" +
-                        "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
-                        "where ce.mostRecent = true  and ce.validTo<:desiredTime and cs.assignedAccountDataEntity.username = :username "
-        );
-        query.setParameter("username", username);
-        if(nDays==-1)
-            query.setParameter("desiredTime", LocalDateTime.now().plusYears(100));
-        else
-            query.setParameter("desiredTime", LocalDateTime.now().plusDays(nDays));
-        return query.getResultList();
 
-    }
 
     @Override
-    public List<CyclicalServiceProjection> customFindCyclicalProjectionsInNextNDays(int nDays) {
-        Query query = entityManager.createQuery(
+    public List<CyclicalServiceProjection> customFindCyclicalProjectionsByParam(int param1,SERVICE_FINDING_MODE serviceFindingMode,String accountUsername) {
+        Query query = null;
+        String userCheck = "";
+        if(accountUsername!=null)
+            userCheck = " and cs.assignedAccountDataEntity.username = :accUsername";
+        switch (serviceFindingMode){
+            //in next n days
+            default -> {
+                query = entityManager.createQuery(
                 "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
                         "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
                         "cs.assignedAccountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
-                        "where ce.mostRecent = true  and ce.validTo<:desiredTime"
-        );
-        if(nDays==-1)
-            query.setParameter("desiredTime", LocalDateTime.now().plusYears(100));
-        else
-            query.setParameter("desiredTime", LocalDateTime.now().plusDays(nDays));
+                        "where ce.mostRecent = true  and ce.validTo<:desiredTime"+userCheck);
+                if(param1==-1)
+                    query.setParameter("desiredTime", LocalDateTime.now().plusYears(100));
+                else
+                    query.setParameter("desiredTime", LocalDateTime.now().plusDays(param1));
+            }
+            case BY_USER_ID -> {
+                query = entityManager.createQuery(
+                        "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
+                                "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
+                                "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
+                                "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
+                                "cs.assignedAccountDataEntity.username)" +
+                                "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
+                                "where ce.mostRecent = true  and cs.serviceUser.idServiceUser =:userID "+userCheck);
+
+                query.setParameter("userID", param1);
+            }
+            case BY_BUSINESS_ID -> {
+                query = entityManager.createQuery(
+                        "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
+                                "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
+                                "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
+                                "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
+                                "cs.assignedAccountDataEntity.username)" +
+                                "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
+                                "where ce.mostRecent = true  and cs.business.idBusiness =:businessID "+userCheck);
+
+                query.setParameter("businessID", param1);
+            }
+        }
+
+        if(accountUsername!=null)
+            query.setParameter("accUsername", accountUsername);
         return query.getResultList();
+
     }
 
     @Override
