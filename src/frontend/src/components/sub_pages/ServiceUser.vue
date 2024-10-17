@@ -46,6 +46,12 @@
       </tbody>
     </table>
 
+    <div class="pagination" v-if="totalPages > 1">
+      <button @click="prevPage" :disabled="currentPage === 1">Poprzednia</button>
+      <span>{{ currentPage }} / {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Następna</button>
+    </div>
+
     <div v-if="selectedUser" style="margin-top: 20px;">
       <h2>Szczegóły dla użytkownika: {{ selectedUserFullName }}</h2>
       <div v-if="cyclicalServices.length">
@@ -205,7 +211,7 @@ export default {
     },
     viewContactData(contactDataId) {
       this.showContactDataModal = true;
-      this.contactDataDetails = null;
+      this.contactDataDetails = null; // Reset details
       fetchWrapper(this, `/api/serviceUser/get/${contactDataId}`)
           .then(response => response.json())
           .then(data => {
@@ -270,6 +276,7 @@ export default {
   text-decoration: none;
   cursor: pointer;
 }
+
 .view-button {
   background-color: #007bff;
   color: white;
