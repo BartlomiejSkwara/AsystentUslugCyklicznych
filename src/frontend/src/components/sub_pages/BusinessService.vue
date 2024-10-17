@@ -28,7 +28,7 @@
       <tbody>
       <tr v-for="business in filteredBusinesses" :key="business.idBusiness">
         <td>{{ business.idBusiness }}</td>
-        <td>{{ business.name }}</td>
+        <td @click="toggleDetails(business.idBusiness)" class="clickable">{{ business.name }}</td>
         <td>{{ business.adres }}</td>
         <td>
           {{ business.contactData ? business.contactData.idContactData : 'N/A' }}
@@ -45,47 +45,63 @@
       </tbody>
     </table>
 
-    <!-- TESTYYY -->
 
+    <div v-if="expandedBusiness !== null">
+      <h3 style="margin-top: 10px">Szczegóły dla firmy: {{ getBusinessName(expandedBusiness) }}</h3>
+      <div v-if="sortedExpandedBusinessDetails.length">
+        <table>
+          <thead>
+          <tr>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>Numer umowy</th>
+            <th>Data ważności</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="detail in sortedExpandedBusinessDetails" :key="detail.id">
+            <td>{{ detail.name }}</td>
+            <td>{{ detail.surname }}</td>
+            <td>{{ detail.agreementNumber }}</td>
+            <td>{{ formatDate(detail.validTo) }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <p v-else>Brak przypisanych użytkowników i cykli.</p>
+    </div>
 
-    <div  id="contactModal"  class="modal fade" tabindex="-1" >
+    <div id="contactModal" class="modal fade" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h2>Dane kontaktowe firmy</h2>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-
           </div>
-          <div class="modal-body ">
+          <div class="modal-body">
             <div v-if="contactDataDetails">
-              <p><strong>Emails:</strong></p>
+              <p><strong>Emaile:</strong></p>
               <ul>
                 <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
               </ul>
-              <p><strong>Phone Numbers:</strong></p>
+              <p><strong>Numery telefonów:</strong></p>
               <ul>
                 <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
               </ul>
             </div>
             <div v-else>
-              <p>No data available</p>
-              
+              <p>Brak danych</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-
-
-
-
-
   </div>
 </template>
 
 <script>
 import { getCookie, fetchWrapper } from '@/utility';
+
 export default {
   name: 'BusinessService',
   data() {
@@ -99,7 +115,8 @@ export default {
       showAdditionalFields: false,
       showModal: false,
       contactDataDetails: null,
-
+      expandedBusiness: null,
+      expandedBusinessDetails: [],
     };
   },
   computed: {
@@ -114,17 +131,52 @@ export default {
             business.regon.toLowerCase().includes(this.searchFields.regon.toLowerCase())
         );
       });
+    },
+    sortedExpandedBusinessDetails() {
+      return this.expandedBusinessDetails.slice().sort((a, b) => {
+        return new Date(a.validTo) - new Date(b.validTo);
+      });
     }
   },
   mounted() {
     this.fetchBusinesses();
   },
   methods: {
+    toggleDetails(businessId) {
+      if (this.expandedBusiness === businessId) {
+        this.expandedBusiness = null;
+        this.expandedBusinessDetails = [];
+      } else {
+        this.expandedBusiness = businessId;
+        this.fetchDetailsForBusiness(businessId);
+      }
+    },
+    fetchDetailsForBusiness(businessId) {
+      fetchWrapper(this, `/api/cyclicalservice/getAllByBusiness?businessID=${businessId}`)
+          .then(response => response.json())
+          .then(data => {
+            const details = data.map(cycle => ({
+              name: cycle.serviceUser.name,
+              surname: cycle.serviceUser.getSurname,
+              agreementNumber: cycle.agreementNumber,
+              validTo: cycle.certificate.validTo,
+              id: cycle.getIdCyclicalService
+            }));
+            this.expandedBusinessDetails = details;
+          })
+          .catch(error => {
+            console.error("There has been a problem with your fetch operation:", error);
+          });
+    },
+    getBusinessName(businessId) {
+      const business = this.businesses.find(b => b.idBusiness === businessId);
+      return business ? business.name : 'N/A';
+    },
     toggleSearchFields() {
       this.showAdditionalFields = !this.showAdditionalFields;
     },
     fetchBusinesses() {
-      fetchWrapper(this,"/api/business/getAll")
+      fetchWrapper(this, "/api/business/getAll")
           .then(response => response.json())
           .then(data => {
             this.businesses = data;
@@ -143,17 +195,15 @@ export default {
     },
     async deleteBusiness(idBusiness) {
       if (confirm('Are you sure you want to delete this business service?')) {
-
-        try{
+        try {
           const cookie = getCookie("XSRF-TOKEN");
-          const response = await fetchWrapper(this,`/api/business/delete/${idBusiness}`, {
+          const response = await fetchWrapper(this, `/api/business/delete/${idBusiness}`, {
             method: 'DELETE',
-            headers:{
-              'X-XSRF-TOKEN':cookie
+            headers: {
+              'X-XSRF-TOKEN': cookie
             }
-          })
+          });
 
-          //.then(response => {
           if (!response.ok) {
             if (response.status === 409) {
               throw new Error('Cannot delete, assigned cycle');
@@ -161,21 +211,19 @@ export default {
               throw new Error('Network response was not ok');
             }
           }
+
           this.businesses = this.businesses.filter(business => business.idBusiness !== idBusiness);
           alert('Business deleted successfully!');
-          //})
-        }catch(error){
-          // .catch(error => {
-              console.error('There has been a problem with your fetch operation:', error);
-              alert(error.message);
-            // });
+        } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+          alert(error.message);
         }
       }
     },
     viewContactData(id) {
       this.showModal = true;
       this.contactDataDetails = null;
-      fetchWrapper(this,`/api/business/get/${id}`)
+      fetchWrapper(this, `/api/business/get/${id}`)
           .then(response => response.json())
           .then(data => {
             this.contactDataDetails = data.contactData;
@@ -183,6 +231,16 @@ export default {
           .catch(error => {
             console.error("There has been a problem with your fetch operation:", error);
           });
+    },
+    formatDate(date) {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      const seconds = String(d.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
     closeModal() {
       this.showModal = false;
@@ -194,7 +252,6 @@ export default {
 <style src="@/assets/style.css"></style>
 
 <style>
-
 .close {
   color: #aaa;
   float: right;
@@ -208,6 +265,7 @@ export default {
   text-decoration: none;
   cursor: pointer;
 }
+
 .view-button {
   background-color: #007bff;
   color: white;
@@ -223,4 +281,14 @@ export default {
 .view-button:hover {
   background-color: #0056b3;
 }
+
+.clickable {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.clickable:hover {
+  color: #0056b3;
+}
+
 </style>
