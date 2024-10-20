@@ -9,7 +9,6 @@ import com.example.uslugicykliczne.repo.CertificateRepo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class CertificateService {
@@ -37,8 +36,8 @@ public class CertificateService {
         certificateEntity.setCyclicalServiceEntity(cyclicalServiceEntity);
         certificateEntity.setCardNumber(cyclicalServiceDto.getCardNumber());
         certificateEntity.setCardType(cyclicalServiceDto.getCardType());
-        certificateEntity.setValidTo(cyclicalServiceDto.getCycleEnd());
         certificateEntity.setValidFrom(cyclicalServiceDto.getCycleStart());
+        certificateEntity.setValidTo(cyclicalServiceDto.getCycleStart().plusYears(cyclicalServiceDto.getCertificateLengthInYears()));
         certificateEntity.setNameInOrganisation(cyclicalServiceDto.getNameInOrganisation().orElse(null));
         certificateEntity.setMostRecent(true);
         certificateEntity.setRenewalMessageSent(false);
@@ -46,14 +45,14 @@ public class CertificateService {
     }
 
 
-    public CertificateEntity insertCertificateCreatedFromRenewalRecord(CyclicalServiceEntity cyclicalServiceEntity, ServiceRenewalRecord serviceRenewalRecord) {
+    public CertificateEntity insertCertificateCreatedFromRenewalRecord(CyclicalServiceEntity cyclicalServiceEntity, ServiceRenewalRecord serviceRenewalRecord, LocalDateTime validFrom) {
         CertificateEntity certificateEntity = new CertificateEntity();
         certificateEntity.setCertificateSerialNumber(serviceRenewalRecord.certSerialNumber());
         certificateEntity.setCyclicalServiceEntity(cyclicalServiceEntity);
         certificateEntity.setCardNumber(serviceRenewalRecord.cardNumber());
         certificateEntity.setCardType(serviceRenewalRecord.cardType());
-        certificateEntity.setValidTo(serviceRenewalRecord.cycleEnd());
-        certificateEntity.setValidFrom(serviceRenewalRecord.cycleStart());
+        certificateEntity.setValidFrom(validFrom);
+        certificateEntity.setValidTo(validFrom.plusYears(serviceRenewalRecord.certificateLengthInYears()));
         certificateEntity.setNameInOrganisation(serviceRenewalRecord.nameInOrganisation().orElse(null));
         certificateEntity.setMostRecent(true);
         certificateEntity.setRenewalMessageSent(false);

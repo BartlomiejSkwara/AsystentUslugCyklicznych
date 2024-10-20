@@ -138,7 +138,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
 
         Query query = entityManager.createQuery(
                 "   select distinct ce.cyclicalServiceEntity.idCyclicalService from CertificateEntity ce" +
-                        "   where ce.validTo<:desiredTime"
+                        "   where ce.validTo<:desiredTime and ce.cyclicalServiceEntity.oneTime=false "
         );
         query.setParameter("desiredTime", LocalDateTime.now().plusDays(60));
 

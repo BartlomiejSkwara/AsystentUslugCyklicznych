@@ -40,10 +40,18 @@ public class CyclicalServiceService {
 
 
     public ResponseEntity<String> renewCyclicalService(ServiceRenewalRecord serviceRenewalRecord, Integer serviceId){
-        Optional<CertificateEntity> certificateEntityOptional = certificateRepo.findMostRecentCertificate(serviceId);
-        if(certificateEntityOptional.isEmpty())
+
+        switch (serviceRenewalRecord.certificateLengthInYears()){
+            case 1,2,3:
+                break;
+            default:
+                return  ResponseEntity.badRequest().body("Podano błędny okres trwania certyfikatu");
+        }
+
+        Optional<CertificateEntity> oldCertificateEntityOptional = certificateRepo.findMostRecentCertificate(serviceId);
+        if(oldCertificateEntityOptional.isEmpty())
             return ResponseEntity.badRequest().body("Can't renew nonexistent service");
-        CertificateEntity certificateEntity = certificateEntityOptional.get();
+        CertificateEntity certificateEntity = oldCertificateEntityOptional.get();
 
         if(certificateEntity.getCyclicalServiceEntity().isOneTime())
             return ResponseEntity.badRequest().body("Can't renew one time service");
@@ -64,12 +72,20 @@ public class CyclicalServiceService {
 
         changeServiceStatus(cyclicalService, StatusEnum.RENEWED.getMaskValue());
         serviceStatusHistoryService.addNewStatusHistoryRecord(null,StatusEnum.RENEWED,"Usługa została odnowiona",serviceId);
-        certificateService.insertCertificateCreatedFromRenewalRecord(cyclicalService, serviceRenewalRecord);
+        certificateService.insertCertificateCreatedFromRenewalRecord(cyclicalService, serviceRenewalRecord,certificateEntity.getValidTo());
 
         return ResponseEntity.ok().body("The task was successfully renewed");
     }
 
     public ResponseEntity<String> insertNewCyclicalServiceEntity(@NotNull CyclicalServiceDto cyclicalServiceDto){
+
+        switch (cyclicalServiceDto.getCertificateLengthInYears()){
+            case 1,2,3:
+                break;
+            default:
+                return  ResponseEntity.badRequest().body("Podano błędny okres trwania certyfikatu");
+        }
+
         Optional<ServiceUserEntity> serviceUserEntityOptional = serviceUserRepo.findById(cyclicalServiceDto.getServiceUserId());
         Optional<BusinessEntity> businessEntityOptional = businessRepo.findById(cyclicalServiceDto.getBusinessId());
 

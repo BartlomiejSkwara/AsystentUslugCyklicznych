@@ -27,9 +27,9 @@ public class CyclicalServiceDto {
     @NotNull(message = "cycleStart is empty !!!")
     private final LocalDateTime cycleStart;
 
-    @FutureOrPresent(message = "future or present constraint broken")
-    @NotNull(message = "cycleEnd is empty !!!")
-    private final LocalDateTime cycleEnd;
+    @Min(value = 1L, message = "Certyfikat nie może trwać krócej niż rok")
+    @NotNull(message = "certificateLengthInYears is empty !!!")
+    private final Integer certificateLengthInYears;
 
     @NotBlank(message = "Certificate cardNumber is empty !!!")
     @Size(max=40, message = "Certificate cardNumber is too long !!!")
@@ -73,6 +73,7 @@ public class CyclicalServiceDto {
     private final String description;
 
     @Min(value = 0L, message = "Specified relatedAccountId must be a positive Integer")
+    @NotNull(message = "relatedAccountId is empty !!!")
     private final Integer relatedAccountId;
 
 

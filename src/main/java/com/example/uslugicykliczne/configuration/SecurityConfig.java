@@ -54,7 +54,8 @@ public class SecurityConfig {
                 httpSecurityCsrfConfigurer
                         .ignoringRequestMatchers(
                             "/api/authentication/login",
-                            "/api/authentication/logout")
+                            "/api/authentication/logout"
+                                )
                         .csrfTokenRepository(repo)
                         .csrfTokenRequestHandler(new SPATokenRequestHandler())
                         .sessionAuthenticationStrategy(new NullAuthenticatedSessionStrategy())
