@@ -18,7 +18,7 @@
         <th>Imię</th>
         <th>Nazwisko</th>
         <th>Kontakt</th>
-        <th>Polski PESEL?</th>
+<!--        <th>Polski PESEL?</th>-->
         <th>PESEL</th>
         <th>Dodatkowy opis</th>
         <th>Działania</th>
@@ -35,7 +35,7 @@
                   data-bs-toggle="modal" data-bs-target="#userContactData"
           >...</button>
         </td>
-        <td>{{ user.hasPolishPesel }}</td>
+<!--        <td>{{ user.hasPolishPesel }}</td>-->
         <td>{{ user.taxIdentificationNumber }}</td>
         <td>{{ user.comments }}</td>
         <td>
@@ -59,14 +59,16 @@
           <thead>
           <tr>
             <th>Nazwa firmy</th>
-            <th>Numer dokumentu</th>
+<!--            <th>Numer dokumentu</th>-->
+            <th>Dokument</th>
             <th>Ważne do:</th>
           </tr>
           </thead>
           <tbody>
           <tr v-for="service in cyclicalServices" :key="service.agreementNumber">
             <td>{{ service.business.businessName }}</td>
-            <td>{{ service.agreementNumber }}</td>
+<!--            <td>{{ service.agreementNumber }}</td>-->
+            <td>Podpis (jakiś tam) ważny (ileś) lat</td>
             <td>{{ formatDate(service.certificate.validTo) }}</td>
           </tr>
           </tbody>

@@ -16,7 +16,7 @@
       </div>
       <div>
         <label for="cardType">Typ karty:</label>
-        <select id="cardType" v-model="form.cardType" required>
+        <select id="cardType" v-model="form.cardType" required disabled>
           <option value="PHYSICAL">FIZYCZNA</option>
           <option value="SIMPLYSIGN">PODPIS W CHMURZE</option>
         </select>

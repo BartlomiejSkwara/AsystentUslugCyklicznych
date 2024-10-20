@@ -6,20 +6,11 @@
         <label for="agreementNumber">Numer dokumentu:</label>
         <input type="text" id="agreementNumber" v-model="form.agreementNumber" required>
       </div>
-<!--      ZOSTAWIAMY CZY USUWAMY CENĘ?-->
-      <div>
-        <label for="price">Cena:</label>
-        <input type="number" id="price" v-model="form.price" step="0.01" required>
-      </div>
-      <div>
-        <label for="description">Opis:</label>
-        <input type="text" id="description" v-model="form.description" required>
-      </div>
       <div>
         <label for="oneTime">Jednorazowe:</label>
         <select id="oneTime" v-model="form.oneTime">
-          <option :value="true">Tak</option>
           <option :value="false">Nie</option>
+          <option :value="true">Tak</option>
         </select>
       </div>
       <div>
@@ -49,28 +40,39 @@
         <label for="nameInOrganisation">Stanowisko w organizacji: (opcjonalne)</label>
         <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation">
       </div>
+
       <div>
-        <label for="businessId">ID firmy:</label>
-        <input type="number" id="businessId" v-model="form.businessId" required>
+        <label for="businessId">Firma:</label>
+        <input list="businesses" name="businesses" v-model="form.businessId" />
+        <datalist id="businesses">
+          <option v-for="business in businesses" :key="business.id" :value="business.name">
+            {{ business.name }}
+          </option>
+        </datalist>
       </div>
+
       <div>
-        <label for="serviceUserId">ID użytkownika usługi:</label>
-        <input type="number" id="serviceUserId" v-model="form.serviceUserId" required>
+        <label for="serviceUserId">Użytkownik usługi:</label>
+        <input list="serviceUsers" name="serviceUsers" v-model="form.serviceUserId" />
+        <datalist id="serviceUsers">
+          <option v-for="user in serviceUsers" :key="user.id" :value="user.name + ' ' + user.surname">
+            {{ user.name + " " + user.surname }}
+          </option>
+        </datalist>
       </div>
+
       <div>
         <label for="accounts">Konto w systemie powiązane z usługą:</label>
-
-        <input list="accounts"  name="accounts" v-model="form.accountDataUsername"/>
+        <input list="accounts" name="accounts" v-model="form.accountDataUsername" />
         <datalist id="accounts">
           <option v-for="(account,key) in accounts" :key="key" :value="account.username"></option>
         </datalist>
-
       </div>
 
-
-
-
-
+      <div>
+        <label for="description">Opis:</label>
+        <input type="text" id="description" v-model="form.description" required>
+      </div>
 
       <button type="submit">Zapisz</button>
       <button type="button" @click="goBack">Powrót</button>
@@ -85,11 +87,11 @@ export default {
   data() {
     return {
       accounts: [],
+      businesses: [],
+      serviceUsers: [],
       form: {
         agreementNumber: '',
-        price: null,
-        description: '',
-        oneTime: true,
+        oneTime: false,
         cycleStart: '',
         cycleEnd: '',
         cardNumber: '',
@@ -98,24 +100,28 @@ export default {
         nameInOrganisation: '',
         businessId: null,
         serviceUserId: null,
-        accountDataUsername: null
+        accountDataUsername: null,
+        description: '',
       }
     };
+  },
+  computed: {
   },
   mounted() {
     refreshCSRF();
     this.fetchAccounts();
-    
+    this.fetchBusinesses();
+    this.fetchServiceUsers();
   },
   methods: {
-    async fetchAccounts(){
+    async fetchAccounts() {
       try {
-        const response = await fetchWrapper(this,`/api/accountData/getAll`, {
-            method: 'GET',
+        const response = await fetchWrapper(this, '/api/accountData/getAll', {
+          method: 'GET'
         });
 
         if (!response.ok) {
-            throw new Error("Network response was not ok " + response.statusText);
+          throw new Error('Network response was not ok ' + response.statusText);
         }
 
         const role = response.headers.get('frontRole');
@@ -123,14 +129,45 @@ export default {
         const data = await response.json();
         this.accounts = data;
       } catch (error) {
-          console.error("There has been a problem with your fetch operation:", error);
+        console.error('There has been a problem with your fetch operation:', error);
       }
     },
+    async fetchBusinesses() {
+      try {
+        const response = await fetchWrapper(this, '/api/business/getAll', {
+          method: 'GET'
+        });
 
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const data = await response.json();
+        this.businesses = data;
+      } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+      }
+    },
+    async fetchServiceUsers() {
+      try {
+        const response = await fetchWrapper(this, '/api/serviceUser/getAll', {
+          method: 'GET'
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const data = await response.json();
+        this.serviceUsers = data;
+      } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+      }
+    },
     submitForm() {
       const payload = {
         agreementNumber: this.form.agreementNumber,
-        price: parseFloat(this.form.price),
+        price: 10.00, // Stała cena
         description: this.form.description,
         oneTime: this.form.oneTime,
         cycleStart: this.form.cycleStart,
@@ -139,17 +176,17 @@ export default {
         cardType: this.form.cardType,
         certSerialNumber: this.form.certSerialNumber,
         nameInOrganisation: this.form.nameInOrganisation || null,
-        businessId: this.form.businessId,
-        serviceUserId: this.form.serviceUserId,
+        businessId: this.getBusinessID(this.form.businessId),
+        serviceUserId: this.getUserID(this.form.serviceUserId),
         relatedAccountId: this.getAccountID(this.form.accountDataUsername)
       };
-      const cookie = getCookie("XSRF-TOKEN");
+      const cookie = getCookie('XSRF-TOKEN');
 
-      fetchWrapper(this,'/api/cyclicalservice/insertBody', {
+      fetchWrapper(this, '/api/cyclicalservice/insertBody', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-XSRF-TOKEN':cookie
+          'X-XSRF-TOKEN': cookie
         },
         body: JSON.stringify(payload)
       })
@@ -164,13 +201,22 @@ export default {
     goBack() {
       this.$router.push('/Cycles');
     },
-    getAccountID(username){
-      return this.accounts.find(acc=>{return acc.username == username}).idLoginCredentials;
+    getBusinessID(name) {
+      const business = this.businesses.find(bus => bus.name === name);
+      return business ? business.idBusiness : null;
     },
+    getUserID(fullName) {
+      const user = this.serviceUsers.find(
+          user => `${user.name} ${user.surname}` === fullName
+      );
+      return user ? user.idServiceUser : null;
+    },
+    getAccountID(username) {
+      const account = this.accounts.find(acc => acc.username === username);
+      return account ? account.idLoginCredentials : null;
+    }
   }
-
 };
 </script>
-
 
 <style src="@/assets/style.css"></style>
