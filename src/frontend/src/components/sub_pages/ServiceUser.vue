@@ -60,7 +60,7 @@
           <tr>
             <th>Nazwa firmy</th>
 <!--            <th>Numer dokumentu</th>-->
-            <th>Dokument</th>
+            <th>Typ Usługi</th>
             <th>Ważne do:</th>
           </tr>
           </thead>
@@ -70,7 +70,7 @@
               {{ service.business.businessName }}
             </td>
 <!--            <td>{{ service.agreementNumber }}</td>-->
-            <td>Podpis (jakiś tam) ważny (ileś) lat</td>
+            <td>{{decodeSignature(service.signatureType)}} ważny {{calculateCertLen(service.certificate.validFrom,service.certificate.validTo)}} lata</td>
             <td>{{ formatDate(service.certificate.validTo) }}</td>
           </tr>
           </tbody>
@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import { getCookie, fetchWrapper } from '@/utility';
+import { getCookie, fetchWrapper, decodeSignatureType } from '@/utility';
 
 export default {
   name: 'ServiceUserList',
@@ -188,6 +188,16 @@ export default {
     }
   },
   methods: {
+    calculateCertLen(sDate,eDate){
+      const d1 = new Date(sDate);
+      const d2 = new Date(eDate);
+      // console.log(sDate,eDate);
+      
+      return d2.getFullYear()-d1.getFullYear();
+    },
+    decodeSignature(sig){
+      return decodeSignatureType(sig);
+    },
     toggleSearchFields() {
       this.showAdditionalFields = !this.showAdditionalFields;
     },

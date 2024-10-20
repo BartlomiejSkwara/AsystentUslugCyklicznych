@@ -8,7 +8,9 @@
                     <span><b>Powiązane Konto Użytkownika Systemu: </b>{{ cycleInfo.accountUsername }}</span><br>
                     <span><b>Cena: </b>{{ cycleInfo.price }}</span><br>
                     <span><b>Usługa Jednorazowa: </b>{{ cycleInfo.oneTime }}</span><br>
-                    <span><b>Numer Dokumentu: </b>{{ cycleInfo.agreementNumber }}</span><br>
+                    <span><b>Numer Zgody: </b>{{ cycleInfo.agreementNumber }}</span><br>
+                    <span><b>Dokument: </b>{{decodedSignature}}</span><br>
+
                     <span><b>Opis usługi: </b>{{ cycleInfo.description }}</span><br>
                     <span><b>Obecnie przypisane Statusy: </b></span>
                     <ul>
@@ -108,7 +110,7 @@
   </template>
   
   <script>  
-  import { decodeStatus, fetchWrapper } from '@/utility';
+  import { decodeSignatureType, decodeStatus, fetchWrapper } from '@/utility';
   export default {
     name: 'CyclicalServiceDetails',
     data() {
@@ -125,6 +127,11 @@
       this.fetchStatusChangeHistory();
       this.fetchCertHistory();
       // this.cycleId = this.$route.params.id; 
+    },
+    computed:{
+      decodedSignature(){
+        return decodeSignatureType(this.cycleInfo.signatureType);
+      }
     },
     methods: {
 

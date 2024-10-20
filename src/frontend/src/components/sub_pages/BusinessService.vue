@@ -54,7 +54,7 @@
           <tr>
             <th>Imię</th>
             <th>Nazwisko</th>
-            <th>Numer umowy</th>
+            <th>Typ Usługi</th>
             <th>Data ważności</th>
           </tr>
           </thead>
@@ -62,7 +62,7 @@
           <tr v-for="detail in sortedExpandedBusinessDetails" :key="detail.id">
             <td>{{ detail.name }}</td>
             <td>{{ detail.surname }}</td>
-            <td>{{ detail.agreementNumber }}</td>
+            <td>{{decodeSignature(detail.signatureType)}} ważny {{calculateCertLen(detail.validFrom,detail.validTo)}} lata</td>
             <td>{{ formatDate(detail.validTo) }}</td>
           </tr>
           </tbody>
@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { getCookie, fetchWrapper } from '@/utility';
+import { getCookie, fetchWrapper, decodeSignatureType } from '@/utility';
 
 export default {
   name: 'BusinessService',
@@ -142,6 +142,16 @@ export default {
     this.fetchBusinesses();
   },
   methods: {
+    calculateCertLen(sDate,eDate){
+      const d1 = new Date(sDate);
+      const d2 = new Date(eDate);
+      // console.log(this.expandedBusinessDetails,eDate);
+      
+      return d2.getFullYear()-d1.getFullYear();
+    },
+    decodeSignature(sig){
+      return decodeSignatureType(sig);
+    },
     toggleDetails(businessId) {
       if (this.expandedBusiness === businessId) {
         this.expandedBusiness = null;
@@ -160,6 +170,7 @@ export default {
               surname: cycle.serviceUser.getSurname,
               agreementNumber: cycle.agreementNumber,
               validTo: cycle.certificate.validTo,
+              validFrom: cycle.certificate.validFrom,
               id: cycle.getIdCyclicalService
             }));
             this.expandedBusinessDetails = details;

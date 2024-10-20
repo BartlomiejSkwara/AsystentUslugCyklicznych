@@ -23,6 +23,11 @@ public class CyclicalServiceDto {
     @Min(value = 0L, message = "Specified Business Id must be a positive Integer")
     private final Integer businessId;
 
+    @NotNull(message = "signatureType is empty !!!")
+    @Min(value = 0L, message = "Niepoprawny typ podpisu")
+    @Max(value = 3L, message = "Niepoprawny typ podpisu")
+    private final Integer signatureType;
+
 //    @FutureOrPresent(message = "future or present constraint broken")
     @NotNull(message = "cycleStart is empty !!!")
     private final LocalDateTime cycleStart;

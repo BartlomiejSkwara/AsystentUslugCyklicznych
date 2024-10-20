@@ -29,7 +29,7 @@
           <u>ID</u>
           <span :class="getSortIcon('getIdCyclicalService')"></span>
         </th>
-        <th>Numer dokumentu</th>
+        <th>Typ Usługi</th>
         <th>Status</th>
         <th>Firma</th>
         <th>Użytkownik</th>
@@ -43,7 +43,7 @@
       <tbody>
       <tr v-for="cycle in filteredCycles" :key="cycle.getIdCyclicalService">
         <td>{{ cycle.getIdCyclicalService }}</td>
-        <td>{{ cycle.agreementNumber }}</td>
+        <td>{{ decodeSignature(cycle.signatureType) }}</td>
         <td>
           <!-- {{statusesList.length}} -->
           <!-- tak wiem, to nie jest optymalne, ale szkoda mi pamięci XD -->
@@ -169,7 +169,7 @@
 
 <script>
 // import { eventBus } from '@/eventBus.js'; // Import eventBus
-import { getCookie,fetchWrapper, STATUS_TYPES_LIST, decodeStatus, hasStatus } from '@/utility';
+import { getCookie,fetchWrapper, STATUS_TYPES_LIST, decodeStatus, hasStatus, decodeSignatureType } from '@/utility';
 
 export default {
   name: 'CyclesList',
@@ -226,7 +226,9 @@ export default {
   },
 
   methods: {
-
+    decodeSignature(sig){
+      return decodeSignatureType(sig)
+    },
     renewCycle(cycSerId){
       this.$router.push(`/renew-cycle/${cycSerId}`)
     },

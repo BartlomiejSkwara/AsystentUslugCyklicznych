@@ -3,12 +3,13 @@
     <h1>Odnowienie płatności cyklicznej</h1>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="cycleStart">Data rozpoczęcia:</label>
-        <input type="datetime-local" id="cycleStart" v-model="form.cycleStart" required>
-      </div>
-      <div>
-        <label for="cycleEnd">Data zakończenia:</label>
-        <input type="datetime-local" id="cycleEnd" v-model="form.cycleEnd" required>
+        <label for="cycleEnd">Okres ważności certyfikatu w latach: </label>
+        <br>
+        <select id="cycleEnd" v-model="form.cycleEnd" required>
+          <option :value="1">1</option>
+          <option :value="2">2</option>
+          <option :value="3">3</option>
+        </select>
       </div>
       <div>
         <label for="cardNumber">Numer karty:</label>
@@ -43,8 +44,7 @@ export default {
   data() {
     return {
       form: {
-        cycleStart: '',
-        cycleEnd: '',
+        cycleEnd: 1,
         cardNumber: '',
         cardType: 'PHYSICAL',
         certSerialNumber: '',
@@ -68,8 +68,7 @@ export default {
     },
     submitForm() {
       const payload = {
-        cycleStart: this.form.cycleStart,
-        cycleEnd: this.form.cycleEnd,
+        certificateLengthInYears: this.form.cycleEnd,
         cardNumber: this.form.cardNumber,
         cardType: this.form.cardType,
         certSerialNumber: this.form.certSerialNumber,

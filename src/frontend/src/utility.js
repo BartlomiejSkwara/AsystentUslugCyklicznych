@@ -40,6 +40,18 @@ export async function fetchWrapper(context, url, init={}){
     return response;
 }
 
+export function decodeSignatureType(type){
+  switch (type) {
+    case 0:
+      return "Podpis Elektroniczny Mobilny SimplySign"
+    case 1:
+      return "Podpis Elektroniczny Karta + Czytnik"
+    case 2:
+      return "Pieczęć Elektroniczna Mobilna SimplySign"
+    default:
+      return "Pieczęć Elektroniczna Karta + Czytnik"
+  }
+}
 
 export function decodeStatus(decodedStatus){
     let bitmask = decodedStatus;

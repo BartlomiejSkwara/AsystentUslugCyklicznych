@@ -3,8 +3,17 @@
     <h1>Dodaj nową płatność cykliczną</h1>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="agreementNumber">Numer dokumentu:</label>
+        <label for="agreementNumber">Numer Zgody:</label>
         <input type="text" id="agreementNumber" v-model="form.agreementNumber" required>
+      </div>
+      <div>
+        <label for="sigType">Typ Usługi:</label>
+        <select id="sigType" v-model="form.signatureType" required>
+          <option :value="0">{{decodeSig(0)}}</option>
+          <option :value="1">{{decodeSig(1)}}</option>
+          <option :value="2">{{decodeSig(2)}}</option>
+          <option :value="3">{{decodeSig(3)}}</option>
+        </select>
       </div>
       <div>
         <label for="oneTime">Jednorazowe:</label>
@@ -18,8 +27,13 @@
         <input type="datetime-local" id="cycleStart" v-model="form.cycleStart" required>
       </div>
       <div>
-        <label for="cycleEnd">Data zakończenia:</label>
-        <input type="datetime-local" id="cycleEnd" v-model="form.cycleEnd" required>
+        <label for="cycleEnd">Okres ważności certyfikatu w latach: </label>
+        <br>
+        <select id="cycleEnd" v-model="form.cycleEnd" required>
+          <option :value="1">1</option>
+          <option :value="2">2</option>
+          <option :value="3">3</option>
+        </select>
       </div>
       <div>
         <label for="cardNumber">Numer karty:</label>
@@ -81,7 +95,7 @@
 </template>
 
 <script>
-import { fetchWrapper, getCookie, refreshCSRF } from '@/utility';
+import { decodeSignatureType, fetchWrapper, getCookie, refreshCSRF } from '@/utility';
 
 export default {
   data() {
@@ -93,7 +107,7 @@ export default {
         agreementNumber: '',
         oneTime: false,
         cycleStart: '',
-        cycleEnd: '',
+        cycleEnd: 1,
         cardNumber: '',
         cardType: 'PHYSICAL',
         certSerialNumber: '',
@@ -102,6 +116,7 @@ export default {
         serviceUserId: null,
         accountDataUsername: null,
         description: '',
+        signatureType: 0,
       }
     };
   },
@@ -114,6 +129,9 @@ export default {
     this.fetchServiceUsers();
   },
   methods: {
+    decodeSig(sig){
+      return decodeSignatureType(sig);
+    },
     async fetchAccounts() {
       try {
         const response = await fetchWrapper(this, '/api/accountData/getAll', {
@@ -171,14 +189,15 @@ export default {
         description: this.form.description,
         oneTime: this.form.oneTime,
         cycleStart: this.form.cycleStart,
-        cycleEnd: this.form.cycleEnd,
+        certificateLengthInYears: this.form.cycleEnd,
         cardNumber: this.form.cardNumber,
         cardType: this.form.cardType,
         certSerialNumber: this.form.certSerialNumber,
         nameInOrganisation: this.form.nameInOrganisation || null,
         businessId: this.getBusinessID(this.form.businessId),
         serviceUserId: this.getUserID(this.form.serviceUserId),
-        relatedAccountId: this.getAccountID(this.form.accountDataUsername)
+        relatedAccountId: this.getAccountID(this.form.accountDataUsername),
+        signatureType: this.form.signatureType
       };
       const cookie = getCookie('XSRF-TOKEN');
 

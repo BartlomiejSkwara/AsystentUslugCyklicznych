@@ -11,7 +11,7 @@ public class CyclicalServiceProjection {
     public CyclicalServiceProjection(int getIdCyclicalService, double price, boolean oneTime, String agreementNumber, String description,
                                      int businessId, String businessName,int idServiceUser,String userName, String userSurname,
                                      int idCertificate,String certificateSerialNumber,LocalDateTime validFrom,LocalDateTime validTo,String cardType,String cardNumber,String nameInOrganisation,
-                                     int statusBitmask, String accountUsername) {
+                                     int statusBitmask, String accountUsername, int signatureType) {
         this.getIdCyclicalService = getIdCyclicalService;
         this.price = price;
         this.oneTime = oneTime;
@@ -22,6 +22,7 @@ public class CyclicalServiceProjection {
         this.certificate = new CertificateProjectionRecord(idCertificate,certificateSerialNumber,validFrom,validTo,cardType,cardNumber,nameInOrganisation);
         this.statusBitmask = statusBitmask;
         this.accountUsername = accountUsername;
+        this.signatureType = signatureType;
     }
 
     private final String accountUsername;
@@ -35,6 +36,7 @@ public class CyclicalServiceProjection {
     private final MinimalServiceUserRecord serviceUser;
     private final CertificateProjectionRecord certificate;
     private final int statusBitmask;
+    private final int signatureType;
 
     private record MinimalBusinessRecord (int idBusiness, String businessName){};
     private record MinimalServiceUserRecord(int idServiceUser,String name, String getSurname){};

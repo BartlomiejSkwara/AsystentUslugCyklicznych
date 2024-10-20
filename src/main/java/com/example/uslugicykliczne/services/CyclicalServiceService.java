@@ -86,6 +86,14 @@ public class CyclicalServiceService {
                 return  ResponseEntity.badRequest().body("Podano błędny okres trwania certyfikatu");
         }
 
+        switch (cyclicalServiceDto.getSignatureType()){
+            case 0,1,2,3:
+                break;
+            default:
+                return  ResponseEntity.badRequest().body("Wybrano błędny typ sygnatury");
+        }
+
+
         Optional<ServiceUserEntity> serviceUserEntityOptional = serviceUserRepo.findById(cyclicalServiceDto.getServiceUserId());
         Optional<BusinessEntity> businessEntityOptional = businessRepo.findById(cyclicalServiceDto.getBusinessId());
 
@@ -174,6 +182,7 @@ public class CyclicalServiceService {
         cyclicalServiceEntity.setPrice(dto.getPrice());
         cyclicalServiceEntity.setOneTime(dto.getOneTime());
         cyclicalServiceEntity.setAgreementNumber(dto.getAgreementNumber());
+        cyclicalServiceEntity.setSignatureType(dto.getSignatureType());
 
         return cyclicalServiceEntity;
     }
