@@ -66,7 +66,9 @@
           </thead>
           <tbody>
           <tr v-for="service in cyclicalServices" :key="service.agreementNumber">
-            <td>{{ service.business.businessName }}</td>
+            <td @click="viewBusinessData(service.business.idBusiness)" class="clickable" data-bs-toggle="modal" data-bs-target="#businessData">
+              {{ service.business.businessName }}
+            </td>
 <!--            <td>{{ service.agreementNumber }}</td>-->
             <td>Podpis (jakiś tam) ważny (ileś) lat</td>
             <td>{{ formatDate(service.certificate.validTo) }}</td>
@@ -102,6 +104,38 @@
         </div>
       </div>
     </div>
+
+    <div id="businessData" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Dane przypisanej firmy</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div v-if="selectedBusiness">
+              <p><strong>Nazwa firmy:</strong> {{ selectedBusiness.name }}</p>
+              <p><strong>NIP:</strong> {{ selectedBusiness.nip }}</p>
+              <p><strong>REGON:</strong> {{ selectedBusiness.regon }}</p>
+              <p><strong>Adres:</strong> {{ selectedBusiness.adres }}</p>
+              <p><strong>Emaile:</strong></p>
+              <ul>
+                <li v-for="email in selectedBusiness.contactData.emails" :key="email.idEmail">{{ email.email }}</li>
+              </ul>
+              <p><strong>Numery telefonów:</strong></p>
+              <ul>
+                <li v-for="phone in selectedBusiness.contactData.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
+              </ul>
+            </div>
+            <div v-else>
+              <p>Brak danych</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -122,8 +156,8 @@ export default {
       cyclicalServices: [],
       currentPage: 1,
       usersPerPage: 8,
-      showContactDataModal: false,
       contactDataDetails: null,
+      selectedBusiness: null,
     };
   },
   computed: {
@@ -212,12 +246,22 @@ export default {
       }
     },
     viewContactData(contactDataId) {
-      this.showContactDataModal = true;
       this.contactDataDetails = null; // Reset details
       fetchWrapper(this, `/api/serviceUser/get/${contactDataId}`)
           .then(response => response.json())
           .then(data => {
             this.contactDataDetails = data.contactData;
+          })
+          .catch(error => {
+            console.error("Problem z operacją:", error);
+          });
+    },
+    viewBusinessData(businessId) {
+      this.selectedBusiness = null; // Resetowanie poprzednich danych firmy
+      fetchWrapper(this, `/api/business/get/${businessId}`)
+          .then(response => response.json())
+          .then(data => {
+            this.selectedBusiness = data; // Poprawione przypisanie danych firmy
           })
           .catch(error => {
             console.error("Problem z operacją:", error);
