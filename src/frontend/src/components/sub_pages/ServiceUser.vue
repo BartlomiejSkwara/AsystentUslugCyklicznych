@@ -70,7 +70,7 @@
               {{ service.business.businessName }}
             </td>
 <!--            <td>{{ service.agreementNumber }}</td>-->
-            <td>{{decodeSignature(service.signatureType)}} ważny {{calculateCertLen(service.certificate.validFrom,service.certificate.validTo)}} lata</td>
+            <td>{{service.certificate.cardType}} ważny {{calculateCertLen(service.certificate.validFrom,service.certificate.validTo)}} lata</td>
             <td>{{ formatDate(service.certificate.validTo) }}</td>
           </tr>
           </tbody>

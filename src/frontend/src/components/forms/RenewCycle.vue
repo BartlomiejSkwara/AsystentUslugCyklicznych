@@ -15,13 +15,13 @@
         <label for="cardNumber">Numer karty:</label>
         <input type="text" id="cardNumber" v-model="form.cardNumber" required>
       </div>
-      <div>
+      <!-- <div>
         <label for="cardType">Typ karty:</label>
         <select id="cardType" v-model="form.cardType" required disabled>
           <option value="PHYSICAL">FIZYCZNA</option>
           <option value="SIMPLYSIGN">PODPIS W CHMURZE</option>
         </select>
-      </div>
+      </div> -->
       <div>
         <label for="certSerialNumber">Numer certyfikatu:</label>
         <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" required>
@@ -70,7 +70,7 @@ export default {
       const payload = {
         certificateLengthInYears: this.form.cycleEnd,
         cardNumber: this.form.cardNumber,
-        cardType: this.form.cardType,
+        // cardType: this.form.cardType,
         certSerialNumber: this.form.certSerialNumber,
         nameInOrganisation: this.form.nameInOrganisation || null
       };

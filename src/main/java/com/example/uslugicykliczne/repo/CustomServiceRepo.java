@@ -66,7 +66,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                         "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
-                        "cs.assignedAccountDataEntity.username,cs.signatureType)" +
+                        "cs.assignedAccountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                         "where ce.mostRecent = true  and ce.validTo<:desiredTime"+userCheck);
                 if(param1==-1)
@@ -80,7 +80,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                                 "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                                 "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                                 "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
-                                "cs.assignedAccountDataEntity.username,cs.signatureType)" +
+                                "cs.assignedAccountDataEntity.username)" +
                                 "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                                 "where ce.mostRecent = true  and cs.serviceUser.idServiceUser =:userID "+userCheck);
 
@@ -92,7 +92,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                                 "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                                 "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                                 "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
-                                "cs.assignedAccountDataEntity.username,cs.signatureType)" +
+                                "cs.assignedAccountDataEntity.username)" +
                                 "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                                 "where ce.mostRecent = true  and cs.business.idBusiness =:businessID "+userCheck);
 

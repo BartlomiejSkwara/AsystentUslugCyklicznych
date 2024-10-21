@@ -25,9 +25,9 @@ public class CyclicalServiceEntity {
     @Basic
     @Column(name = "agreementNumber",nullable = false, length = 40)
     private String agreementNumber;
-    @Basic
-    @Column(name = "signatureType",nullable = false)
-    private int signatureType;
+//    @Basic
+//    @Column(name = "signatureType",nullable = false)
+//    private int signatureType;
     @Basic
     @Column(name = "description")
     private String description;

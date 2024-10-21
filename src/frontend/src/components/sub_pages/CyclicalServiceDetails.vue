@@ -9,7 +9,7 @@
                     <span><b>Cena: </b>{{ cycleInfo.price }}</span><br>
                     <span><b>Usługa Jednorazowa: </b>{{ cycleInfo.oneTime }}</span><br>
                     <span><b>Numer Zgody: </b>{{ cycleInfo.agreementNumber }}</span><br>
-                    <span><b>Dokument: </b>{{decodedSignature}}</span><br>
+                    <!-- <span><b>Dokument: </b>{{decodedSignature}}</span><br> -->
 
                     <span><b>Opis usługi: </b>{{ cycleInfo.description }}</span><br>
                     <span><b>Obecnie przypisane Statusy: </b></span>

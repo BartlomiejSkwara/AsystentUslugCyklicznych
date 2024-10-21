@@ -7,15 +7,6 @@
         <input type="text" id="agreementNumber" v-model="form.agreementNumber" required>
       </div>
       <div>
-        <label for="sigType">Typ Usługi:</label>
-        <select id="sigType" v-model="form.signatureType" required>
-          <option :value="0">{{decodeSig(0)}}</option>
-          <option :value="1">{{decodeSig(1)}}</option>
-          <option :value="2">{{decodeSig(2)}}</option>
-          <option :value="3">{{decodeSig(3)}}</option>
-        </select>
-      </div>
-      <div>
         <label for="oneTime">Jednorazowe:</label>
         <select id="oneTime" v-model="form.oneTime">
           <option :value="false">Nie</option>
@@ -43,7 +34,11 @@
         <label for="cardType">Typ karty:</label>
         <select id="cardType" v-model="form.cardType" required>
           <option value="PHYSICAL">FIZYCZNA</option>
-          <option value="SIMPLYSIGN">PODPIS W CHMURZE</option>
+          <option value="PODPIS_SIMPLYSIGN">SIMPLYSIGN PODPIS</option>
+          <option value="PIECZĘĆ_SIMPLYSIGN">SIMPLYSIGN PIECZĘĆ</option>
+          <option value="PODPIS_KARTA_I_CZYTNIK">KARTA I CZYTNIK PODPIS</option>
+          <option value="PIECZĘĆ_KARTA_I_CZYTNIK">KARTA I CZYTNIK PIECZĘĆ</option>
+
         </select>
       </div>
       <div>
@@ -197,7 +192,7 @@ export default {
         businessId: this.getBusinessID(this.form.businessId),
         serviceUserId: this.getUserID(this.form.serviceUserId),
         relatedAccountId: this.getAccountID(this.form.accountDataUsername),
-        signatureType: this.form.signatureType
+        // signatureType: this.form.signatureType
       };
       const cookie = getCookie('XSRF-TOKEN');
 

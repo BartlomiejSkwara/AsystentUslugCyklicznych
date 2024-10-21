@@ -62,7 +62,7 @@
           <tr v-for="detail in sortedExpandedBusinessDetails" :key="detail.id">
             <td>{{ detail.name }}</td>
             <td>{{ detail.surname }}</td>
-            <td>{{decodeSignature(detail.signatureType)}} ważny {{calculateCertLen(detail.validFrom,detail.validTo)}} lata</td>
+            <td>{{detail.cardType}} ważny {{calculateCertLen(detail.validFrom,detail.validTo)}} lata</td>
             <td>{{ formatDate(detail.validTo) }}</td>
           </tr>
           </tbody>
@@ -171,7 +171,8 @@ export default {
               agreementNumber: cycle.agreementNumber,
               validTo: cycle.certificate.validTo,
               validFrom: cycle.certificate.validFrom,
-              id: cycle.getIdCyclicalService
+              id: cycle.getIdCyclicalService,
+              cardType: cycle.certificate.cardType
             }));
             this.expandedBusinessDetails = details;
           })

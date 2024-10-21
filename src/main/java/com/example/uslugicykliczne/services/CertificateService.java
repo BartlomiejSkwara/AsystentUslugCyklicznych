@@ -45,12 +45,12 @@ public class CertificateService {
     }
 
 
-    public CertificateEntity insertCertificateCreatedFromRenewalRecord(CyclicalServiceEntity cyclicalServiceEntity, ServiceRenewalRecord serviceRenewalRecord, LocalDateTime validFrom) {
+    public CertificateEntity insertCertificateCreatedFromRenewalRecord(CyclicalServiceEntity cyclicalServiceEntity, ServiceRenewalRecord serviceRenewalRecord, LocalDateTime validFrom, String cardType) {
         CertificateEntity certificateEntity = new CertificateEntity();
         certificateEntity.setCertificateSerialNumber(serviceRenewalRecord.certSerialNumber());
         certificateEntity.setCyclicalServiceEntity(cyclicalServiceEntity);
         certificateEntity.setCardNumber(serviceRenewalRecord.cardNumber());
-        certificateEntity.setCardType(serviceRenewalRecord.cardType());
+        certificateEntity.setCardType(cardType);
         certificateEntity.setValidFrom(validFrom);
         certificateEntity.setValidTo(validFrom.plusYears(serviceRenewalRecord.certificateLengthInYears()));
         certificateEntity.setNameInOrganisation(serviceRenewalRecord.nameInOrganisation().orElse(null));

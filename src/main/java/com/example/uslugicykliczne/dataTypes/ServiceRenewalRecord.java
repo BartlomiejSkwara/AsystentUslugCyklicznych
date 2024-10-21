@@ -13,9 +13,9 @@ public record ServiceRenewalRecord(
         @Size(max=40, message = "Certificate cardNumber is too long !!!")
         String  cardNumber,
 
-        @NotBlank(message = "Certificate cardType is empty !!!")
-        @Size(max=40, message = "Certificate cardType is too long !!!")
-        String  cardType,
+//        @NotBlank(message = "Certificate cardType is empty !!!")
+//        @Size(max=40, message = "Certificate cardType is too long !!!")
+//        String  cardType,
         @NotBlank(message = "Certificate serialNumber is empty !!!")
         @Size(max=40, message = "Certificate serialNumber is too long !!!")
         String  certSerialNumber,

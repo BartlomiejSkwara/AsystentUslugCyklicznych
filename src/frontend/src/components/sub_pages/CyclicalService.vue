@@ -43,7 +43,7 @@
       <tbody>
       <tr v-for="cycle in filteredCycles" :key="cycle.getIdCyclicalService">
         <td>{{ cycle.getIdCyclicalService }}</td>
-        <td>{{ decodeSignature(cycle.signatureType) }}</td>
+        <td>{{ cycle.certificate.cardType }}</td>
         <td>
           <!-- {{statusesList.length}} -->
           <!-- tak wiem, to nie jest optymalne, ale szkoda mi pamięci XD -->

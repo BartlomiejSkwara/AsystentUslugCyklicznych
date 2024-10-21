@@ -72,7 +72,7 @@ public class CyclicalServiceService {
 
         changeServiceStatus(cyclicalService, StatusEnum.RENEWED.getMaskValue());
         serviceStatusHistoryService.addNewStatusHistoryRecord(null,StatusEnum.RENEWED,"Usługa została odnowiona",serviceId);
-        certificateService.insertCertificateCreatedFromRenewalRecord(cyclicalService, serviceRenewalRecord,certificateEntity.getValidTo());
+        certificateService.insertCertificateCreatedFromRenewalRecord(cyclicalService, serviceRenewalRecord,certificateEntity.getValidTo(),certificateEntity.getCardType());
 
         return ResponseEntity.ok().body("The task was successfully renewed");
     }
@@ -86,12 +86,12 @@ public class CyclicalServiceService {
                 return  ResponseEntity.badRequest().body("Podano błędny okres trwania certyfikatu");
         }
 
-        switch (cyclicalServiceDto.getSignatureType()){
-            case 0,1,2,3:
-                break;
-            default:
-                return  ResponseEntity.badRequest().body("Wybrano błędny typ sygnatury");
-        }
+//        switch (cyclicalServiceDto.getSignatureType()){
+//            case 0,1,2,3:
+//                break;
+//            default:
+//                return  ResponseEntity.badRequest().body("Wybrano błędny typ sygnatury");
+//        }
 
 
         Optional<ServiceUserEntity> serviceUserEntityOptional = serviceUserRepo.findById(cyclicalServiceDto.getServiceUserId());
@@ -182,7 +182,7 @@ public class CyclicalServiceService {
         cyclicalServiceEntity.setPrice(dto.getPrice());
         cyclicalServiceEntity.setOneTime(dto.getOneTime());
         cyclicalServiceEntity.setAgreementNumber(dto.getAgreementNumber());
-        cyclicalServiceEntity.setSignatureType(dto.getSignatureType());
+//        cyclicalServiceEntity.setSignatureType(dto.getSignatureType());
 
         return cyclicalServiceEntity;
     }
