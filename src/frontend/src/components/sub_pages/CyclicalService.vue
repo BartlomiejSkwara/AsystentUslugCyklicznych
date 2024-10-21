@@ -35,7 +35,7 @@
         <th>Użytkownik</th>
 
         <th>Ważne do:</th>
-        <th>Typ karty </th>
+<!--        <th>Typ karty </th>-->
         <th></th>
         <th></th>
       </tr>
@@ -59,7 +59,7 @@
         <td>{{ cycle.serviceUser.name + ' ' + cycle.serviceUser.getSurname }}</td>
 
         <td>{{ formatDate(cycle.certificate.validTo) }}</td>
-        <td>{{ cycle.certificate.cardType }}</td>
+<!--        <td>{{ cycle.certificate.cardType }}</td>-->
         <td>
           <!-- {{ cycle.certificate.idCertificate }} -->
             <button class="btn btn-primary" @click="detailsScreen(cycle)">Szczegóły</button>

@@ -59,9 +59,11 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="detail in sortedExpandedBusinessDetails" :key="detail.id">
+          <tr v-for="detail in sortedExpandedBusinessDetails" :key="detail.name">
             <td>{{ detail.name }}</td>
-            <td>{{ detail.surname }}</td>
+            <td @click="viewUserData(detail.id_user)" class="clickable" data-bs-toggle="modal" data-bs-target="#userContactData">
+              {{ detail.surname }}
+            </td>
             <td>{{detail.cardType}} ważny {{calculateCertLen(detail.validFrom,detail.validTo)}} lata</td>
             <td>{{ formatDate(detail.validTo) }}</td>
           </tr>
@@ -96,6 +98,36 @@
         </div>
       </div>
     </div>
+
+    <div id="userContactData" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Dane kontaktowe użytkownika przypisanego do firmy</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div v-if="selectedUserData">
+              <p><strong>Imię:</strong> {{ selectedUserData.name }}</p>
+              <p><strong>Nazwisko:</strong> {{ selectedUserData.surname }}</p>
+              <p><strong>PESEL:</strong> {{ selectedUserData.taxIdentificationNumber === null ? "brak" : selectedUserData.taxIdentificationNumber}}</p>
+              <p><strong>Emaile:</strong></p>
+              <ul>
+                <li v-for="email in selectedUserData.contactData.emails" :key="email.idEmail">{{ email.email }}</li>
+              </ul>
+              <p><strong>Numery telefonów:</strong></p>
+              <ul>
+                <li v-for="phone in selectedUserData.contactData.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
+              </ul>
+            </div>
+            <div v-else>
+              <p>Brak danych</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -116,6 +148,7 @@ export default {
       showModal: false,
       contactDataDetails: null,
       expandedBusiness: null,
+      selectedUserData: null,
       expandedBusinessDetails: [],
     };
   },
@@ -166,6 +199,7 @@ export default {
           .then(response => response.json())
           .then(data => {
             const details = data.map(cycle => ({
+              id_user: cycle.serviceUser.idServiceUser,
               name: cycle.serviceUser.name,
               surname: cycle.serviceUser.getSurname,
               agreementNumber: cycle.agreementNumber,
@@ -244,6 +278,19 @@ export default {
             console.error("There has been a problem with your fetch operation:", error);
           });
     },
+    //////
+    viewUserData(UserDataId) {
+      this.selectedUserData = null; // Reset details
+      fetchWrapper(this, `/api/serviceUser/get/${UserDataId}`)
+          .then(response => response.json())
+          .then(data => {
+            this.selectedUserData = data;
+          })
+          .catch(error => {
+            console.error("Problem z operacją:", error);
+          });
+    },
+    ////////
     formatDate(date) {
       const d = new Date(date);
       const year = d.getFullYear();
