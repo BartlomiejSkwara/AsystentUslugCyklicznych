@@ -54,7 +54,7 @@
         <label for="businessId">Firma:</label>
         <input list="businesses" name="businesses" v-model="form.businessId" />
         <datalist id="businesses">
-          <option v-for="business in businesses" :key="business.id" :value="business.name">
+          <option v-for="business in businesses" :key="business.id">
             {{ business.name }}
           </option>
         </datalist>
@@ -64,7 +64,7 @@
         <label for="serviceUserId">Użytkownik usługi:</label>
         <input list="serviceUsers" name="serviceUsers" v-model="form.serviceUserId" />
         <datalist id="serviceUsers">
-          <option v-for="user in serviceUsers" :key="user.id" :value="user.name + ' ' + user.surname">
+          <option v-for="user in serviceUsers" :key="user.id">
             {{ user.name + " " + user.surname }}
           </option>
         </datalist>
