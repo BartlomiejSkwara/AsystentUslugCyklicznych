@@ -22,7 +22,7 @@
         <th>PESEL</th>
         <th>Dodatkowy opis</th>
         <th>Rola w systemie</th>
-        <th>Działania</th>
+        <th></th>
       </tr>
       </thead>
       <tbody>
@@ -41,8 +41,35 @@
         <td>{{ user.comments }}</td>
         <td> {{ user.accountDataEntity.role}}</td>
         <td>
-          <button class="action-button edit-button" @click="editUser(user.idServiceUser)">Edytuj</button>
-          <button v-if="isAdmin" class="action-button delete-button" @click="deleteUser(user.idServiceUser)">Usuń</button>
+          <div class="dropdown ">
+            <button class="btn btn-primary dropdown-toggle" style="background-color: gray;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Działania:
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a style="font-weight: bold" class="dropdown-item" href="#" @click="editUser(user.idServiceUser)">Edytuj</a>
+              </li>
+
+              <li v-if="isAdmin">
+                <a style="font-weight: bold" class="dropdown-item" href="#" @click="deleteUser(user.idServiceUser)">Usuń</a>
+              </li>
+
+              <li v-if="user.accountDataEntity.role === 'ROLE_user' ">
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_admin')">Rola: Admin</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_editor')">Rola: Edytor</a>
+              </li>
+
+              <li v-if="user.accountDataEntity.role === 'ROLE_editor' ">
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_admin')">Rola: Admin</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_user')">Rola: User</a>
+              </li>
+
+              <li v-if="user.accountDataEntity.role === 'ROLE_admin'">
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_editor')">Rola: Edytor</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_user')">Rola: User</a>
+              </li>
+            </ul>
+          </div>
         </td>
       </tr>
       </tbody>
@@ -245,6 +272,44 @@ export default {
           console.error('Problem z operacją:', error);
           alert(error.message);
         }
+      }
+    },
+
+    fetchUsers() {
+      fetchWrapper(this, '/api/serviceUser/getAll')
+          .then(response => response.json())
+          .then(data => {
+            this.users = data;
+          })
+          .catch(error => {
+            console.error("Problem z operacją:", error);
+          });
+    },
+
+
+    async changeUserRole(accountId, role) {
+      try {
+        const response = await fetchWrapper(this, `/api/accountData/changeUserRole`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-XSRF-TOKEN': getCookie('XSRF-TOKEN')
+          },
+          body: new URLSearchParams({
+            accountId: accountId,
+            role: role
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Próba zmiany użytkownika na rolę wyższą/z roli wyższej niż posiadasz jako edytor.');
+        }
+
+        alert('Rola użytkownika została zmieniona.');
+        this.fetchUsers();
+      } catch (error) {
+        console.error('Problem z operacją:', error);
+        alert(error.message);
       }
     },
     prevPage() {
