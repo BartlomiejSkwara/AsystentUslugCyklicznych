@@ -10,6 +10,16 @@
         <label for="surname">Nazwisko:</label>
         <input type="text" id="surname" v-model="form.surname" required />
       </div>
+<!--      -->
+      <div>
+        <label for="login">Login:</label>
+        <input type="text" id="login" v-model="form.login" required />
+      </div>
+      <div>
+        <label for="password">Hasło:</label>
+        <input type="password" id="password" v-model="form.password" />
+      </div>
+<!--     -->
       <div>
         <label>Emaile:</label>
         <div v-for="(email, index) in form.emails" :key="index">
@@ -58,6 +68,8 @@ export default {
         idServiceUser: null,
         name: '',
         surname: '',
+        login: '',
+        password: '',
         emails: [''],
         phoneNumbers: [''],
         hasPolishPESEL: false,
@@ -90,6 +102,8 @@ export default {
             this.form.idServiceUser = user.idServiceUser || null;
             this.form.name = user.name || '';
             this.form.surname = user.surname || '';
+            this.form.login = user.accountDataEntity.username || '';
+            this.form.password = '';
             this.form.hasPolishPESEL = user.hasPolishPESEL !== undefined ? user.hasPolishPESEL : false;
             this.form.taxId = user.taxId || null;
             this.form.comments = user.comments || '';
@@ -126,12 +140,18 @@ export default {
       const payload = {
         name: this.form.name,
         surname: this.form.surname,
+        login: this.form.login,
+        password: this.form.password,
         hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
         comments: this.form.comments,
         emails: this.form.emails,
         phoneNumbers: this.form.phoneNumbers,
         taxId: this.form.hasPolishPESEL ? this.form.taxId : null
       };
+
+      // if (this.form.newPassword) {
+      //   payload.password = this.form.newPassword; // Dodaj hasło tylko, jeśli jest ustawione
+      // }
       
       const url = this.formMode === 'add'
           ? '/api/serviceUser/insertBody'

@@ -21,6 +21,7 @@
 <!--        <th>Polski PESEL?</th>-->
         <th>PESEL</th>
         <th>Dodatkowy opis</th>
+        <th>Rola w systemie</th>
         <th>Działania</th>
       </tr>
       </thead>
@@ -30,7 +31,7 @@
         <td>{{ user.name }}</td>
         <td @click="toggleCyclicalServices(user.idServiceUser)" class="clickable">{{ user.getSurname || user.surname }}</td>
         <td>
-          {{ user.contactData ? user.contactData.idContactData : 'N/A' }}
+<!--          {{ user.contactData ? user.contactData.idContactData : 'N/A' }}-->
           <button v-if="user.contactData" @click="viewContactData(user.idServiceUser)" class="view-button"
                   data-bs-toggle="modal" data-bs-target="#userContactData"
           >...</button>
@@ -38,6 +39,7 @@
 <!--        <td>{{ user.hasPolishPesel }}</td>-->
         <td>{{ user.taxIdentificationNumber }}</td>
         <td>{{ user.comments }}</td>
+        <td> {{ user.accountDataEntity.role}}</td>
         <td>
           <button class="action-button edit-button" @click="editUser(user.idServiceUser)">Edytuj</button>
           <button v-if="isAdmin" class="action-button delete-button" @click="deleteUser(user.idServiceUser)">Usuń</button>

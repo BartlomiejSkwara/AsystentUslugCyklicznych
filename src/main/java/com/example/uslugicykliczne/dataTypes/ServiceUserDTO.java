@@ -18,7 +18,7 @@ public class ServiceUserDTO {
     @Size(max=40, message = "Login is too long !!!")
     private final String  login;
 
-    @NotBlank(message = "Password field is empty!!!")
+//    @NotBlank(message = "Password field is empty!!!")
     @Size(max=80, message = "Password is too long !!!")
     private final String password;
 

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -16,11 +17,13 @@ public class ServiceUserService {
     private final ServiceUserRepo serviceUserRepo;
     private final AccountManagementService accountManagementService;
     private final ContactDataService contactDataService;
+    private final PasswordEncoder passwordEncoder;
 
-    public ServiceUserService(ServiceUserRepo serviceUserRepo, AccountManagementService accountManagementService, ContactDataService contactDataService) {
+    public ServiceUserService(ServiceUserRepo serviceUserRepo, AccountManagementService accountManagementService, ContactDataService contactDataService, PasswordEncoder passwordEncoder) {
         this.serviceUserRepo = serviceUserRepo;
         this.accountManagementService = accountManagementService;
         this.contactDataService = contactDataService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -30,6 +33,7 @@ public class ServiceUserService {
         if (serviceUserEntity.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Can't edit nonexistent service user !!!");
 
+        ServiceUserEntity user = serviceUserEntity.get();
 
         ContactDataEntity contactDataEntity = serviceUserEntity.get().getContactData();
 
@@ -47,6 +51,17 @@ public class ServiceUserService {
         }
 
         contactDataService.updateContactDataEntity(contactDataEntity,serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
+
+
+        if (!user.getAccountDataEntity().getUsername().equals(serviceUserDTO.getLogin())) {
+            user.getAccountDataEntity().setUsername(serviceUserDTO.getLogin());
+        }
+
+
+        if (serviceUserDTO.getPassword() != null && !serviceUserDTO.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(serviceUserDTO.getPassword());
+            user.getAccountDataEntity().setHashedPassword(encodedPassword);
+        }
 
         serviceUserRepo.save(createServiceUserEntityFromDTO(serviceUserEntity.get(), serviceUserDTO,contactDataEntity));
         return ResponseEntity.ok("Successfully updated the user");
