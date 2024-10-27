@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="background">
     <SideBar class="col-3 sidebar"></SideBar>
     <div class="container-fluid ms-0 me-0">
       <div class="row">
-        <div class="col-3">test</div>
+        <div class="col-3"></div>
         <div class="col-9 mx-auto p-4 py-md-5">
           <HeaderComponent></HeaderComponent>
             <router-view>
@@ -42,17 +42,21 @@ export default {
 }
 </script>
 
+
+<!--<style src="@/assets/style.css"></style>-->
+
 <style>
-
-
-
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  bottom: 0; 
-  overflow-y: auto; 
-  z-index: 1000; 
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.background {
+  background-color: rgba(80,89,80,0.05)
 }
 
 </style>

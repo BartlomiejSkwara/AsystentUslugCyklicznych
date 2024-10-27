@@ -20,7 +20,7 @@
           <th>ID</th>
           <th>Username</th>
           <th>Rola</th>
-          <!-- <th>Działania</th> -->
+          <th></th>
         </tr>
         </thead>
         <tbody>
@@ -28,10 +28,30 @@
           <td>{{ account.idLoginCredentials }}</td>
           <td>{{ account.username }}</td>
           <td>{{ account.role }}</td>
-          <!-- <td>
-            <button class="action-button edit-button" @click="editBusiness(business.idBusiness)">Edytuj</button>
-            <button v-if="isAdmin" class="action-button delete-button" @click="deleteBusiness(business.idBusiness)">Usuń</button>
-          </td> -->
+          <td>
+<!--            BAZOWAC NA CYKLACH-->
+            <div class="dropdown ">
+              <button class="btn btn-primary dropdown-toggle" style="background-color: gray;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Nadaj rolę:
+              </button>
+              <ul class="dropdown-menu">
+                <li v-if="account.role === 'ROLE_user' ">
+                  <a class="dropdown-item " href="#">Admin</a>
+                  <a class="dropdown-item " href="#">Edytor</a>
+                </li>
+
+                <li v-if="account.role === 'ROLE_editor' ">
+                  <a class="dropdown-item " href="#">Admin</a>
+                  <a class="dropdown-item " href="#">User</a>
+                </li>
+
+                <li v-if="account.role === 'ROLE_admin'">
+                  <a class="dropdown-item " href="#">Edytor</a>
+                  <a class="dropdown-item " href="#">User</a>
+                </li>
+              </ul>
+            </div>
+          </td>
         </tr>
         </tbody>
       </table>
