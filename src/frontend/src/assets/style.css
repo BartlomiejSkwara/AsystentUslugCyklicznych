@@ -9,7 +9,7 @@ th, td {
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: rgba(80,89,80,0.1);
     cursor: pointer;
 }
 

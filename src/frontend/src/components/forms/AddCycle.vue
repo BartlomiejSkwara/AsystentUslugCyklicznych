@@ -3,7 +3,7 @@
     <h1>Dodaj nową płatność cykliczną</h1>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="agreementNumber">Numer Zgody:</label>
+        <label for="agreementNumber">Numer umowy:</label>
         <input type="text" id="agreementNumber" v-model="form.agreementNumber" required>
       </div>
       <div>

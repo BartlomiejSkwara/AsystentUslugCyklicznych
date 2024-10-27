@@ -8,6 +8,6 @@ export default {
     name:'FooterComponent',
 }
 </script>
+
 <style lang="">
-    
 </style>
