@@ -23,10 +23,10 @@ public class AccountDataController {
     private final ValidationUtility validationUtility;
 
 
-    @GetMapping("/getAll")
-    List<AccountDataProjection> getAllUsers(){
-        return  accountDataRepo.findAllBy();
-    }
+//    @GetMapping("/getAll")
+//    List<AccountDataProjection> getAllUsers(){
+//        return  accountDataRepo.findAllBy();
+//    }
 
 //    @PostMapping("/register")
 //    public ResponseEntity<?> register(@Valid @RequestBody RegistrationValidationRecord registrationValidationRecord, BindingResult bindingResult, HttpServletResponse httpServletResponse){

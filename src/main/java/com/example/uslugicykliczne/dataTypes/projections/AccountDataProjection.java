@@ -5,4 +5,5 @@ public interface AccountDataProjection{
     int getIdLoginCredentials();
     String getUsername();
     String getRole();
+
 }

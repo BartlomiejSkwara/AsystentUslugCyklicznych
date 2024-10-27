@@ -1,5 +1,6 @@
 package com.example.uslugicykliczne.dataTypes;
 
+import com.example.uslugicykliczne.dataTypes.projections.AccountDataProjection;
 import com.example.uslugicykliczne.dataTypes.projections.ContactDataProjection;
 
 public interface ServiceUserProjection {
@@ -13,5 +14,5 @@ public interface ServiceUserProjection {
     //getCyclicalServices (albo może  lepiej ich tu nie dodawać :>)
 
     ContactDataProjection getContactData();
-
+    AccountDataProjection getAccountDataEntity();
 }

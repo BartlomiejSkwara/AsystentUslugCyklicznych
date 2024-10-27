@@ -21,7 +21,7 @@ public interface ServiceUserRepo  extends ListCrudRepository<ServiceUserEntity,I
         return null;
     }
 
-    @Query("select distinct su from ServiceUserEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails ")
+    @Query("select distinct su from ServiceUserEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails JOIN FETCH su.accountDataEntity")
     List<ServiceUserEntity> findJoinedEmailBy();
 
     @Query("select distinct su from ServiceUserEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.phoneNumbers where su in (:oldSu)")
