@@ -36,6 +36,9 @@ public class ServiceUserEntity {
     @JoinColumn(name = "contactDataId", referencedColumnName = "idContactData", nullable = false)
     private ContactDataEntity contactData;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "accountData",referencedColumnName = "idLoginCredentials",nullable = false)
+    private AccountDataEntity accountDataEntity;
 
     @Override
     public boolean equals(Object o) {

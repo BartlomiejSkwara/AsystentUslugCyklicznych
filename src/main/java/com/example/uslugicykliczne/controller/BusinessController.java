@@ -65,19 +65,28 @@ public class BusinessController
 
 
     @PostMapping("/insertBody")
-    public ResponseEntity<String> insert(@Valid @RequestBody() BusinessDTO businessDTO, BindingResult bindingResult){
+    public ResponseEntity<String> insert(
+            @RequestParam(defaultValue = "true", required = false) String checkForDuplicates,
+            @Valid @RequestBody() BusinessDTO businessDTO,
+            BindingResult bindingResult
+    ){
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
-        return businessService.insertNewBusinessEntity(businessDTO);
+        return businessService.insertNewBusinessEntity(businessDTO,!checkForDuplicates.equals("false"));
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Integer id, @Valid @RequestBody() BusinessDTO businessDTO, BindingResult bindingResult ){
+    public ResponseEntity<String> update(
+            @RequestParam(defaultValue = "true", required = false) String checkForDuplicates,
+            @PathVariable Integer id,
+            @Valid @RequestBody() BusinessDTO businessDTO,
+            BindingResult bindingResult
+    ){
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
-        return businessService.updateBusinessEntity(id, businessDTO);
+        return businessService.updateBusinessEntity(id, businessDTO,!checkForDuplicates.equals("false"));
     }
 
 }

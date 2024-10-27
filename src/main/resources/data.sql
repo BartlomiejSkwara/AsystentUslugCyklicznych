@@ -37,7 +37,7 @@ SET SQL_SAFE_UPDATES = 1;
 
 LOCK TABLES `account_data` WRITE;
 /*!40000 ALTER TABLE `account_data` DISABLE KEYS */;
-INSERT INTO `account_data` (id_login_credentials,role,username,hashed_password) VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_editor','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO'),(3,'ROLE_user','user','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO');
+INSERT INTO `account_data` (id_login_credentials,role,username,hashed_password) VALUES (1,'ROLE_admin','admin','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(2,'ROLE_editor','Krisent','$2a$10$Frl2aoDXlhUWbr47Bex.je5HakgHbAe0fc90D.d8TUIsPnYkDnTKO'),(3,'ROLE_user','user','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(4,'ROLE_user','emps','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(5,'ROLE_user','kug','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(6,'ROLE_user','aar','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(7,'ROLE_user','rob','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(8,'ROLE_user','san','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(9,'ROLE_user','crag','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO'),(10,'ROLE_user','karlach','$2a$10$Rzzrw7bukifg80Xddf6qOOMSfSrgnFvdx.n59DS2ZeIh8TlGT0UfO');
 /*!40000 ALTER TABLE `account_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -123,7 +123,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `service_user` WRITE;
 /*!40000 ALTER TABLE `service_user` DISABLE KEYS */;
-INSERT INTO `service_user` (contact_data_id, has_polishpesel, id_service_user, name, surname,tax_identification_number, comments) VALUES (3,_binary '\0',1,'crazy','steve',NULL,NULL),(4,_binary '',2,'Mieszko','Pierwszy','96696696611',NULL),(5,_binary '\0',3,'Michael','Byrd',NULL,'Mostly orders a suspiciously large amounts of feathers'),(10,_binary '\0',4,'Big','E',NULL,NULL),(11,_binary '\0',5,'Ku\'gath','Plaguefather ',NULL,NULL),(12,_binary '\0',6,'Aaron','Burr ',NULL,NULL),(13,_binary '\0',7,'Roboute','Guilliman',NULL,NULL),(14,_binary '\0',8,'Sandro','the Great',NULL,NULL),(15,_binary '\0',9,'Crag','Hack',NULL,NULL),(16,_binary '\0',10,'Karlach','Cliffgate',NULL,NULL);
+INSERT INTO `service_user` (contact_data_id, has_polishpesel, id_service_user, name, surname,tax_identification_number, comments,account_data) VALUES (3,_binary '\0',1,'crazy','steve',NULL,NULL,1),(4,_binary '',2,'Mieszko','Pierwszy','96696696611',NULL,2),(5,_binary '\0',3,'Michael','Byrd',NULL,'Mostly orders a suspiciously large amounts of feathers',3),(10,_binary '\0',4,'Big','E',NULL,NULL,4),(11,_binary '\0',5,'Ku\'gath','Plaguefather ',NULL,NULL,5),(12,_binary '\0',6,'Aaron','Burr ',NULL,NULL,6),(13,_binary '\0',7,'Roboute','Guilliman',NULL,NULL,7),(14,_binary '\0',8,'Sandro','the Great',NULL,NULL,8),(15,_binary '\0',9,'Crag','Hack',NULL,NULL,9),(16,_binary '\0',10,'Karlach','Cliffgate',NULL,NULL,10);
 UNLOCK TABLES;
 
 SET FOREIGN_KEY_CHECKS=1;

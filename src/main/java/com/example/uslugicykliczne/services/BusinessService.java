@@ -29,11 +29,18 @@ public class BusinessService {
 
 
 
-    public ResponseEntity<String> updateBusinessEntity(Integer id,BusinessDTO businessDTO){
+    public ResponseEntity<String> updateBusinessEntity(Integer id,BusinessDTO businessDTO,boolean skipDuplicateCheck){
         Optional<BusinessEntity> businessEntityOptional = businessRepo.findBusinessWithContactDataById(id);
         if (businessEntityOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Can't edit nonexistent business !!!");
 
+
+        if(!skipDuplicateCheck){
+            String foundDuplicates = contactDataService.findContactsInDB(businessDTO.getEmails(),businessDTO.getPhoneNumbers());
+            if(foundDuplicates!=null){
+                return ResponseEntity.badRequest().body("Podano zarejestrowane już dane kontaktowe: "+foundDuplicates+" czy na pewno chcesz je ponownie dodać ?");
+            }
+        }
         ContactDataEntity contactDataEntity = businessEntityOptional.get().getContactData();
         contactDataService.updateContactDataEntity(contactDataEntity,businessDTO.getEmails(),businessDTO.getPhoneNumbers());
 
@@ -41,8 +48,14 @@ public class BusinessService {
         return ResponseEntity.ok("Successfully updated the business");
     }
 
-    public ResponseEntity<String> insertNewBusinessEntity(BusinessDTO businessDTO){
+    public ResponseEntity<String> insertNewBusinessEntity(BusinessDTO businessDTO,boolean skipDuplicateCheck){
 
+        if(!skipDuplicateCheck){
+            String foundDuplicates = contactDataService.findContactsInDB(businessDTO.getEmails(),businessDTO.getPhoneNumbers());
+            if(foundDuplicates!=null){
+                return ResponseEntity.badRequest().body("Podano zarejestrowane już dane kontaktowe: "+foundDuplicates+" czy na pewno chcesz je ponownie dodać ?");
+            }
+        }
         ContactDataEntity contactDataEntity = contactDataService.insertContactDataEntity(businessDTO.getEmails(),businessDTO.getPhoneNumbers());
         businessRepo.save(createBusinessEntityFromDTO(new BusinessEntity() ,businessDTO,contactDataEntity));
         return ResponseEntity.ok("Successfully added the user");

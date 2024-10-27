@@ -63,20 +63,29 @@ public class ServiceUserController {
 
 
     @PostMapping("/insertBody")
-    public ResponseEntity<String> insert(@Valid @RequestBody() ServiceUserDTO serviceUserDTO, BindingResult bindingResult){
+    public ResponseEntity<String> insert(
+            @RequestParam(defaultValue = "true", required = false) String checkForDuplicates,
+            @Valid @RequestBody() ServiceUserDTO serviceUserDTO,
+            BindingResult bindingResult
+    ){
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
-        return serviceUserService.insertNewServiceUserEntity(serviceUserDTO);
+
+        return serviceUserService.insertNewServiceUserEntity(serviceUserDTO,!checkForDuplicates.equals("false"));
     }
 
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Integer id,@Valid @RequestBody() ServiceUserDTO serviceUserDTO, BindingResult bindingResult ){
+    public ResponseEntity<String> update(
+            @RequestParam(defaultValue = "true", required = false) String checkForDuplicates,
+            @PathVariable Integer id,@Valid @RequestBody() ServiceUserDTO serviceUserDTO,
+            BindingResult bindingResult
+    ){
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
-        return serviceUserService.updateServiceUserEntity(id, serviceUserDTO);
+        return serviceUserService.updateServiceUserEntity(id, serviceUserDTO,!checkForDuplicates.equals("false"));
     }
 
 }

@@ -14,6 +14,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 public class ServiceUserDTO {
+    @NotBlank(message = "Login field is empty !!!")
+    @Size(max=40, message = "Login is too long !!!")
+    private final String  login;
+
+    @NotBlank(message = "Password field is empty!!!")
+    @Size(max=80, message = "Password is too long !!!")
+    private final String password;
 
     @NotBlank(message = "ServiceUser's name is empty !!!")
     @Size(max=40, message = "ServiceUser's name is too long !!!")

@@ -130,7 +130,6 @@ public class CyclicalServiceService {
     }
 
     public ResponseEntity<String> updateCyclicalServiceEntity(Integer id, CyclicalServiceDto cyclicalServiceDto){
-        // TODO popraw wydajność wyszukiwania
         Optional<CyclicalServiceEntity> cyclicalServiceEntityOptional = cyclicalServiceRepo.findById(id);
         if(cyclicalServiceEntityOptional.isEmpty())
             return  ResponseEntity.internalServerError().body("Can't update nonexistant cyclical service");

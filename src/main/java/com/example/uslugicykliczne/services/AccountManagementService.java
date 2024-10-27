@@ -1,7 +1,7 @@
 package com.example.uslugicykliczne.services;
 
 import com.example.uslugicykliczne.dataTypes.LoginValidationRecord;
-import com.example.uslugicykliczne.dataTypes.RegistrationValidationRecord;
+//import com.example.uslugicykliczne.dataTypes.RegistrationValidationRecord;
 import com.example.uslugicykliczne.entity.AccountDataEntity;
 import com.example.uslugicykliczne.repo.AccountDataRepo;
 import com.example.uslugicykliczne.security.CustomUserDetails;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,31 +31,31 @@ public class AccountManagementService {
 
 
     @Transactional
-    public ResponseEntity<?> register(RegistrationValidationRecord registrationValidationRecord, HttpServletResponse httpServletResponse) {
-        if(accountDataRepo.findByUsername(registrationValidationRecord.login()).isPresent()){
-            return ResponseEntity.badRequest().body("Użytkownik o takiej nazwie już istniej !!! ");
+    public AccountDataEntity register(String password, String login) {
+        if(accountDataRepo.findByUsername(login).isPresent()){
+            return null;
         }
         AccountDataEntity accountDataEntity = new AccountDataEntity();
 
         String role = "ROLE_user";
-        switch (registrationValidationRecord.role()){
-            case 1:
-                role = "ROLE_editor";
-                break;
-            case 2:
-                role = "ROLE_admin";
-                break;
-            default:
-                role = "ROLE_user";
-                break;
-        }
+//        switch (registrationValidationRecord.role()){
+//            case 1:
+//                role = "ROLE_editor";
+//                break;
+//            case 2:
+//                role = "ROLE_admin";
+//                break;
+//            default:
+//                role = "ROLE_user";
+//                break;
+//        }
 
         accountDataEntity.setRole(role);
-        accountDataEntity.setUsername(registrationValidationRecord.login());
-        accountDataEntity.setHashedPassword(passwordEncoder.encode(registrationValidationRecord.password()));
+        accountDataEntity.setUsername(login);
+        accountDataEntity.setHashedPassword(passwordEncoder.encode(password));
 
 
-        accountDataRepo.save(accountDataEntity);
+        return  accountDataRepo.save(accountDataEntity);
 //        String jwtToken = jwtService.generateJWT(accountDataEntity);
 //        jwtService.addTokenToResponse(httpServletResponse,jwtToken);
 //        login(,httpServletResponse);
@@ -67,8 +68,6 @@ public class AccountManagementService {
 //        }
 //
 //        return true;
-        return ResponseEntity.ok("Registration was successfull");
-
     }
 
     public void login(LoginValidationRecord loginValidationRecord,HttpServletResponse httpServletResponse){
@@ -88,4 +87,32 @@ public class AccountManagementService {
 
     }
 
+    public ResponseEntity<?> changeUserRole(Integer accountId, String role) {
+        Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(accountId);
+        if(optionalAccountDataEntity.isEmpty()){
+            return ResponseEntity.badRequest().body("Nie można zmienić roli nie istniejącego użytkownika");
+        }
+        AccountDataEntity accountDataEntity = optionalAccountDataEntity.get();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String clientRole = ((CustomUserDetails) authentication.getPrincipal()).getRole();
+
+        if(accountDataEntity.getRole().equals("ROLE_admin")&&!clientRole.equals("ROLE_admin")){
+            return ResponseEntity.badRequest().body("Nie można zmienić roli użytkownika o wyższej roli");
+        }
+
+        if(role.equals("ROLE_user")||role.equals("ROLE_editor")){
+        }
+        else if (role.equals("ROLE_admin")) {
+            if(!clientRole.equals("ROLE_admin")){
+                return ResponseEntity.badRequest().body("Nie można ustawić roli przekraczającej nasze uprawnienia");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Podana rola nie istnieje");
+        }
+
+        accountDataEntity.setRole(role);
+        accountDataRepo.save(accountDataEntity);
+        return ResponseEntity.ok("Z powodzeniem dokonano zmiany roli");
+
+    }
 }

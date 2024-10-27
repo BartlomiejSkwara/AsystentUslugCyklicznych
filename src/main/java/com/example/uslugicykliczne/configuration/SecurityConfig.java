@@ -100,7 +100,9 @@ public class SecurityConfig {
                             "/api/business/get/**",
                             "/api/business/insertBody",
                             "/api/business/getAllByUser",
-                            "/api/accountData/getAll"
+                            "/api/accountData/getAll",
+//                            "/api/accountData/register",
+                            "/api/accountData/changeUserRole"
                             ).hasAnyRole("editor","admin")
 
                     .anyRequest().hasRole("admin")

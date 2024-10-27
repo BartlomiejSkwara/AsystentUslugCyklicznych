@@ -2,7 +2,7 @@ package com.example.uslugicykliczne.controller;
 
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.LoginValidationRecord;
-import com.example.uslugicykliczne.dataTypes.RegistrationValidationRecord;
+//import com.example.uslugicykliczne.dataTypes.RegistrationValidationRecord;
 import com.example.uslugicykliczne.entity.AccountDataEntity;
 import com.example.uslugicykliczne.security.CustomUserDetails;
 import com.example.uslugicykliczne.services.AccountManagementService;
