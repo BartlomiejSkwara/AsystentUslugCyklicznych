@@ -11,7 +11,7 @@ public interface EmailRepo  extends ListCrudRepository<EmailEntity,Integer> {
     @Query("delete EmailEntity s where s in (:deleted)")
     void deleteAllBy(List<EmailEntity> deleted);
 
-    @Query("select EmailEntity FROM EmailEntity mail where mail.email in (:emailList)")
-    List<EmailEntity> findAllLike(List<String> emailList);
+    @Query("select mail.email FROM EmailEntity mail where mail.email in (:emailList)")
+    List<String> findAllLike(List<String> emailList);
 
 }

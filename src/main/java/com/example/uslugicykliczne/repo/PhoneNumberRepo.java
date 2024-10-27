@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface PhoneNumberRepo  extends ListCrudRepository<PhoneNumberEntity,Integer> {
 
-    @Query("select PhoneNumberEntity FROM  PhoneNumberEntity pn where pn.number in (:numberList)")
-    List<PhoneNumberEntity> findAllLike(List<String> numberList);
+    @Query("select pn.number FROM  PhoneNumberEntity pn where pn.number in (:numberList)")
+    List<String> findAllLike(List<String> numberList);
 }

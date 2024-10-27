@@ -48,26 +48,23 @@ public class ContactDataService {
 
     }
 
-    public String findContactsInDB(List<String> emails, List<String> phoneNumbers) {
+    public HashSet<String> findContactsInDB(List<String> emails, List<String> phoneNumbers) {
         HashSet<String> contactSet = new HashSet<>();
-        for (EmailEntity email : emailRepo.findAllLike(emails)) {
-            contactSet.add(email.getEmail());
-        }
-        for (PhoneNumberEntity phoneNumber : phoneNumberRepo.findAllLike(phoneNumbers)) {
-            contactSet.add(phoneNumber.getNumber());
-        }
 
-        if(contactSet.size() == 0){
-            return null;
-        }
+        contactSet.addAll(emailRepo.findAllLike(emails));
+        contactSet.addAll(phoneNumberRepo.findAllLike(phoneNumbers));
 
-        StringBuilder stringBuilder = new StringBuilder("");
-
-        for (String contact : contactSet) {
-            stringBuilder.append(contact);
-            stringBuilder.append(", ");
-        }
-        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
-        return stringBuilder.toString();
+//        if(contactSet.size() == 0){
+//            return null;
+//        }
+//
+//        StringBuilder stringBuilder = new StringBuilder("");
+//
+//        for (String contact : contactSet) {
+//            stringBuilder.append(contact);
+//            stringBuilder.append(", ");
+//        }
+//        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        return contactSet;
     }
 }

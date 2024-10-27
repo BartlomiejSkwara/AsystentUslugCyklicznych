@@ -37,7 +37,15 @@
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
         <button type="button" @click="addPhoneNumber">Dodaj nowy numer telefonu</button>
+      
+      
       </div>
+      <div class="form-check form-switch">
+        <label class="form-check-label" for="flexSwitchCheckDefault">Ignoruj Duplikaty Danych Kontaktowych</label>
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="ignoreDup">
+      </div>
+      <p class="text-danger">{{ errorMessage }}</p>
+
       <button type="submit">Zapisz</button>
       <button type="button" @click="goBack">Powrót</button>
     </form>
@@ -61,7 +69,9 @@ export default {
         comments: '',
         emails: [''], // Initialize with one empty field
         phoneNumbers: [''] // Initialize with one empty field
-      }
+      },
+      errorMessage: "",
+      ignoreDup: false,
     };
   },
   mounted() {
@@ -112,7 +122,9 @@ export default {
         this.form.phoneNumbers.splice(index, 1);
       }
     },
-    submitForm() {
+    async submitForm() {
+
+        
       const payload = {
         name: this.form.name,
         adres: this.form.adres,
@@ -123,26 +135,42 @@ export default {
         phoneNumbers: this.form.phoneNumbers
       };
 
-      const url = this.formMode === 'add'
+      let url = this.formMode === 'add'
           ? '/api/business/insertBody'
           : `/api/business/update/${this.form.idBusiness}`;
 
+
+      if(this.ignoreDup)
+        url+="?checkForDuplicates=false";
+      console.log(url);
+      
       const cookie = getCookie("XSRF-TOKEN");
-      fetchWrapper(this,url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-XSRF-TOKEN':cookie
-        },
-        body: JSON.stringify(payload)
-      })
-          .then(response => response.text())
-          .then(() => {
-            this.$router.push('/Business'); // Redirect to business list
-          })
-          .catch(error => {
-            console.error('Error saving business:', error);
-          });
+      
+      
+      try {
+        const response = await fetchWrapper(this,url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN':cookie
+          },
+          body: JSON.stringify(payload)
+        })
+
+        // if (!response.ok) {
+        //   throw new Error('Network response was not ok ' + response.statusText);
+        // }
+        if(response.status == 400){
+          this.errorMessage = await response.text();
+        }else if(response.status == 200){
+          this.$router.push('/Business'); 
+        }
+      
+      } catch (error) {
+        console.error('Error saving business:', error);
+      }
+      
+         
     },
     goBack() {
       this.$router.push('/Business');

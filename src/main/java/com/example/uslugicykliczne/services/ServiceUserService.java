@@ -1,16 +1,14 @@
 package com.example.uslugicykliczne.services;
 
 import com.example.uslugicykliczne.dataTypes.ServiceUserDTO;
-import com.example.uslugicykliczne.entity.AccountDataEntity;
-import com.example.uslugicykliczne.entity.BusinessEntity;
-import com.example.uslugicykliczne.entity.ContactDataEntity;
-import com.example.uslugicykliczne.entity.ServiceUserEntity;
+import com.example.uslugicykliczne.entity.*;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 @Service
@@ -27,19 +25,27 @@ public class ServiceUserService {
 
 
 
-    public ResponseEntity<String> updateServiceUserEntity(Integer id, ServiceUserDTO serviceUserDTO,boolean skipDuplicateCheck){
+    public ResponseEntity<String> updateServiceUserEntity(Integer id, ServiceUserDTO serviceUserDTO,boolean duplicateCheck){
         Optional<ServiceUserEntity> serviceUserEntity = serviceUserRepo.findUserWithContactDataById(id);
         if (serviceUserEntity.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Can't edit nonexistent service user !!!");
 
 
-        if(!skipDuplicateCheck){
-            String foundDuplicates = contactDataService.findContactsInDB(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
-            if(foundDuplicates!=null){
-                return ResponseEntity.badRequest().body("Podano zarejestrowane już dane kontaktowe: "+foundDuplicates+" czy na pewno chcesz je ponownie dodać ?");
+        ContactDataEntity contactDataEntity = serviceUserEntity.get().getContactData();
+
+        if(duplicateCheck){
+            HashSet<String> foundDuplicates = contactDataService.findContactsInDB(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
+            for(EmailEntity em : contactDataEntity.getEmails()){
+                foundDuplicates.remove(em.getEmail());
+            }
+            for(PhoneNumberEntity em : contactDataEntity.getPhoneNumbers()){
+                foundDuplicates.remove(em.getNumber());
+            }
+            if(!foundDuplicates.isEmpty()){
+                return ResponseEntity.badRequest().body("Podano już zapisane dane kontaktowe: "+foundDuplicates);
             }
         }
-        ContactDataEntity contactDataEntity = serviceUserEntity.get().getContactData();
+
         contactDataService.updateContactDataEntity(contactDataEntity,serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
 
         serviceUserRepo.save(createServiceUserEntityFromDTO(serviceUserEntity.get(), serviceUserDTO,contactDataEntity));
@@ -47,7 +53,7 @@ public class ServiceUserService {
     }
 
     @Transactional
-    public ResponseEntity<String> insertNewServiceUserEntity(ServiceUserDTO serviceUserDTO,boolean skipDuplicateCheck){
+    public ResponseEntity<String> insertNewServiceUserEntity(ServiceUserDTO serviceUserDTO,boolean duplicateCheck){
 
         AccountDataEntity accountDataEntity = accountManagementService.register(serviceUserDTO.getPassword(), serviceUserDTO.getLogin());
         if(accountDataEntity==null){
@@ -55,10 +61,10 @@ public class ServiceUserService {
         }
         //List<ServiceUserEntity> duplicateUniques = customerRepo.findCustomerEntitiesByEmailOrPhoneNumber(customerDto.getEmail(), customerDto.getPhoneNumber());
         //if(duplicateUniques.isEmpty()){
-            if(!skipDuplicateCheck){
-                String foundDuplicates = contactDataService.findContactsInDB(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
-                if(foundDuplicates!=null){
-                    return ResponseEntity.badRequest().body("Podano zarejestrowane już dane kontaktowe: "+foundDuplicates+" czy na pewno chcesz je ponownie dodać ?");
+            if(duplicateCheck){
+                HashSet<String> foundDuplicates = contactDataService.findContactsInDB(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
+                if(!foundDuplicates.isEmpty()){
+                    return ResponseEntity.badRequest().body("Podano zarejestrowane już dane kontaktowe: "+foundDuplicates);
                 }
             }
             ContactDataEntity contactDataEntity = contactDataService.insertContactDataEntity(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
