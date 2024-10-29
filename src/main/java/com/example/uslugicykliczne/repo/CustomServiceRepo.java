@@ -55,7 +55,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
         Query query = null;
         String userCheck = "";
         if(accountUsername!=null)
-            userCheck = " and cs.assignedAccountDataEntity.username = :accUsername";
+            userCheck = " and cs.serviceUser.accountDataEntity.username = :accUsername";
         switch (serviceFindingMode){
             //in next n days
             default -> {
