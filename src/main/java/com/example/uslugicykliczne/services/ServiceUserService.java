@@ -70,10 +70,7 @@ public class ServiceUserService {
     @Transactional
     public ResponseEntity<String> insertNewServiceUserEntity(ServiceUserDTO serviceUserDTO,boolean duplicateCheck){
 
-        AccountDataEntity accountDataEntity = accountManagementService.register(serviceUserDTO.getPassword(), serviceUserDTO.getLogin());
-        if(accountDataEntity==null){
-            return ResponseEntity.badRequest().body("Użytkownik o takiej nazwie już istnieje !!! ");
-        }
+
         //List<ServiceUserEntity> duplicateUniques = customerRepo.findCustomerEntitiesByEmailOrPhoneNumber(customerDto.getEmail(), customerDto.getPhoneNumber());
         //if(duplicateUniques.isEmpty()){
             if(duplicateCheck){
@@ -84,6 +81,12 @@ public class ServiceUserService {
             }
             ContactDataEntity contactDataEntity = contactDataService.insertContactDataEntity(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
             ServiceUserEntity sue = createServiceUserEntityFromDTO(new ServiceUserEntity(),serviceUserDTO,contactDataEntity);
+
+
+            AccountDataEntity accountDataEntity = accountManagementService.register(serviceUserDTO.getPassword(), serviceUserDTO.getLogin());
+            if(accountDataEntity==null){
+                return ResponseEntity.badRequest().body("Użytkownik o takiej nazwie już istnieje !!! ");
+            }
             sue.setAccountDataEntity(accountDataEntity);
 
             serviceUserRepo.save(sue);

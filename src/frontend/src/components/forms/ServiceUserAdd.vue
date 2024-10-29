@@ -51,6 +51,13 @@
         <label for="comments">Dodatkowy opis:</label>
         <input type="text" id="comments" v-model="form.comments" />
       </div>
+
+      <div class="form-check form-switch">
+        <label class="form-check-label" for="flexSwitchCheckDefault">Ignoruj Duplikaty Danych Kontaktowych</label>
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="ignoreDup">
+      </div>
+      <p class="text-danger">{{ errorMessage }}</p>
+
       <button type="submit">Zapisz</button>
       <button type="button" @click="goBack">Powrót</button>
     </form>
@@ -75,7 +82,9 @@ export default {
         hasPolishPESEL: false,
         taxId: '',
         comments: ''
-      }
+      },
+      errorMessage: "",
+      ignoreDup: false,
     };
   },
   mounted() {
@@ -136,7 +145,7 @@ export default {
         this.form.phoneNumbers.splice(index, 1);
       }
     },
-    submitForm() {
+    async submitForm() {
       const payload = {
         name: this.form.name,
         surname: this.form.surname,
@@ -153,31 +162,34 @@ export default {
       //   payload.password = this.form.newPassword; // Dodaj hasło tylko, jeśli jest ustawione
       // }
       
-      const url = this.formMode === 'add'
+      let url = this.formMode === 'add'
           ? '/api/serviceUser/insertBody'
           : `/api/serviceUser/update/${this.form.idServiceUser}`;
-
+      if(this.ignoreDup)
+          url+="?checkForDuplicates=false";
       const cookie = getCookie("XSRF-TOKEN");
       // console.log("Fetched cookie:");
       // console.log(document.cookie);
       // console.log(cookie);
+      try {
+        const response = await fetchWrapper(this,url,{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN':cookie
+          },
+          body: JSON.stringify(payload)
+        })
+        if(response.status == 400){
+          this.errorMessage = await response.text();
+        }else if(response.status == 200){
+          this.$router.push('/ServiceUser'); 
+        }
 
-    
-      fetchWrapper(this,url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-XSRF-TOKEN':cookie
-        },
-        body: JSON.stringify(payload)
-      })
-          .then(response => response.text())
-          .then(() => {
-            this.$router.push('/ServiceUser');
-          })
-          .catch(error => {
-            console.error('Error saving user:', error);
-          });
+      } catch (error) {
+        console.error('Error saving user:', error);
+
+      }
     },
     goBack() {
       this.$router.push('/ServiceUser');

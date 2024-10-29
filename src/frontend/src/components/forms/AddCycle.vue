@@ -70,13 +70,7 @@
         </datalist>
       </div>
 
-      <div>
-        <label for="accounts">Konto w systemie powiązane z usługą:</label>
-        <input list="accounts" name="accounts" v-model="form.accountDataUsername" />
-        <datalist id="accounts">
-          <option v-for="(account,key) in accounts" :key="key" :value="account.username"></option>
-        </datalist>
-      </div>
+
 
       <div>
         <label for="description">Opis:</label>
@@ -95,7 +89,6 @@ import { decodeSignatureType, fetchWrapper, getCookie, refreshCSRF } from '@/uti
 export default {
   data() {
     return {
-      accounts: [],
       businesses: [],
       serviceUsers: [],
       form: {
@@ -119,7 +112,6 @@ export default {
   },
   mounted() {
     refreshCSRF();
-    this.fetchAccounts();
     this.fetchBusinesses();
     this.fetchServiceUsers();
   },
@@ -127,24 +119,7 @@ export default {
     decodeSig(sig){
       return decodeSignatureType(sig);
     },
-    async fetchAccounts() {
-      try {
-        const response = await fetchWrapper(this, '/api/accountData/getAll', {
-          method: 'GET'
-        });
 
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
-        }
-
-        const role = response.headers.get('frontRole');
-        this.$store.commit('setRole', role);
-        const data = await response.json();
-        this.accounts = data;
-      } catch (error) {
-        console.error('There has been a problem with your fetch operation:', error);
-      }
-    },
     async fetchBusinesses() {
       try {
         const response = await fetchWrapper(this, '/api/business/getAll', {
