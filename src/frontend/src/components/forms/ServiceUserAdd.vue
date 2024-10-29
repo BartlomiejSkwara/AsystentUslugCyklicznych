@@ -197,7 +197,7 @@ export default {
             this.$router.push('/ServiceUser');
           }
           else{
-            return true;            
+            return  this.form.name + " " + this.form.surname;            
           }
         }
 
@@ -205,7 +205,7 @@ export default {
         console.error('Error saving user:', error);
 
       }
-      return false;
+      return null;
     },
     goBack() {
       this.$router.push('/ServiceUser');

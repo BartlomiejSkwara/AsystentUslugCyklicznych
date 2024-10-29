@@ -161,15 +161,25 @@ export default {
   },
   methods: {
     async submitUserForm(){  
-      if(await this.$refs.userForm.submitForm()){
+      let newUserName = await this.$refs.userForm.submitForm()
+      if(newUserName!=null){
         document.getElementById("closeUserForm").click();
-        this.fetchServiceUsers();
+        await this.fetchServiceUsers();
+
+        this.form.serviceUserId = newUserName;
       }
     },
     async submitBusinessForm(){  
-      if(await this.$refs.businessForm.submitForm()){
+
+      let newName = await this.$refs.businessForm.submitForm()
+      if(newName!=null){
         document.getElementById("closeBusinessForm").click();
-        this.fetchBusinesses();
+        await this.fetchBusinesses();
+        
+
+        this.form.businessId = newName;
+
+
       }
     },
     decodeSig(sig){

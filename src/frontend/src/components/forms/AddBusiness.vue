@@ -180,7 +180,7 @@ export default {
             this.$router.push('/Business'); 
           }
           else{
-            return true;            
+            return this.form.name;            
           }
         }
       
@@ -188,7 +188,7 @@ export default {
         console.error('Error saving business:', error);
       }
       
-         
+      return null;   
     },
     goBack() {
       this.$router.push('/Business');

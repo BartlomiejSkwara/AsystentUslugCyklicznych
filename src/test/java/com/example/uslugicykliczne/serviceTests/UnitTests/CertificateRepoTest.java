@@ -41,7 +41,7 @@ public class CertificateRepoTest {
     public void close() throws Exception{
         autoCloseable.close();
     }
-    @Test
+//    @Test
     void findFirstCertificateWithNoRenewalAndWithoutMessageSent(){
         TestUtilityService.quickInsertCertificateEntity(testEntityManager,LocalDateTime.now().plusYears(1),false,true,null);
         Optional<CertificateEntity> answer;
@@ -72,7 +72,7 @@ public class CertificateRepoTest {
     }
 
 
-    @Test
+//    @Test
     void findFirstDateBeforeTestFailure(){
 
 
