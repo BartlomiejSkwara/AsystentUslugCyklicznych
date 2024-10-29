@@ -5,10 +5,7 @@ import com.example.uslugicykliczne.dataTypes.StatusEnum;
 import com.example.uslugicykliczne.entity.CyclicalServiceEntity;
 import com.example.uslugicykliczne.entity.StatusChangeEntity;
 import com.example.uslugicykliczne.entity.StatusTypeEntity;
-import jakarta.persistence.EntityGraph;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +18,7 @@ interface CustomServiceRepo{
     List<CyclicalServiceProjection> customFindCyclicalProjectionsByParam(int param1,SERVICE_FINDING_MODE serviceFindingMode,String accountUsername);
 
 
+    Optional<CyclicalServiceEntity> findCyclicalServiceAcDataJoin(Integer id);
 
 
     Optional<CyclicalServiceEntity> customFindNameOfAccountAssignedToService(int serviceID);
@@ -42,7 +40,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                         "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
-                        "cs.assignedAccountDataEntity.username,cs.signatureType)" +
+                        "cs.serviceUser.accountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                         "where floor(mod(cs.statusBitmap/:status,:status)) = 1 and ce.mostRecent=true "
         );
@@ -66,7 +64,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                         "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
-                        "cs.assignedAccountDataEntity.username)" +
+                        "cs.serviceUser.accountDataEntity.username)" +
                         "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                         "where ce.mostRecent = true  and ce.validTo<:desiredTime"+userCheck);
                 if(param1==-1)
@@ -80,7 +78,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                                 "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                                 "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                                 "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
-                                "cs.assignedAccountDataEntity.username)" +
+                                "cs.serviceUser.accountDataEntity.username)" +
                                 "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                                 "where ce.mostRecent = true  and cs.serviceUser.idServiceUser =:userID "+userCheck);
 
@@ -92,7 +90,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                                 "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
                                 "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                                 "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
-                                "cs.assignedAccountDataEntity.username)" +
+                                "cs.serviceUser.accountDataEntity.username)" +
                                 "from com.example.uslugicykliczne.entity.CertificateEntity ce left join  ce.cyclicalServiceEntity cs " +
                                 "where ce.mostRecent = true  and cs.business.idBusiness =:businessID "+userCheck);
 
@@ -106,14 +104,40 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
 
     }
 
+
+//    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"assignedAccountDataEntity"})
+//    @org.springframework.data.jpa.repository.Query("select cse from CyclicalServiceEntity cse where cse.idCyclicalService = :id")
     @Override
+    public Optional<CyclicalServiceEntity> findCyclicalServiceAcDataJoin(Integer id) {
+        EntityGraph<CyclicalServiceEntity> entityGraph = entityManager.createEntityGraph(CyclicalServiceEntity.class);
+        entityGraph.addAttributeNodes("serviceUser");
+        Subgraph<CyclicalServiceEntity> sub = entityGraph.addSubgraph("serviceUser");
+        sub.addAttributeNodes("accountDataEntity");
+
+        Query query = entityManager.createQuery("select cse from CyclicalServiceEntity cse where cse.id = :id");
+        query.setHint("jakarta.persistence.loadgraph", entityGraph);
+
+        query.setParameter("id", id);
+
+        List<CyclicalServiceEntity> list = query.getResultList();
+
+        if(list.size()>0)
+            return Optional.of(list.get(0));
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional
     public Optional<CyclicalServiceEntity> customFindNameOfAccountAssignedToService(int serviceID) {
 
+        EntityGraph<CyclicalServiceEntity> entityGraph = entityManager.createEntityGraph(CyclicalServiceEntity.class);
+        entityGraph.addAttributeNodes("serviceUser");
+        Subgraph<CyclicalServiceEntity> sub = entityGraph.addSubgraph("serviceUser");
+        sub.addAttributeNodes("accountDataEntity");
 
-        EntityGraph entityGraph = entityManager.createEntityGraph(CyclicalServiceEntity.class);
-        entityGraph.addAttributeNodes("statusBitmap", "assignedAccountDataEntity");
         Map<String, Object> properties = new HashMap<>();
-        properties.put("javax.persistence.fetchgraph", entityGraph);
+        properties.put("jakarta.persistence.fetchgraph", entityGraph);
+
         CyclicalServiceEntity cyclicalService = entityManager.find(CyclicalServiceEntity.class, serviceID, properties);
 
         if (cyclicalService==null)

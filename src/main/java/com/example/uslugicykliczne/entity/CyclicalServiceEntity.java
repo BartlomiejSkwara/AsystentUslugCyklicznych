@@ -32,7 +32,7 @@ public class CyclicalServiceEntity {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     private BusinessEntity business;
 
     @ManyToOne(optional = false)
@@ -45,7 +45,7 @@ public class CyclicalServiceEntity {
     @Column(name = "status")
     private int statusBitmap;
 
-    @ManyToOne()
-    private AccountDataEntity assignedAccountDataEntity;
+//    @ManyToOne()
+//    private AccountDataEntity assignedAccountDataEntity;
 
 }

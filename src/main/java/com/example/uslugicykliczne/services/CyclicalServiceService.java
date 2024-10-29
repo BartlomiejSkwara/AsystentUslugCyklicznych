@@ -103,13 +103,13 @@ public class CyclicalServiceService {
             insertedEntity.setStatusBitmap(StatusEnum.RENEWED.getMaskValue());
             AccountDataEntity accountDataEntity = null;
 
-            Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId());
-            if(optionalAccountDataEntity.isEmpty())
-                return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
-            accountDataEntity = optionalAccountDataEntity.get();
+//            Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId());
+//            if(optionalAccountDataEntity.isEmpty())
+//                return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
+//            accountDataEntity = optionalAccountDataEntity.get();
 
 
-            insertedEntity.setAssignedAccountDataEntity(accountDataEntity);
+//            insertedEntity.setAssignedAccountDataEntity(accountDataEntity);
             insertedEntity = cyclicalServiceRepo.save(insertedEntity);
             CertificateEntity certificateEntity = certificateService.insertCertificateCreatedFromCyclicalServiceDTO(insertedEntity,cyclicalServiceDto);
             //cyclicalServiceEntity.setCertificates(dto.getRenewalPeriod());
@@ -143,13 +143,13 @@ public class CyclicalServiceService {
             updatedEntity = createCyclicalServiceEntityFromDTO(updatedEntity,cyclicalServiceDto,serviceUserEntityOptional.get(),businessEntityOptional.get());
             AccountDataEntity accountDataEntity = null;
 
-            Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId());
-            if(optionalAccountDataEntity.isEmpty())
-                return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
-            accountDataEntity = optionalAccountDataEntity.get();
-
-
-            updatedEntity.setAssignedAccountDataEntity(accountDataEntity);
+//            Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId());
+//            if(optionalAccountDataEntity.isEmpty())
+//                return  ResponseEntity.internalServerError().body("Can't link cyclical service to nonexistant account");
+//            accountDataEntity = optionalAccountDataEntity.get();
+//
+//
+//            updatedEntity.setAssignedAccountDataEntity(accountDataEntity);
             updatedEntity = cyclicalServiceRepo.save(updatedEntity);
 //            CertificateEntity certificateEntity = certificateService.insertCertificateCreatedFromCyclicalServiceDTO(insertedEntity,cyclicalServiceDto);
             //cyclicalServiceEntity.setCertificates(dto.getRenewalPeriod());
@@ -227,7 +227,7 @@ public class CyclicalServiceService {
         CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
 
 
-        if(!SecurityContextHolder.getContext().getAuthentication().getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+        if(!SecurityContextHolder.getContext().getAuthentication().getName().equals(cyclicalService.getServiceUser().getAccountDataEntity().getUsername()))
             return new ResponseEntity<>("Don't modify resources you don't own !!!", HttpStatus.FORBIDDEN);
 
         changeServiceStatus(cyclicalService,StatusEnum.MARKED_FOR_CANCEL.getMaskValue());
@@ -244,7 +244,7 @@ public class CyclicalServiceService {
             return ResponseEntity.badRequest().body("Can't renew nonexistent service");
         CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
 
-        if(!SecurityContextHolder.getContext().getAuthentication().getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+        if(!SecurityContextHolder.getContext().getAuthentication().getName().equals(cyclicalService.getServiceUser().getAccountDataEntity().getUsername()))
             return new ResponseEntity<>("Don't modify resources you don't own !!!", HttpStatus.FORBIDDEN);
 
 
@@ -273,6 +273,7 @@ public class CyclicalServiceService {
 
     }
 
+    @Transactional
     public List<StatusChangeRecordProjection> getStatusChangesRelatedToService(Integer serviceId) {
 
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findCyclicalServiceAcDataJoin(serviceId);
@@ -285,17 +286,21 @@ public class CyclicalServiceService {
         CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
 
         if (!userDetails.getRole().equals("ROLE_admin")&&!userDetails.getRole().equals("ROLE_editor")){
-            if(!authentication.getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+            if(!authentication.getName().equals(cyclicalService.getServiceUser().getAccountDataEntity().getUsername()))
                 return List.of();
         }
 
 
         return statusChangeRepo.findByServiceIdWithChronologicalOrder(serviceId);
     }
+
+    @Transactional
     public List<CertificateProjectionRecord> getCertificatesRelatedToService(Integer serviceId) {
+
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findCyclicalServiceAcDataJoin(serviceId);
         if (optionalCyclicalServiceEntity.isEmpty())
             return List.of();
+
 
         CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
 
@@ -303,7 +308,7 @@ public class CyclicalServiceService {
         CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
 
         if (!userDetails.getRole().equals("ROLE_admin")&&!userDetails.getRole().equals("ROLE_editor")){
-            if(!authentication.getName().equals(cyclicalService.getAssignedAccountDataEntity().getUsername()))
+            if(!authentication.getName().equals(cyclicalService.getServiceUser().getAccountDataEntity().getUsername()))
                 return List.of();
         }
 

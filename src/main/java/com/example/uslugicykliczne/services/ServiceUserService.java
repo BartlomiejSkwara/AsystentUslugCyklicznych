@@ -79,14 +79,17 @@ public class ServiceUserService {
                     return ResponseEntity.badRequest().body("Podano zarejestrowane już dane kontaktowe: "+foundDuplicates);
                 }
             }
-            ContactDataEntity contactDataEntity = contactDataService.insertContactDataEntity(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
-            ServiceUserEntity sue = createServiceUserEntityFromDTO(new ServiceUserEntity(),serviceUserDTO,contactDataEntity);
 
 
             AccountDataEntity accountDataEntity = accountManagementService.register(serviceUserDTO.getPassword(), serviceUserDTO.getLogin());
             if(accountDataEntity==null){
                 return ResponseEntity.badRequest().body("Użytkownik o takiej nazwie już istnieje !!! ");
             }
+
+            ContactDataEntity contactDataEntity = contactDataService.insertContactDataEntity(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
+            ServiceUserEntity sue = createServiceUserEntityFromDTO(new ServiceUserEntity(),serviceUserDTO,contactDataEntity);
+
+
             sue.setAccountDataEntity(accountDataEntity);
 
             serviceUserRepo.save(sue);

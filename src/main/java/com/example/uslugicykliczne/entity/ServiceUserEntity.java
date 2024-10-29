@@ -32,7 +32,7 @@ public class ServiceUserEntity {
     private Collection<CyclicalServiceEntity> cyclicalServices;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "contactDataId", referencedColumnName = "idContactData", nullable = false)
     private ContactDataEntity contactData;
 
