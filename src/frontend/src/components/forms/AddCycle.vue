@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Dodaj nową płatność cykliczną</h1>
+    <h1>{{ formMode === 'edit' ? 'Edytuj płatność cykliczną' : 'Dodaj nową płatność cykliczną' }}</h1>
     <form @submit.prevent="submitForm">
       <div>
         <label for="agreementNumber">Numer umowy:</label>
@@ -133,6 +133,7 @@ export default {
   },
   data() {
     return {
+      formMode: 'add',
       businesses: [],
       serviceUsers: [],
       form: {
@@ -156,6 +157,11 @@ export default {
   },
   mounted() {
     refreshCSRF();
+    // console.log(this.$route.query.serviceUserId)
+    if (this.$route.query.serviceUserId) {
+      this.formMode = 'edit';
+      this.fetchCycle();
+    }
     this.fetchBusinesses();
     this.fetchServiceUsers();
   },
@@ -184,6 +190,54 @@ export default {
     },
     decodeSig(sig){
       return decodeSignatureType(sig);
+    },
+
+    fetchCycle() {
+      const userId = this.$route.query.serviceUserId || 1; // Default userID or from route params
+      const targetAgreementNumber = this.$route.query.agreementNumber; // Get agreementNumber from route
+
+      fetchWrapper(this, `/api/cyclicalservice/getAllByUser?userID=${userId}`)
+          .then(response => response.json())
+          .then(cycles => {
+            if (cycles.length > 0) {
+              let cycle;
+              if (targetAgreementNumber) {
+                // Find the cycle with the matching agreementNumber
+                cycle = cycles.find(cycle => cycle.agreementNumber === targetAgreementNumber);
+              }
+              this.form.idCyclicalService = cycle.idCyclicalService;
+
+              if (cycle) {
+                this.form.agreementNumber = cycle.agreementNumber || '';
+                this.form.cycleStart = cycle.certificate ? cycle.certificate.validFrom : '';
+                this.form.cycleEnd = this.calculateCertificateYears(cycle.certificate.validFrom, cycle.certificate.validTo);
+                this.form.oneTime = cycle.oneTime || false;
+                this.form.cardNumber = cycle.certificate ? cycle.certificate.cardNumber : '';
+                this.form.cardType = cycle.certificate ? cycle.certificate.cardType : 'PHYSICAL';
+                this.form.certSerialNumber = cycle.certificate ? cycle.certificate.certificateSerialNumber : '';
+                this.form.nameInOrganisation = cycle.certificate ? cycle.certificate.nameInOrganisation : '';
+                this.form.businessId = cycle.business ? cycle.business.businessName : '';
+                this.form.serviceUserId = cycle.serviceUser ? `${cycle.serviceUser.name} ${cycle.serviceUser.getSurname}` : '';
+                this.form.description = cycle.description || '';
+              } else {
+                console.log('No cycle with matching agreementNumber found.');
+              }
+            } else {
+              console.log('No cyclical service data found for the given user.');
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching user data:', error);
+          });
+    },
+
+    calculateCertificateYears(validFrom, validTo) {
+      if (validFrom && validTo) {
+        const startYear = new Date(validFrom).getFullYear();
+        const endYear = new Date(validTo).getFullYear();
+        return endYear - startYear;
+      }
+      return 1; // Default to 1 year if dates are invalid
     },
 
     async fetchBusinesses() {
@@ -236,7 +290,11 @@ export default {
       };
       const cookie = getCookie('XSRF-TOKEN');
 
-      fetchWrapper(this, '/api/cyclicalservice/insertBody', {
+      let url = this.formMode === 'add'
+          ? '/api/cyclicalservice/insertBody'
+          : `/api/cyclicalservice/update/${this.form.idCyclicalService}`;
+
+      fetchWrapper(this, url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

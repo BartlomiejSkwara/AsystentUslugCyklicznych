@@ -76,6 +76,10 @@
                 <a   class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.BLANK,cycle.statusBitmask)" data-bs-toggle="modal" data-bs-target="#requestModal">Zmiana Statusu</a>
               </li>
 
+              <li v-if="isAdminOrEditor" >
+                <a   class="dropdown-item " href="#" @click="editCycle(cycle.getIdCyclicalService)">Edytuj Cykl</a>
+              </li>
+
               <li v-if="cancelRequestElligable(cycle.accountUsername,cycle.statusBitmask)">
                 <a  class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.CANCEL_REQUEST,cycle.statusBitmask)" data-bs-toggle="modal" data-bs-target="#requestModal">Anulowanie Prośba</a>
               </li>
@@ -227,6 +231,30 @@ export default {
   },
 
   methods: {
+    editCycle(id){
+      // console.log(id)
+      const cycle = this.cycles.find(c => c.getIdCyclicalService === id)
+      if (cycle) {
+        this.$router.push({
+          path: '/add-cycle',
+          query: {
+            businessId: cycle.idBusiness,
+            cycleStart: cycle.certificate.valid_from,
+            certificateLengthInYears: cycle.certificate.certificateLengthInYears,
+            cardNumber: cycle.certificate.cardNumber,
+            cardType: cycle.certificate.cardType,
+            certSerialNumber: cycle.certificate.certSerialNumber,
+            nameInOrganisation: cycle.certificate.nameInOrganisation,
+            oneTime: cycle.oneTime,
+            price: cycle.price,
+            serviceUserId: cycle.serviceUser.idServiceUser,
+            agreementNumber: cycle.agreementNumber,
+            description: cycle.description
+          }
+        });
+      }
+    },
+
     decodeSignature(sig){
       return decodeSignatureType(sig)
     },
