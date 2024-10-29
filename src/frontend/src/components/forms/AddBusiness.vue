@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>{{ formMode === 'edit' ? 'Edytuj dane firmy' : 'Dodaj nową firmę' }}</h1>
-    <form @submit.prevent="submitForm">
+    <form @submit.prevent="submitForm" :style="styleModifier">
       <div>
         <label for="name">Nazwa:</label>
         <input type="text" id="name" v-model="form.name" required>
@@ -19,8 +19,8 @@
         <input type="text" id="regon" v-model="form.regon" required>
       </div>
       <div>
-        <label for="comments">Opis:</label>
-        <input type="text" id="comments" v-model="form.comments">
+        <label for="commentsBusiness">Opis:</label>
+        <input type="text" id="commentsBusiness" v-model="form.comments">
       </div>
       <div>
         <label>Emaile:</label>
@@ -46,10 +46,13 @@
       </div>
       <p class="text-danger">{{ errorMessage }}</p>
 
-      <button type="submit">Zapisz</button>
-      <button type="button" @click="goBack">Powrót</button>
+      <button v-if="standalone" type="submit">Zapisz</button>
+      <button v-if="standalone" type="button" @click="goBack">Powrót</button>
     </form>
   </div>
+
+
+
 </template>
 
 
@@ -57,6 +60,12 @@
 import { fetchWrapper, getCookie, refreshCSRF } from '@/utility';
 export default {
   name: 'BusinessForm',
+  props:{
+    standalone:{
+      type: Boolean,
+      default: true,
+    }
+  },
   data() {
     return {
       formMode: 'add', // 'edit' for editing existing business
@@ -74,9 +83,13 @@ export default {
       ignoreDup: false,
     };
   },
+  computed:{
+    styleModifier(){
+      return !this.standalone? {width: "100%"}:{};
+    }
+  },
   mounted() {
     refreshCSRF();
-
     if (this.$route.query.idBusiness) {
       this.formMode = 'edit';
       this.fetchBusiness();
@@ -163,7 +176,12 @@ export default {
         if(response.status == 400){
           this.errorMessage = await response.text();
         }else if(response.status == 200){
-          this.$router.push('/Business'); 
+          if(this.standalone){
+            this.$router.push('/Business'); 
+          }
+          else{
+            return true;            
+          }
         }
       
       } catch (error) {

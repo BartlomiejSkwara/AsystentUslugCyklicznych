@@ -58,16 +58,23 @@
             {{ business.name }}
           </option>
         </datalist>
+
+        <button class="btn btn-primary"   data-bs-toggle="modal" data-bs-target="#businessModal">Dodaj Nową</button>
+
       </div>
 
       <div>
         <label for="serviceUserId">Użytkownik usługi:</label>
+
         <input list="serviceUsers" name="serviceUsers" v-model="form.serviceUserId" />
         <datalist id="serviceUsers">
           <option v-for="user in serviceUsers" :key="user.id">
             {{ user.name + " " + user.surname }}
           </option>
         </datalist>
+
+        <button class="btn btn-primary"   data-bs-toggle="modal" data-bs-target="#userModal">Dodaj Nowego</button>
+
       </div>
 
 
@@ -81,12 +88,49 @@
       <button type="button" @click="goBack">Powrót</button>
     </form>
   </div>
+
+
+
+
+  <div id="userModal" class="modal fade" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body ">
+          <ServiceUserAdd  ref="userForm" :standalone="false"></ServiceUserAdd>  
+        </div>
+        <div class="modal-footer">
+          <button @click="submitUserForm" class="btn btn-outline-success" >Submit</button>
+          <button  id="closeUserForm" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>  
+
+  <div id="businessModal" class="modal fade" tabindex="-1" aria-labelledby="businessModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body ">
+          <AddBusiness  ref="businessForm" :standalone="false"></AddBusiness>  
+        </div>
+        <div class="modal-footer">
+          <button @click="submitBusinessForm" class="btn btn-outline-success" >Submit</button>
+          <button  id="closeBusinessForm" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div> 
 </template>
 
 <script>
 import { decodeSignatureType, fetchWrapper, getCookie, refreshCSRF } from '@/utility';
+import ServiceUserAdd from './ServiceUserAdd.vue';
+import AddBusiness from './AddBusiness.vue';
 
 export default {
+  components:{
+    ServiceUserAdd,
+    AddBusiness
+  },
   data() {
     return {
       businesses: [],
@@ -116,6 +160,18 @@ export default {
     this.fetchServiceUsers();
   },
   methods: {
+    async submitUserForm(){  
+      if(await this.$refs.userForm.submitForm()){
+        document.getElementById("closeUserForm").click();
+        this.fetchServiceUsers();
+      }
+    },
+    async submitBusinessForm(){  
+      if(await this.$refs.businessForm.submitForm()){
+        document.getElementById("closeBusinessForm").click();
+        this.fetchBusinesses();
+      }
+    },
     decodeSig(sig){
       return decodeSignatureType(sig);
     },
@@ -166,7 +222,6 @@ export default {
         nameInOrganisation: this.form.nameInOrganisation || null,
         businessId: this.getBusinessID(this.form.businessId),
         serviceUserId: this.getUserID(this.form.serviceUserId),
-        relatedAccountId: this.getAccountID(this.form.accountDataUsername),
         // signatureType: this.form.signatureType
       };
       const cookie = getCookie('XSRF-TOKEN');
@@ -200,10 +255,7 @@ export default {
       );
       return user ? user.idServiceUser : null;
     },
-    getAccountID(username) {
-      const account = this.accounts.find(acc => acc.username === username);
-      return account ? account.idLoginCredentials : null;
-    }
+
   }
 };
 </script>

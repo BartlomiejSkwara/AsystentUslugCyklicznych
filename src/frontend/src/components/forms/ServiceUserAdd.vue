@@ -1,10 +1,10 @@
 <template>
   <div>
     <h1>{{ formMode === 'edit' ? 'Edytuj użytkownika' : 'Dodaj nowego użytkownika usługi' }}</h1>
-    <form @submit.prevent="submitForm">
+    <form  @submit.prevent="submitForm" :style="styleModifier">
       <div>
-        <label for="name">Imię:</label>
-        <input type="text" id="name" v-model="form.name" required />
+        <label for="serviceUserName">Imię:</label>
+        <input type="text" id="serviceUserName" v-model="form.name" required />
       </div>
       <div>
         <label for="surname">Nazwisko:</label>
@@ -48,18 +48,18 @@
         <input type="text" id="taxIdentificationNumber" v-model="form.taxId" />
       </div>
       <div>
-        <label for="comments">Dodatkowy opis:</label>
-        <input type="text" id="comments" v-model="form.comments" />
+        <label for="commentsUser">Dodatkowy opis:</label>
+        <input type="text" id="commentsUser" v-model="form.comments" />
       </div>
 
       <div class="form-check form-switch">
-        <label class="form-check-label" for="flexSwitchCheckDefault">Ignoruj Duplikaty Danych Kontaktowych</label>
-        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="ignoreDup">
+        <label class="form-check-label" for="flexSwitchCheckDefaultUser">Ignoruj Duplikaty Danych Kontaktowych</label>
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefaultUser" v-model="ignoreDup">
       </div>
       <p class="text-danger">{{ errorMessage }}</p>
 
-      <button type="submit">Zapisz</button>
-      <button type="button" @click="goBack">Powrót</button>
+      <button v-if="standalone" type="submit">Zapisz</button>
+      <button v-if="standalone" type="button" @click="goBack">Powrót</button>
     </form>
   </div>
 </template>
@@ -68,6 +68,12 @@
 import { getCookie,fetchWrapper, refreshCSRF } from '@/utility';
 export default {
   name: 'UserForm',
+  props:{
+    standalone:{
+      type: Boolean,
+      default: true,
+    }
+  },
   data() {
     return {
       formMode: 'add',
@@ -87,11 +93,15 @@ export default {
       ignoreDup: false,
     };
   },
+  computed:{
+    styleModifier(){
+      return !this.standalone? {width: "100%"}:{};
+    }
+  },
   mounted() {
     refreshCSRF();
     if (this.$route.query.idServiceUser) {
       this.formMode = 'edit';
-
       this.fetchUser();
     }
   },
@@ -183,17 +193,25 @@ export default {
         if(response.status == 400){
           this.errorMessage = await response.text();
         }else if(response.status == 200){
-          this.$router.push('/ServiceUser'); 
+          if(this.standalone){
+            this.$router.push('/ServiceUser');
+          }
+          else{
+            return true;            
+          }
         }
 
       } catch (error) {
         console.error('Error saving user:', error);
 
       }
+      return false;
     },
     goBack() {
       this.$router.push('/ServiceUser');
     }
+
+
   }
 };
 </script>
