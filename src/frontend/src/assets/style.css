@@ -252,3 +252,11 @@ button[type="submit"] {
 .view-button:hover {
     background-color: #0056b3;
 }
+
+.modal-bg{
+    background-color: rgba(80,89,80,0.05)
+}
+
+.modal-footer.modal-bg{
+    background-color: rgba(80,89,80,0.05)
+}

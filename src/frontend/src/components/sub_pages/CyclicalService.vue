@@ -117,12 +117,12 @@
     <!-- Status change modal  fade-->
     <div id="requestModal" class="modal fade" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
+        <div class="modal-content ">
+          <div class="modal-header modal-bg">
             <h2>Doprecyzuj szczegóły operacji {{requestType.desc}} na usłudze nr. {{serviceReferencedByModal}}</h2>
 
           </div>
-          <div class="modal-body ">
+          <div class="modal-body modal-bg">
 
               <label for="Komentarz">Komentarz:</label>
               <br>
@@ -141,9 +141,9 @@
 
           </div>
 
-          <div class="modal-footer">
-            <button @click="submitRequest" class="btn btn-outline-success" >Submit</button>
-            <button  id="closeRequest" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <div class="modal-footer modal-bg">
+            <button @click="submitRequest" class="btn btn-outline-success" >Zatwierdź</button>
+            <button  id="closeRequest" class="btn btn-outline-secondary" data-bs-dismiss="modal">Powrót</button>
             <!-- @click="switchRequestModalVisibility(-1,-1,-1)" -->
           </div>
         </div>
@@ -564,6 +564,7 @@ export default {
   }
 };
 </script>
+<style src="@/assets/style.css"></style>
 <style>
 .renew{
   color: white;

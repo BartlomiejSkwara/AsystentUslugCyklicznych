@@ -55,18 +55,18 @@
               </li>
 
               <li v-if="user.accountDataEntity.role === 'ROLE_user' ">
-                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_admin')">Rola: Admin</a>
-                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_editor')">Rola: Edytor</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_admin')">Nadaj rolę: Admin</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_editor')">Nadaj rolę: Edytor</a>
               </li>
 
               <li v-if="user.accountDataEntity.role === 'ROLE_editor' ">
-                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_admin')">Rola: Admin</a>
-                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_user')">Rola: User</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_admin')">Nadaj rolę: Admin</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_user')">Nadaj rolę: User</a>
               </li>
 
               <li v-if="user.accountDataEntity.role === 'ROLE_admin'">
-                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_editor')">Rola: Edytor</a>
-                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_user')">Rola: User</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_editor')">Nadaj rolę: Edytor</a>
+                <a class="dropdown-item" href="#" @click="changeUserRole(user.idServiceUser, 'ROLE_user')">Nadaj rolę: User</a>
               </li>
             </ul>
           </div>
@@ -288,6 +288,18 @@ export default {
 
 
     async changeUserRole(accountId, role) {
+      // TODO
+      // const loggedInUserId = this.$store.state.loggedInUserId;
+      // const loggedInUserRole = this.$store.state.role;
+      // console.log(loggedInUserId + ' test')
+      // console.log(loggedInUserRole + ' test2')
+      // console.log(accountId + ' test3')
+      //
+      // // Prevent admin or editor from changing their own role
+      // if (accountId === loggedInUserId && (loggedInUserRole === 'ROLE_admin' || loggedInUserRole === 'ROLE_editor')) {
+      //   alert("Nie możesz zmienić swojej własnej roli.");
+      //   return;
+      // }
       try {
         const response = await fetchWrapper(this, `/api/accountData/changeUserRole`, {
           method: 'POST',
