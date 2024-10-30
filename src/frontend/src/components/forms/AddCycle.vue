@@ -150,12 +150,15 @@ export default {
         accountDataUsername: null,
         description: '',
         signatureType: 0,
+        idCyclicalService:null
       }
     };
   },
   computed: {
   },
   mounted() {
+    console.log(this.form);
+    
     refreshCSRF();
     // console.log(this.$route.query.serviceUserId)
     if (this.$route.query.serviceUserId) {
@@ -164,6 +167,8 @@ export default {
     }
     this.fetchBusinesses();
     this.fetchServiceUsers();
+    console.log(this.form);
+
   },
   methods: {
     async submitUserForm(){  
@@ -199,15 +204,19 @@ export default {
       fetchWrapper(this, `/api/cyclicalservice/getAllByUser?userID=${userId}`)
           .then(response => response.json())
           .then(cycles => {
+            
             if (cycles.length > 0) {
               let cycle;
               if (targetAgreementNumber) {
                 // Find the cycle with the matching agreementNumber
                 cycle = cycles.find(cycle => cycle.agreementNumber === targetAgreementNumber);
               }
-              this.form.idCyclicalService = cycle.idCyclicalService;
+              
 
               if (cycle) {
+
+                ///fsaf
+                
                 this.form.agreementNumber = cycle.agreementNumber || '';
                 this.form.cycleStart = cycle.certificate ? cycle.certificate.validFrom : '';
                 this.form.cycleEnd = this.calculateCertificateYears(cycle.certificate.validFrom, cycle.certificate.validTo);
@@ -219,6 +228,9 @@ export default {
                 this.form.businessId = cycle.business ? cycle.business.businessName : '';
                 this.form.serviceUserId = cycle.serviceUser ? `${cycle.serviceUser.name} ${cycle.serviceUser.getSurname}` : '';
                 this.form.description = cycle.description || '';
+                this.form.idCyclicalService = cycle.getIdCyclicalService;
+                console.log(cycle);
+                console.log(this.form);
               } else {
                 console.log('No cycle with matching agreementNumber found.');
               }

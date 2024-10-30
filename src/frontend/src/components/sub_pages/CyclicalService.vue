@@ -234,6 +234,8 @@ export default {
     editCycle(id){
       // console.log(id)
       const cycle = this.cycles.find(c => c.getIdCyclicalService === id)
+      console.log(cycle);
+      
       if (cycle) {
         this.$router.push({
           path: '/add-cycle',

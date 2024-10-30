@@ -151,7 +151,20 @@ public class CyclicalServiceService {
 //
 //            updatedEntity.setAssignedAccountDataEntity(accountDataEntity);
             updatedEntity = cyclicalServiceRepo.save(updatedEntity);
-//            CertificateEntity certificateEntity = certificateService.insertCertificateCreatedFromCyclicalServiceDTO(insertedEntity,cyclicalServiceDto);
+
+            Optional<CertificateEntity> certificateEntity = certificateRepo.findMostRecentCertificate(id);
+            if(certificateEntity.isPresent()){
+                CertificateEntity editedCert = certificateEntity.get();
+                editedCert.setCardNumber(cyclicalServiceDto.getCardNumber());
+                editedCert.setCardType(cyclicalServiceDto.getCardType());
+
+                editedCert.setValidTo(editedCert.getValidFrom().plusYears(cyclicalServiceDto.getCertificateLengthInYears()));
+                editedCert.setCertificateSerialNumber(cyclicalServiceDto.getCertSerialNumber());
+                if(cyclicalServiceDto.getNameInOrganisation().isPresent())
+                    editedCert.setNameInOrganisation(cyclicalServiceDto.getNameInOrganisation().get());
+
+                certificateRepo.save(editedCert);
+            }
             //cyclicalServiceEntity.setCertificates(dto.getRenewalPeriod());
             //schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
 //            if(certificateEntity!=null){
