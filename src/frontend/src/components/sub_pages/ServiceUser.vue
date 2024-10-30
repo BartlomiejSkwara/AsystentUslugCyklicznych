@@ -286,21 +286,40 @@ export default {
           });
     },
 
+    async fetchLoginCredentials() {
+      try {
+        const response = await fetchWrapper(this, `/api/accountData/getAll`);
+        if (!response.ok) {
+          throw new Error('Nie udało się pobrać danych loginu.');
+        }
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Problem z operacją:", error);
+        return [];
+      }
+    },
+
 
     async changeUserRole(accountId, role) {
-      // TODO
-      // const loggedInUserId = this.$store.state.loggedInUserId;
-      // const loggedInUserRole = this.$store.state.role;
-      // console.log(loggedInUserId + ' test')
-      // console.log(loggedInUserRole + ' test2')
-      // console.log(accountId + ' test3')
-      //
-      // // Prevent admin or editor from changing their own role
-      // if (accountId === loggedInUserId && (loggedInUserRole === 'ROLE_admin' || loggedInUserRole === 'ROLE_editor')) {
-      //   alert("Nie możesz zmienić swojej własnej roli.");
-      //   return;
-      // }
       try {
+        const loggedInUserUsername = this.$store.state.username;
+        const loginCredentials = await this.fetchLoginCredentials();
+
+        const loggedInUser = loginCredentials.find(user => user.username === loggedInUserUsername);
+        if (!loggedInUser) {
+          alert("Nie udało się znaleźć zalogowanego użytkownika.");
+          return;
+        }
+
+        const loggedInUserId = loggedInUser.idLoginCredentials;
+        const loggedInUserRole = loggedInUser.role;
+
+        if (accountId === loggedInUserId && (loggedInUserRole === 'ROLE_admin' || loggedInUserRole === 'ROLE_editor')) {
+          alert("Nie możesz zmienić swojej własnej roli.");
+          return;
+        }
+
         const response = await fetchWrapper(this, `/api/accountData/changeUserRole`, {
           method: 'POST',
           headers: {
