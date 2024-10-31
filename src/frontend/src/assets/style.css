@@ -253,8 +253,10 @@ button[type="submit"] {
     background-color: #0056b3;
 }
 
+
+
 .modal-bg{
-    background-color: rgba(80,89,80,0.05)
+    background-color: rgba(0, 255, 0, 0.05)
 }
 
 .modal-footer.modal-bg{

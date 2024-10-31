@@ -53,8 +53,8 @@
       </div>
 
       <div class="form-check form-switch">
-        <label class="form-check-label" for="flexSwitchCheckDefaultUser">Ignoruj Duplikaty Danych Kontaktowych</label>
         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefaultUser" v-model="ignoreDup">
+        <label class="form-check-label" for="flexSwitchCheckDefaultUser">Ignoruj Duplikaty Danych Kontaktowych</label>
       </div>
       <p class="text-danger">{{ errorMessage }}</p>
 
@@ -197,7 +197,7 @@ export default {
             this.$router.push('/ServiceUser');
           }
           else{
-            return  this.form.name + " " + this.form.surname;            
+            return  this.form.name + " " + this.form.surname;              
           }
         }
 

@@ -41,8 +41,8 @@
       
       </div>
       <div class="form-check form-switch">
-        <label class="form-check-label" for="flexSwitchCheckDefault">Ignoruj Duplikaty Danych Kontaktowych</label>
         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="ignoreDup">
+        <label class="form-check-label" for="flexSwitchCheckDefault">Ignoruj Duplikaty Danych Kontaktowych</label>
       </div>
       <p class="text-danger">{{ errorMessage }}</p>
 
