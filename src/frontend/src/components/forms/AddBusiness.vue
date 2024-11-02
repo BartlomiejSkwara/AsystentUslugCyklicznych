@@ -3,19 +3,19 @@
     <h1>{{ formMode === 'edit' ? 'Edytuj dane firmy' : 'Dodaj nową firmę' }}</h1>
     <form @submit.prevent="submitForm" :style="styleModifier">
       <div>
-        <label for="name">Nazwa:</label>
+        <label for="name">Nazwa: <span class="text-danger">*</span></label>
         <input type="text" id="name" v-model="form.name" required>
       </div>
       <div>
-        <label for="address">Adres:</label>
+        <label for="address">Adres: <span class="text-danger">*</span></label>
         <input type="text" id="address" v-model="form.adres" required>
       </div>
       <div>
-        <label for="nip">NIP:</label>
+        <label for="nip">NIP: <span class="text-danger">*</span></label>
         <input type="text" id="nip" v-model="form.nip" required>
       </div>
       <div>
-        <label for="regon">REGON:</label>
+        <label for="regon">REGON: </label>
         <input type="text" id="regon" v-model="form.regon" required>
       </div>
       <div>
@@ -23,7 +23,7 @@
         <input type="text" id="commentsBusiness" v-model="form.comments">
       </div>
       <div>
-        <label>Emaile:</label>
+        <label>Emaile: <span class="text-danger">*</span></label>
         <div v-for="(email, index) in form.emails" :key="index">
           <input type="text" v-model="form.emails[index]" placeholder="Wpisz email">
           <button type="button" @click="removeEmail(index)">Usuń</button>
@@ -31,7 +31,7 @@
         <button type="button" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
-        <label>Numer telefonu: (max 16 cyfr)</label>
+        <label>Numer telefonu: (max 16 cyfr) <span class="text-danger">*</span></label>
         <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
           <input type="text" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu">
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
@@ -44,6 +44,7 @@
         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="ignoreDup">
         <label class="form-check-label" for="flexSwitchCheckDefault">Ignoruj Duplikaty Danych Kontaktowych</label>
       </div>
+      <p class="text-danger" style="font-size: 0.9em">* pozycje obowiązkowe</p>
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>

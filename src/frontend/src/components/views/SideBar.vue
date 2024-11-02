@@ -10,7 +10,7 @@
       <li v-if="hasRole(['ROLE_admin', 'ROLE_editor', 'ROLE_user'])">
         <router-link to="/Cycles" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Cykle
+          Certyfikaty
         </router-link>
       </li>
       <!-- Link do ServiceUser widoczny tylko dla ROLE_admin i ROLE_editor -->
@@ -27,13 +27,6 @@
           Firmy
         </router-link>
       </li>
-<!--      WYWALONE BO PRZENIESIONE DO KONT UŻYTKOWNIKÓW USŁUG-->
-<!--      <li v-if="hasRole(['ROLE_admin'])">-->
-<!--        <router-link to="/Accounts" class="nav-link text-white">-->
-<!--          <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>-->
-<!--          Konta użytkowników systemu-->
-<!--        </router-link>-->
-<!--      </li>-->
     </ul>
   </div>
 </template>

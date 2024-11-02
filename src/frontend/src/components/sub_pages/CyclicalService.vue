@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1 style="margin-bottom: 20px;">Lista cykli</h1>
+    <h1 style="margin-bottom: 20px;">Lista certyfikatów</h1>
     <div class="container">
-      <router-link v-if="isAdminOrEditor" to="/add-cycle" class="add-button">Dodaj nową usługę cykliczną</router-link>
+      <router-link v-if="isAdminOrEditor" to="/add-cycle" class="add-button">Dodaj nowy certyfikat</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
         <input type="text" class="input" v-model="searchFields.agreementNumber" placeholder="Numer dokumentu" style="margin-bottom: 10px; margin-right: 10px">
       </div>

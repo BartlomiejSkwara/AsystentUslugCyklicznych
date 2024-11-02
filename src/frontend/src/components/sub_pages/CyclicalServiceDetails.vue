@@ -6,8 +6,9 @@
                 <div class="col-md-4">
                     <h3>Dane Usługi: </h3>
                     <span><b>Powiązane Konto Użytkownika Systemu: </b>{{ cycleInfo.accountUsername }}</span><br>
-                    <span><b>Usługa Jednorazowa: </b>{{ cycleInfo.oneTime }}</span><br>
-                    <span><b>Numer Zgody: </b>{{ cycleInfo.agreementNumber }}</span><br>
+<!--                    <span><b>Cena: </b>{{ cycleInfo.price }}</span><br>-->
+                    <span><b>Usługa: </b>{{ cycleInfo.oneTime === true ? 'Jednorazowa' : 'Cykliczna'}}</span><br>
+                    <span><b>Numer Umowy: </b>{{ cycleInfo.agreementNumber }}</span><br>
                     <!-- <span><b>Dokument: </b>{{decodedSignature}}</span><br> -->
 
                     <span><b>Opis usługi: </b>{{ cycleInfo.description }}</span><br>

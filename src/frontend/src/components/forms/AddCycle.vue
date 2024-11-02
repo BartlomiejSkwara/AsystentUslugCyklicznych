@@ -3,22 +3,23 @@
     <h1>{{ formMode === 'edit' ? 'Edytuj płatność cykliczną' : 'Dodaj nową płatność cykliczną' }}</h1>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="agreementNumber">Numer umowy:</label>
+        <label for="agreementNumber">Numer umowy: <span class="text-danger">*</span></label>
         <input type="text" id="agreementNumber" v-model="form.agreementNumber" required>
       </div>
       <div>
-        <label for="oneTime">Jednorazowe:</label>
+        <label for="oneTime">Jednorazowe: <span class="text-danger"> *</span></label>
+        <br>
         <select id="oneTime" v-model="form.oneTime">
           <option :value="false">Nie</option>
           <option :value="true">Tak</option>
         </select>
       </div>
       <div>
-        <label for="cycleStart">Data rozpoczęcia:</label>
+        <label for="cycleStart">Data rozpoczęcia: <span class="text-danger">*</span></label>
         <input type="datetime-local" id="cycleStart" v-model="form.cycleStart" required>
       </div>
       <div>
-        <label for="cycleEnd">Okres ważności certyfikatu w latach: </label>
+        <label for="cycleEnd">Okres ważności certyfikatu w latach: <span class="text-danger"> *</span></label>
         <br>
         <select id="cycleEnd" v-model="form.cycleEnd" required>
           <option :value="1">1</option>
@@ -27,11 +28,12 @@
         </select>
       </div>
       <div>
-        <label for="cardNumber">Numer karty:</label>
-        <input type="text" id="cardNumber" v-model="form.cardNumber" required>
+        <label for="cardNumber">Numer karty: <span class="text-danger">*</span></label>
+        <input type="text" id="cardNumber" v-model="form.cardNumber" @input="formatCardNumber" required>
       </div>
       <div>
-        <label for="cardType">Typ karty:</label>
+        <label for="cardType">Typ karty: <span class="text-danger"> *</span></label>
+        <br>
         <select id="cardType" v-model="form.cardType" required>
           <option value=1>{{translateCardType(1)}}</option>
           <option value=2>{{translateCardType(2)}}</option>
@@ -40,29 +42,29 @@
         </select>
       </div>
       <div>
-        <label for="certSerialNumber">Numer certyfikatu:</label>
+        <label for="certSerialNumber">Numer certyfikatu: <span class="text-danger">*</span></label>
         <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" required>
       </div>
       <div>
-        <label for="nameInOrganisation">Stanowisko w organizacji: (opcjonalne)</label>
+        <label for="nameInOrganisation">Stanowisko w organizacji: </label>
         <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation">
       </div>
 
       <div>
-        <label for="businessId">Firma:</label>
+        <label for="businessId">Firma: <span class="text-danger">*</span></label>
         <input list="businesses" name="businesses" v-model="form.businessId" />
         <datalist id="businesses">
           <option v-for="business in businesses" :key="business.id">
             {{ business.name }}
           </option>
+
         </datalist>
 
         <button class="btn btn-primary"   data-bs-toggle="modal" data-bs-target="#businessModal">Dodaj Nową</button>
-
       </div>
 
       <div>
-        <label for="serviceUserId">Użytkownik usługi:</label>
+        <label for="serviceUserId">Użytkownik usługi: <span class="text-danger">*</span></label>
 
         <input list="serviceUsers" name="serviceUsers" v-model="form.serviceUserId" />
         <datalist id="serviceUsers">
@@ -81,7 +83,7 @@
         <label for="description">Opis:</label>
         <input type="text" id="description" v-model="form.description" required>
       </div>
-
+      <p class="text-danger" style="font-size: 0.9em">* pozycje obowiązkowe</p>
       <button type="submit">Zapisz</button>
       <button type="button" @click="goBack">Powrót</button>
     </form>
@@ -97,8 +99,8 @@
           <ServiceUserAdd  ref="userForm" :standalone="false"></ServiceUserAdd>  
         </div>
         <div class="modal-footer">
-          <button @click="submitUserForm" class="btn btn-outline-success" >Submit</button>
-          <button  id="closeUserForm" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button @click="submitUserForm" class="btn btn-outline-success" >Zapisz</button>
+          <button  id="closeUserForm" class="btn btn-outline-secondary" data-bs-dismiss="modal">Powrót</button>
         </div>
       </div>
     </div>
@@ -111,8 +113,8 @@
           <AddBusiness  ref="businessForm" :standalone="false"></AddBusiness>  
         </div>
         <div class="modal-footer">
-          <button @click="submitBusinessForm" class="btn btn-outline-success" >Submit</button>
-          <button  id="closeBusinessForm" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button @click="submitBusinessForm" class="btn btn-outline-success" >Zapisz</button>
+          <button  id="closeBusinessForm" class="btn btn-outline-secondary" data-bs-dismiss="modal">Powrót</button>
         </div>
       </div>
     </div>
@@ -170,7 +172,15 @@ export default {
   },
   methods: {
     translateCardType,
-    async submitUserForm(){  
+    formatCardNumber() {
+      let cardNumber = this.form.cardNumber.replace(/\D/g, '');
+
+      cardNumber = cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
+
+      this.form.cardNumber = cardNumber.trim();
+    },
+
+    async submitUserForm(){
       let newUserName = await this.$refs.userForm.submitForm()
       if(newUserName!=null){
         document.getElementById("closeUserForm").click();
