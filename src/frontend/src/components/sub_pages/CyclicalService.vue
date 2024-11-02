@@ -43,7 +43,7 @@
       <tbody>
       <tr v-for="cycle in filteredCycles" :key="cycle.getIdCyclicalService">
         <td>{{ cycle.getIdCyclicalService }}</td>
-        <td>{{ cycle.certificate.cardType }}</td>
+        <td>{{ translateCardType(cycle.certificate.cardType) }}</td>
         <td>
           <!-- {{statusesList.length}} -->
           <!-- tak wiem, to nie jest optymalne, ale szkoda mi pamięci XD -->
@@ -174,7 +174,7 @@
 
 <script>
 // import { eventBus } from '@/eventBus.js'; // Import eventBus
-import { getCookie,fetchWrapper, STATUS_TYPES_LIST, decodeStatus, hasStatus, decodeSignatureType } from '@/utility';
+import { getCookie,fetchWrapper, STATUS_TYPES_LIST, decodeStatus, hasStatus, decodeSignatureType, translateCardType } from '@/utility';
 
 export default {
   name: 'CyclesList',
@@ -231,6 +231,7 @@ export default {
   },
 
   methods: {
+    translateCardType,
     editCycle(id){
       // console.log(id)
       const cycle = this.cycles.find(c => c.getIdCyclicalService === id)
@@ -248,7 +249,6 @@ export default {
             certSerialNumber: cycle.certificate.certSerialNumber,
             nameInOrganisation: cycle.certificate.nameInOrganisation,
             oneTime: cycle.oneTime,
-            price: cycle.price,
             serviceUserId: cycle.serviceUser.idServiceUser,
             agreementNumber: cycle.agreementNumber,
             description: cycle.description

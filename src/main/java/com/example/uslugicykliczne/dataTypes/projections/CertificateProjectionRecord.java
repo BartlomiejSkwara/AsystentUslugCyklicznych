@@ -7,7 +7,7 @@ public record CertificateProjectionRecord(
     String certificateSerialNumber,
     LocalDateTime validFrom,
     LocalDateTime validTo,
-    String cardType,
+    Integer cardType,
     String cardNumber,
     String nameInOrganisation
 ) {

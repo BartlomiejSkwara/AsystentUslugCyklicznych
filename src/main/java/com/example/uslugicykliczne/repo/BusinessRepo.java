@@ -21,7 +21,7 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
         return null;
     }
 
-    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails where b in(:businessGroup)")
+    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails JOIN FETCH b.address where b in(:businessGroup)")
     List<BusinessEntity> findBJoinedEmailFromIdGroupBy(List<BusinessEntity> businessGroup);
 
 
@@ -36,7 +36,7 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
         }
         return null;
     }
-    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails ")
+    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails JOIN FETCH b.address")
     List<BusinessEntity> findBJoinedEmailBy();
     @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.phoneNumbers where b in (:oldB)")
     List<BusinessProjection> findBJoinedPhoneBy(List<BusinessEntity> oldB);
@@ -52,7 +52,7 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
     }
 
 
-    @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails WHERE su.idBusiness = :id")
+    @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails JOIN FETCH su.address WHERE su.idBusiness = :id")
     Optional<BusinessEntity> findBSingleJoinedEmailBy(int id);
 
     @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.phoneNumbers where su = :oldB")

@@ -17,7 +17,7 @@ public class TestUtilityService {
         certificateEntity.setCertificateSerialNumber("123");
         certificateEntity.setCyclicalServiceEntity(cyclicalServiceEntity);
         certificateEntity.setCardNumber("123");
-        certificateEntity.setCardType("physical");
+        certificateEntity.setCardType(1);
         certificateEntity.setValidTo(validTo);
         certificateEntity.setValidFrom(LocalDateTime.now());
         certificateEntity.setNameInOrganisation("CEO");
@@ -29,7 +29,6 @@ public class TestUtilityService {
     static public CyclicalServiceEntity createCyclicalServiceEntity(boolean oneTime, ServiceUserEntity serviceUser, BusinessEntity businessEntity){
         CyclicalServiceEntity cyclicalServiceEntity = new CyclicalServiceEntity();
         cyclicalServiceEntity.setDescription("service desc");
-        cyclicalServiceEntity.setPrice(100);
         cyclicalServiceEntity.setOneTime(oneTime);
         cyclicalServiceEntity.setAgreementNumber("1234");
         ContactDataEntity contactDataEntity;
@@ -96,7 +95,7 @@ public class TestUtilityService {
         BusinessEntity entity = new BusinessEntity();
         entity.setRegon("12314");
         entity.setNip("521124");
-        entity.setAdres("bruhowa 33");
+//        entity.setAdres("bruhowa 33");
         entity.setName("bruhcorp");
         entity.setComments("comment");
         if (contactDataEntity==null)

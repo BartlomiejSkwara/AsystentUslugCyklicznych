@@ -25,8 +25,8 @@ public class CertificateEntity {
     @Column(name = "validTo",nullable = false)
     private LocalDateTime validTo;
     @Basic
-    @Column(name = "cardType",nullable = false, length = 40)
-    private String cardType;
+    @Column(name = "cardType",nullable = false)
+    private Integer cardType;
     @Basic
     @Column(name = "cardNumber",nullable = false, length = 40)
     private String cardNumber;

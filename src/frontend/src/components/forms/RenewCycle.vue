@@ -46,7 +46,7 @@ export default {
       form: {
         cycleEnd: 1,
         cardNumber: '',
-        cardType: 'PHYSICAL',
+        cardType: 1,
         certSerialNumber: '',
         nameInOrganisation: ''
       },

@@ -6,7 +6,6 @@
                 <div class="col-md-4">
                     <h3>Dane Usługi: </h3>
                     <span><b>Powiązane Konto Użytkownika Systemu: </b>{{ cycleInfo.accountUsername }}</span><br>
-                    <span><b>Cena: </b>{{ cycleInfo.price }}</span><br>
                     <span><b>Usługa Jednorazowa: </b>{{ cycleInfo.oneTime }}</span><br>
                     <span><b>Numer Zgody: </b>{{ cycleInfo.agreementNumber }}</span><br>
                     <!-- <span><b>Dokument: </b>{{decodedSignature}}</span><br> -->
@@ -26,7 +25,7 @@
                   <span><b>Numer Seryjny Certyfikatu: </b>{{ cycleInfo.certificate.certificateSerialNumber }}</span><br>
                   <span><b>Ważny Od: </b>{{ formatDate(cycleInfo.certificate.validFrom) }}</span><br>
                   <span><b>Ważny Do: </b>{{ formatDate(cycleInfo.certificate.validTo) }}</span><br>
-                  <span><b>Typ Karty: </b>{{ cycleInfo.certificate.cardType }}</span><br>
+                  <span><b>Typ Karty: </b>{{ translateCardType(cycleInfo.certificate.cardType) }}</span><br>
                   <span><b>Numer Karty: </b>{{ cycleInfo.certificate.cardNumber }}</span><br>
                   <button class="btn btn-primary"  data-bs-toggle="collapse" data-bs-target="#certHistory" >Historia certyfikatów ... </button>
 
@@ -94,7 +93,7 @@
                     <td>{{ cert.certificateSerialNumber }}</td>
                     <td>{{  formatDate(cert.validFrom) }}</td>
                     <td>{{ formatDate(cert.validTo) }}</td>
-                    <td>{{ cert.cardType }}</td>
+                    <td>{{ translateCardType(cert.cardType) }}</td>
                     <td>{{ cert.cardNumber }}</td>
                     <td>{{ cert.nameInOrganisation }}</td>
 
@@ -110,7 +109,7 @@
   </template>
   
   <script>  
-  import { decodeSignatureType, decodeStatus, fetchWrapper } from '@/utility';
+  import { decodeSignatureType, decodeStatus, fetchWrapper, translateCardType } from '@/utility';
   export default {
     name: 'CyclicalServiceDetails',
     data() {
@@ -134,7 +133,7 @@
       }
     },
     methods: {
-
+      translateCardType,
       formatDate(date) {
       const d = new Date(date);
       const year = d.getFullYear();

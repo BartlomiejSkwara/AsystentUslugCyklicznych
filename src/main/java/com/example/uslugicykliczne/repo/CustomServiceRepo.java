@@ -37,7 +37,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
     public List<CyclicalServiceProjection> customFindCyclicalProjectionsWithCancelRequest() {
         Query query = entityManager.createQuery(
                 "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
-                        "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
+                        "cs.idCyclicalService,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
                         "cs.serviceUser.accountDataEntity.username)" +
@@ -61,7 +61,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
             default -> {
                 query = entityManager.createQuery(
                 "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
-                        "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
+                        "cs.idCyclicalService,cs.oneTime,cs.agreementNumber,cs.description," +
                         "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                         "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
                         "cs.serviceUser.accountDataEntity.username)" +
@@ -75,7 +75,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
             case BY_USER_ID -> {
                 query = entityManager.createQuery(
                         "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
-                                "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
+                                "cs.idCyclicalService,cs.oneTime,cs.agreementNumber,cs.description," +
                                 "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                                 "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
                                 "cs.serviceUser.accountDataEntity.username)" +
@@ -87,7 +87,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
             case BY_BUSINESS_ID -> {
                 query = entityManager.createQuery(
                         "select  new com.example.uslugicykliczne.dataTypes.projections.CyclicalServiceProjection(" +
-                                "cs.idCyclicalService,cs.price,cs.oneTime,cs.agreementNumber,cs.description," +
+                                "cs.idCyclicalService,cs.oneTime,cs.agreementNumber,cs.description," +
                                 "cs.business.id,cs.business.name, cs.serviceUser.id, cs.serviceUser.name, cs.serviceUser.surname," +
                                 "ce.idCertificate, ce.certificateSerialNumber, ce.validFrom,ce.validTo,ce.cardType,ce.cardNumber,ce.nameInOrganisation, cs.statusBitmap, " +
                                 "cs.serviceUser.accountDataEntity.username)" +

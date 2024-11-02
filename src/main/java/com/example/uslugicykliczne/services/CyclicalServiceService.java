@@ -191,7 +191,6 @@ public class CyclicalServiceService {
         cyclicalServiceEntity.setServiceUser(serviceUserEntity);
         cyclicalServiceEntity.setBusiness(businessEntity);
         cyclicalServiceEntity.setDescription(dto.getDescription());
-        cyclicalServiceEntity.setPrice(dto.getPrice());
         cyclicalServiceEntity.setOneTime(dto.getOneTime());
         cyclicalServiceEntity.setAgreementNumber(dto.getAgreementNumber());
 //        cyclicalServiceEntity.setSignatureType(dto.getSignatureType());

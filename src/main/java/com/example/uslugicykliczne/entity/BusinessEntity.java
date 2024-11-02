@@ -3,6 +3,8 @@ package com.example.uslugicykliczne.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Entity
 @Data
 @Table(name = "Business", schema = "uslugi_cykliczne", catalog = "")
@@ -15,11 +17,13 @@ public class BusinessEntity {
     @Basic
     @Column(name = "name",nullable = false, length = 80)
     private String name;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
+    private AddressEntity address;
+
+
     @Basic
-    @Column(name = "adres",nullable = false, length = 80)
-    private String adres;
-    @Basic
-    @Column(name = "regon",nullable = false, length = 40)
+    @Column(name = "regon", length = 40, nullable = true)
     private String regon;
     @Basic
     @Column(name = "nip",nullable = false, length = 40)
@@ -36,29 +40,12 @@ public class BusinessEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BusinessEntity that = (BusinessEntity) o;
-
-        if (idBusiness != that.idBusiness) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (adres != null ? !adres.equals(that.adres) : that.adres != null) return false;
-        if (regon != null ? !regon.equals(that.regon) : that.regon != null) return false;
-        if (nip != null ? !nip.equals(that.nip) : that.nip != null) return false;
-        if (comments != null ? !comments.equals(that.comments) : that.comments != null) return false;
-
-        return true;
+        if (!(o instanceof BusinessEntity that)) return false;
+        return getIdBusiness() == that.getIdBusiness() && Objects.equals(getName(), that.getName()) && Objects.equals(getAddress(), that.getAddress()) && Objects.equals(getRegon(), that.getRegon()) && Objects.equals(getNip(), that.getNip()) && Objects.equals(getComments(), that.getComments()) && Objects.equals(getContactData(), that.getContactData());
     }
 
     @Override
     public int hashCode() {
-        int result = idBusiness;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (adres != null ? adres.hashCode() : 0);
-        result = 31 * result + (regon != null ? regon.hashCode() : 0);
-        result = 31 * result + (nip != null ? nip.hashCode() : 0);
-        result = 31 * result + (comments != null ? comments.hashCode() : 0);
-        return result;
+        return Objects.hash(getIdBusiness(), getName(), getAddress(), getRegon(), getNip(), getComments(), getContactData());
     }
-
 }

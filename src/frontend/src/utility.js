@@ -23,6 +23,21 @@ export  function refreshCSRF(){
      fetchWrapper(this,`/api/authentication/requestToken`)
 }
 
+export function translateCardType(id){
+  switch (id) {
+    case 1:
+      return "SIMPLYSIGN PODPIS"
+    case 2:
+      return "SIMPLYSIGN PPIECZĘĆ"
+    case 3:
+      return "Fizyczny Podpis"
+    case 4:
+      return "Fizyczna Pieczęć"  
+    default:
+      return "null"
+  }
+}
+
 export async function fetchWrapper(context, url, init={}){
 
     const response = await fetch(url,init)

@@ -64,7 +64,7 @@
             <td @click="viewUserData(detail.id_user)" class="clickable" data-bs-toggle="modal" data-bs-target="#userContactData">
               {{ detail.surname }}
             </td>
-            <td>{{detail.cardType}} ważny {{calculateCertLen(detail.validFrom,detail.validTo)}} lata</td>
+            <td>{{translateCardType(detail.cardType)}} ważny {{calculateCertLen(detail.validFrom,detail.validTo)}} lata</td>
             <td>{{ formatDate(detail.validTo) }}</td>
           </tr>
           </tbody>
@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { getCookie, fetchWrapper, decodeSignatureType } from '@/utility';
+import { getCookie, fetchWrapper, decodeSignatureType, translateCardType } from '@/utility';
 
 export default {
   name: 'BusinessService',
@@ -175,6 +175,7 @@ export default {
     this.fetchBusinesses();
   },
   methods: {
+    translateCardType,
     calculateCertLen(sDate,eDate){
       const d1 = new Date(sDate);
       const d2 = new Date(eDate);

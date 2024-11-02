@@ -21,7 +21,7 @@ class  CustomBusinessRepoImpl implements CustomBusinessRepo{
 //    @Override
 //    public List<BusinessProjection> findBusinessByRelatedUserID(int userId) {
 //        Query query = entityManager.createQuery(
-//                "select  new com.example.uslugicykliczne.dataTypes.BusinessRecordProjection(" +
+//                "select  new com.example.uslugicykliczne.dataTypes.projections.BusinessRecordProjection(" +
 //                        "bu.id,bu.name,bu.adres,bu.regon,bu.nip,bu.comments," +
 //                        "bu.contactData.emails, bu.contactData.phoneNumbers)" +
 //                        "from com.example.uslugicykliczne.entity.CyclicalServiceEntity cs left join  cs.business bu " +

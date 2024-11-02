@@ -99,7 +99,7 @@
               {{ service.business.businessName }}
             </td>
 <!--            <td>{{ service.agreementNumber }}</td>-->
-            <td>{{service.certificate.cardType}} ważny {{calculateCertLen(service.certificate.validFrom,service.certificate.validTo)}} lata</td>
+            <td>{{translateCardType(service.certificate.cardType)}} ważny {{calculateCertLen(service.certificate.validFrom,service.certificate.validTo)}} lata</td>
             <td>{{ formatDate(service.certificate.validTo) }}</td>
           </tr>
           </tbody>
@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import { getCookie, fetchWrapper, decodeSignatureType } from '@/utility';
+import { getCookie, fetchWrapper, decodeSignatureType,translateCardType } from '@/utility';
 
 export default {
   name: 'ServiceUserList',
@@ -217,6 +217,7 @@ export default {
     }
   },
   methods: {
+    translateCardType,
     calculateCertLen(sDate,eDate){
       const d1 = new Date(sDate);
       const d2 = new Date(eDate);

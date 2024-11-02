@@ -42,7 +42,7 @@ public class CyclicalServiceDto {
 
     @NotBlank(message = "Certificate cardType is empty !!!")
     @Size(max=40, message = "Certificate cardType is too long !!!")
-    private final String  cardType;
+    private final Integer  cardType;
 
 
     @NotBlank(message = "Certificate serialNumber is empty !!!")
@@ -60,9 +60,7 @@ public class CyclicalServiceDto {
 
 
 
-    @NotNull(message = "Price is empty !!!")
-    @Min(value = 0, message = "Can't specify negative price !!!")
-    private final Double price;
+
 
     @NotNull(message = "serviceUserId is empty !!!")
     @Min(value = 0L, message = "Specified serviceUserId must be a positive Integer")

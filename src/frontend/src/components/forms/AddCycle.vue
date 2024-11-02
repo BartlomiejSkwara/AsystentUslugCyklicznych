@@ -33,12 +33,10 @@
       <div>
         <label for="cardType">Typ karty:</label>
         <select id="cardType" v-model="form.cardType" required>
-          <option value="PHYSICAL">FIZYCZNA</option>
-          <option value="PODPIS_SIMPLYSIGN">SIMPLYSIGN PODPIS</option>
-          <option value="PIECZĘĆ_SIMPLYSIGN">SIMPLYSIGN PIECZĘĆ</option>
-          <option value="PODPIS_KARTA_I_CZYTNIK">KARTA I CZYTNIK PODPIS</option>
-          <option value="PIECZĘĆ_KARTA_I_CZYTNIK">KARTA I CZYTNIK PIECZĘĆ</option>
-
+          <option value=1>{{translateCardType(1)}}</option>
+          <option value=2>{{translateCardType(2)}}</option>
+          <option value=3>{{translateCardType(3)}}</option>
+          <option value=4>{{translateCardType(4)}}</option>
         </select>
       </div>
       <div>
@@ -122,7 +120,7 @@
 </template>
 
 <script>
-import { decodeSignatureType, fetchWrapper, getCookie, refreshCSRF } from '@/utility';
+import { decodeSignatureType, fetchWrapper, getCookie, refreshCSRF, translateCardType } from '@/utility';
 import ServiceUserAdd from './ServiceUserAdd.vue';
 import AddBusiness from './AddBusiness.vue';
 
@@ -142,7 +140,7 @@ export default {
         cycleStart: '',
         cycleEnd: 1,
         cardNumber: '',
-        cardType: 'PHYSICAL',
+        cardType: 1,
         certSerialNumber: '',
         nameInOrganisation: '',
         businessId: null,
@@ -171,6 +169,7 @@ export default {
 
   },
   methods: {
+    translateCardType,
     async submitUserForm(){  
       let newUserName = await this.$refs.userForm.submitForm()
       if(newUserName!=null){
@@ -222,7 +221,7 @@ export default {
                 this.form.cycleEnd = this.calculateCertificateYears(cycle.certificate.validFrom, cycle.certificate.validTo);
                 this.form.oneTime = cycle.oneTime || false;
                 this.form.cardNumber = cycle.certificate ? cycle.certificate.cardNumber : '';
-                this.form.cardType = cycle.certificate ? cycle.certificate.cardType : 'PHYSICAL';
+                this.form.cardType = cycle.certificate ? cycle.certificate.cardType : 1;
                 this.form.certSerialNumber = cycle.certificate ? cycle.certificate.certificateSerialNumber : '';
                 this.form.nameInOrganisation = cycle.certificate ? cycle.certificate.nameInOrganisation : '';
                 this.form.businessId = cycle.business ? cycle.business.businessName : '';
@@ -287,7 +286,6 @@ export default {
     submitForm() {
       const payload = {
         agreementNumber: this.form.agreementNumber,
-        price: 10.00, // Stała cena
         description: this.form.description,
         oneTime: this.form.oneTime,
         cycleStart: this.form.cycleStart,

@@ -3,6 +3,7 @@ package com.example.uslugicykliczne.services;
 import com.example.uslugicykliczne.dataTypes.BusinessDTO;
 import com.example.uslugicykliczne.dataTypes.projections.BusinessProjection;
 import com.example.uslugicykliczne.entity.*;
+import com.example.uslugicykliczne.repo.AddressRepo;
 import com.example.uslugicykliczne.repo.BusinessRepo;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
 import jakarta.persistence.Entity;
@@ -24,8 +25,7 @@ public class BusinessService {
     private final ServiceUserRepo serviceUserRepo;
     private final ContactDataService contactDataService;
     private final EntityManager entityManager;
-
-
+    private final AddressRepo addressRepo;
 
 
     public ResponseEntity<String> updateBusinessEntity(Integer id,BusinessDTO businessDTO,boolean duplicateCheck){
@@ -49,10 +49,12 @@ public class BusinessService {
             }
         }
 
+        AddressEntity addressEntity = createAddressEntityFromDTO(businessEntityOptional.get().getAddress(),businessDTO);
+        addressRepo.save(addressEntity);
 
         contactDataService.updateContactDataEntity(contactDataEntity,businessDTO.getEmails(),businessDTO.getPhoneNumbers());
 
-        businessRepo.save(createBusinessEntityFromDTO(businessEntityOptional.get(), businessDTO, contactDataEntity));
+        businessRepo.save(createBusinessEntityFromDTO(businessEntityOptional.get(), businessDTO, contactDataEntity,addressEntity));
         return ResponseEntity.ok("Successfully updated the business");
     }
 
@@ -64,21 +66,36 @@ public class BusinessService {
                 return ResponseEntity.badRequest().body("Podano zarejestrowane już dane kontaktowe: "+foundDuplicates);
             }
         }
+        AddressEntity addressEntity = createAddressEntityFromDTO(new AddressEntity(),businessDTO);
+        addressRepo.save(addressEntity);
         ContactDataEntity contactDataEntity = contactDataService.insertContactDataEntity(businessDTO.getEmails(),businessDTO.getPhoneNumbers());
-        businessRepo.save(createBusinessEntityFromDTO(new BusinessEntity() ,businessDTO,contactDataEntity));
+
+        businessRepo.save(createBusinessEntityFromDTO(new BusinessEntity() ,businessDTO,contactDataEntity,addressEntity));
         return ResponseEntity.ok("Successfully added the user");
 
     }
-    public BusinessEntity createBusinessEntityFromDTO(BusinessEntity businessEntity, BusinessDTO dto, ContactDataEntity contactDataEntity ){
+    public BusinessEntity createBusinessEntityFromDTO(BusinessEntity businessEntity, BusinessDTO dto, ContactDataEntity contactDataEntity,AddressEntity addressEntity ){
         businessEntity.setName(dto.getName());
         businessEntity.setComments(dto.getComments());
         businessEntity.setContactData(contactDataEntity);
-        businessEntity.setAdres(dto.getAdres());
+        businessEntity.setAddress(addressEntity);
         businessEntity.setNip(dto.getNip());
-        businessEntity.setRegon(dto.getRegon());
+        if(dto.getRegon().isPresent()&&!dto.getRegon().get().isEmpty())
+            businessEntity.setRegon(dto.getRegon().get());
+        else
+            businessEntity.setRegon(null);
+
         return businessEntity;
     }
 
+    public AddressEntity createAddressEntityFromDTO(AddressEntity addressEntity,BusinessDTO dto){
+        addressEntity.setLocality(dto.getLocality());
+        addressEntity.setPostalCode(dto.getPostalCode());
+        addressEntity.setStreet(dto.getStreet());
+        addressEntity.setPropertyNumber(dto.getPropertyNumber());
+        addressEntity.setApartmentNumber(dto.getApartmentNumber());
+        return addressEntity;
+    }
     public void deleteBusiness(Integer id) {
         Optional<BusinessEntity> businessEntity = businessRepo.findById(id);
         if (businessEntity.isPresent()){

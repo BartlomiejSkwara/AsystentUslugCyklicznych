@@ -45,7 +45,7 @@ public class CertificateService {
     }
 
 
-    public CertificateEntity insertCertificateCreatedFromRenewalRecord(CyclicalServiceEntity cyclicalServiceEntity, ServiceRenewalRecord serviceRenewalRecord, LocalDateTime validFrom, String cardType) {
+    public CertificateEntity insertCertificateCreatedFromRenewalRecord(CyclicalServiceEntity cyclicalServiceEntity, ServiceRenewalRecord serviceRenewalRecord, LocalDateTime validFrom, Integer cardType) {
         CertificateEntity certificateEntity = new CertificateEntity();
         certificateEntity.setCertificateSerialNumber(serviceRenewalRecord.certSerialNumber());
         certificateEntity.setCyclicalServiceEntity(cyclicalServiceEntity);

@@ -11,6 +11,7 @@ delete from service_user;
 delete from contact_data;
 delete from status_type;
 delete from status_change;
+delete from address;
 # delete from cyclical_service_status_change_entities;
 SET SQL_SAFE_UPDATES = 1;
 
@@ -74,13 +75,30 @@ INSERT INTO `phone_number` (id_contact_data, id_phone_number, number) VALUES (1,
 UNLOCK TABLES;
 
 
+
+
+
+
+
+--
+-- Dumping data for table `address`
+--
+
+LOCK TABLES `address` WRITE;
+/*!40000 ALTER TABLE `address` DISABLE KEYS */;
+INSERT INTO `address`(address_id,apartment_number,locality,postal_code,property_number,street) VALUE (1,3,'Warszawa','00-049',1,'Kmyrańskiego'), (2,9297,'Danville','94506',2,'Polly Parkway'), (3,213,'Dallas','75243',3,'McKinney Avenue'), (4,21,'Chiba','100-8677',4,'Chibaminato'),(5,55,'Tokyo','100-8606',5,' Kotto-dori Ave'),(6,233,'Irvine','333-222',6,' Bruh Avenue');
+/*!40000 ALTER TABLE `address` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
 --
 -- Dumping data for table `business`
 --
 
 LOCK TABLES `business` WRITE;
 /*!40000 ALTER TABLE `business` DISABLE KEYS */;
-INSERT INTO `business` (contact_data_id,id_business,nip,regon,adres,name,comments) VALUES (1,1,'2142151','3214125125','Warszawa ul. Kmyrańskiego 33',' Huta Szkła Ozdobnego',NULL),(2,2,'2142151','3214125125','Danville Polly Parkway 9297 ','Doofenshmirtz Evil INC','Blah blah blah'),(6,3,'235143215','6345315','Dallas Texas','Petrochem',NULL),(7,4,'6134531','1343125','Chiba Japan','Akaromi BioCorp',NULL),(8,5,'32415','12351','Chu-ku, Tokyo, Japan','Arasaka Corporation',NULL),(9,6,'12421421','6132432','Irvine, California, United States','Blizzard Entertainment','Po prostu nie :>');
+INSERT INTO `business` (contact_data_id,id_business,nip,regon,name,comments,address_address_id) VALUES (1,1,'2142151','3214125125',' Huta Szkła Ozdobnego',NULL,1),(2,2,'2142151','3214125125','Doofenshmirtz Evil INC','Blah blah blah',2),(6,3,'235143215','6345315','Petrochem',NULL,3),(7,4,'6134531','1343125','Akaromi BioCorp',NULL,4),(8,5,'32415','12351','Arasaka Corporation',NULL,5),(9,6,'12421421','6132432','Blizzard Entertainment','Po prostu nie :>',6);
 /*!40000 ALTER TABLE `business` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,9 +108,13 @@ UNLOCK TABLES;
 
 LOCK TABLES `cyclical_service` WRITE;
 /*!40000 ALTER TABLE `cyclical_service` DISABLE KEYS */;
-INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,price,service_user_id_service_user,agreement_number,description,status,assigned_account_data_entity_id_login_credentials) VALUES (2,1,_binary '\0',22.4,1,'1234124','Pięć ton eternitu w wiórach',256,1),(2,2,_binary '',5022.4,1,'42425331551','Dwie tony rudy ołowiu',256,1),(5,3,_binary '\0',332122.4,7,'5142','Amortyzacja dla chomika dżungarskiego',256,2),(3,4,_binary '\0',523.3,9,'51324','4 tony stali nierdzewnej',256,2),(1,5,_binary '\0',3000.4,2,'21532153','800 kg rudy sfalerytu',256,3),(2,6,_binary '\0',4213124.23,4,'9243124','300 kg auremitu',256,3);
+INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,service_user_id_service_user,agreement_number,description,status) VALUES (2,1,_binary '\0',1,'1234124','Pięć ton eternitu w wiórach',256),(2,2,_binary '',1,'42425331551','Dwie tony rudy ołowiu',256),(5,3,_binary '\0',7,'5142','Amortyzacja dla chomika dżungarskiego',256),(3,4,_binary '\0',9,'51324','4 tony stali nierdzewnej',256),(1,5,_binary '\0',2,'21532153','800 kg rudy sfalerytu',256),(2,6,_binary '\0',4,'9243124','300 kg auremitu',256);
 /*!40000 ALTER TABLE `cyclical_service` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+
+
 
 
 --
@@ -101,7 +123,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `certificate` WRITE;
 /*!40000 ALTER TABLE `certificate` DISABLE KEYS */;
-INSERT INTO `certificate` (id_certificate,id_cyclical_service,renewal_message_sent,most_recent,valid_from,valid_to,card_number,card_type,certificate_serial_number,name_in_organisation) VALUES (1,1,_binary '',_binary '\0',current_date-interval 5 year ,current_date-interval 4 year ,'4215213','PHYSICAL','25213412421142214',NULL),(2,2,_binary '\0',_binary '',current_date-interval 1 year ,current_date+interval 4 day ,'945322155213','PHYSICAL','32623523632',NULL),(3,1,_binary '',_binary '\0',current_date-interval 4 year ,current_date-interval 3 year ,'4215213','PHYSICAL','235213412421142214','CEO'),(4,1,_binary '',_binary '\0',current_date-interval 3 year ,current_date-interval 2 year ,'4215213','PHYSICAL','35213412421142214','CEO'),(5,1,_binary '',_binary '\0',current_date-interval 2 year ,current_date-interval 1 year,'4215213','PHYSICAL','45213412421142214','CEO'),(6,1,_binary '',_binary '\0',current_date-interval 1 year ,current_date-interval 0 year,'4215213','PHYSICAL','55213412421142214','CEO'),(7,1,_binary '\0',_binary '',current_date,current_date+interval 3 year ,'4215213','PHYSICAL','65213412421142214','CEO'),(8,3,_binary '',_binary '\0',current_date-interval 4 year ,current_date-interval 2 year ,'4215213','PHYSICAL','75213412421142214',NULL),(9,3,_binary '',_binary '\0',current_date-interval 2 year ,current_date-interval 1 year ,'4215213','PHYSICAL','85213412421142214','CEO'),(10,3,_binary '\0',_binary '',current_date-interval 2 year ,current_date+interval 15 day ,'4215213','PHYSICAL','95213412421142214','CEO'),(11,4,_binary '\0',_binary '',current_date-interval 2 year ,current_date+interval 25 day ,'4215213','PHYSICAL','43324234',NULL),(12,5,_binary '\0',_binary '',current_date-interval 1 year ,current_date+interval 14 day ,'251235132','PHYSICAL','1613451',NULL),(13,6,_binary '\0',_binary '',current_date-interval 1 year ,current_date+interval 2 day ,'8675987','PHYSICAL','4123124',NULL);
+INSERT INTO `certificate` (id_certificate,id_cyclical_service,renewal_message_sent,most_recent,valid_from,valid_to,card_number,card_type,certificate_serial_number,name_in_organisation) VALUES (1,1,_binary '',_binary '\0',current_date-interval 5 year ,current_date-interval 4 year ,'4215213',1,'25213412421142214',NULL),(2,2,_binary '\0',_binary '',current_date-interval 1 year ,current_date+interval 4 day ,'945322155213',1,'32623523632',NULL),(3,1,_binary '',_binary '\0',current_date-interval 4 year ,current_date-interval 3 year ,'4215213',1,'235213412421142214','CEO'),(4,1,_binary '',_binary '\0',current_date-interval 3 year ,current_date-interval 2 year ,'4215213',1,'35213412421142214','CEO'),(5,1,_binary '',_binary '\0',current_date-interval 2 year ,current_date-interval 1 year,'4215213',2,'45213412421142214','CEO'),(6,1,_binary '',_binary '\0',current_date-interval 1 year ,current_date-interval 0 year,'4215213',2,'55213412421142214','CEO'),(7,1,_binary '\0',_binary '',current_date,current_date+interval 3 year ,'4215213',2,'65213412421142214','CEO'),(8,3,_binary '',_binary '\0',current_date-interval 4 year ,current_date-interval 2 year ,'4215213',2,'75213412421142214',NULL),(9,3,_binary '',_binary '\0',current_date-interval 2 year ,current_date-interval 1 year ,'4215213',3,'85213412421142214','CEO'),(10,3,_binary '\0',_binary '',current_date-interval 2 year ,current_date+interval 15 day ,'4215213',3,'95213412421142214','CEO'),(11,4,_binary '\0',_binary '',current_date-interval 2 year ,current_date+interval 25 day ,'4215213',3,'43324234',NULL),(12,5,_binary '\0',_binary '',current_date-interval 1 year ,current_date+interval 14 day ,'251235132',4,'1613451',NULL),(13,6,_binary '\0',_binary '',current_date-interval 1 year ,current_date+interval 2 day ,'8675987',4,'4123124',NULL);
 /*!40000 ALTER TABLE `certificate` ENABLE KEYS */;
 UNLOCK TABLES;
 
