@@ -109,7 +109,7 @@ export const STATUS_TYPES_LIST = {
     },
     INVOICE_SENT:{
       mVal : 128,
-      desc : "Faktura wystawiona kod otrzymany"
+      desc : "Faktura wystawiona, kod wysłany"
     },
     RENEWED:{
       mVal : 256,

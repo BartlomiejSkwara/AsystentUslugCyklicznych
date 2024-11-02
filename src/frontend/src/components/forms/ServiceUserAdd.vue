@@ -3,25 +3,23 @@
     <h1>{{ formMode === 'edit' ? 'Edytuj użytkownika' : 'Dodaj nowego użytkownika usługi' }}</h1>
     <form  @submit.prevent="submitForm" :style="styleModifier">
       <div>
-        <label for="serviceUserName">Imię:</label>
+        <label for="serviceUserName">Imię: <span class="text-danger">*</span></label>
         <input type="text" id="serviceUserName" v-model="form.name" required />
       </div>
       <div>
-        <label for="surname">Nazwisko:</label>
+        <label for="surname">Nazwisko: <span class="text-danger">*</span></label>
         <input type="text" id="surname" v-model="form.surname" required />
       </div>
-<!--      -->
       <div>
-        <label for="login">Login:</label>
+        <label for="login">Login: <span class="text-danger">*</span></label>
         <input type="text" id="login" v-model="form.login" required />
       </div>
       <div>
-        <label for="password">Hasło:</label>
+        <label for="password">Hasło: <span class="text-danger">*</span></label>
         <input type="password" id="password" v-model="form.password" />
       </div>
-<!--     -->
       <div>
-        <label>Emaile:</label>
+        <label>Emaile: <span class="text-danger">*</span></label>
         <div v-for="(email, index) in form.emails" :key="index">
           <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" required />
           <button type="button" @click="removeEmail(index)">Usuń</button>
@@ -29,7 +27,7 @@
         <button type="button" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
-        <label>Numery telefonów: (max 16 znaków)</label>
+        <label>Numery telefonów: (max 16 znaków) <span class="text-danger">*</span></label>
         <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
           <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" required />
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
@@ -37,14 +35,15 @@
         <button type="button" @click="addPhoneNumber">Dodaj nowy telefon</button>
       </div>
       <div>
-        <label for="hasPolishPESEL">Polski PESEL?:</label>
+        <label for="hasPolishPESEL">Polski PESEL?: <span class="text-danger">*</span></label>
+        <br>
         <select id="hasPolishPESEL" v-model="form.hasPolishPESEL">
           <option :value="true">Tak</option>
           <option :value="false">Nie</option>
         </select>
       </div>
       <div v-if="form.hasPolishPESEL">
-        <label for="taxIdentificationNumber">PESEL (dokładnie 11 znaków):</label>
+        <label for="taxIdentificationNumber">PESEL (dokładnie 11 znaków): <span class="text-danger">*</span></label>
         <input type="text" id="taxIdentificationNumber" v-model="form.taxId" />
       </div>
       <div>
@@ -56,6 +55,7 @@
         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefaultUser" v-model="ignoreDup">
         <label class="form-check-label" for="flexSwitchCheckDefaultUser">Ignoruj Duplikaty Danych Kontaktowych</label>
       </div>
+      <p class="text-danger" style="font-size: 0.9em">* pozycje obowiązkowe</p>
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
@@ -85,7 +85,7 @@ export default {
         password: '',
         emails: [''],
         phoneNumbers: [''],
-        hasPolishPESEL: false,
+        hasPolishPESEL: true,
         taxId: '',
         comments: ''
       },
