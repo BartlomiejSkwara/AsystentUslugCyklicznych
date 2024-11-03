@@ -118,8 +118,8 @@ public class ServiceUserService {
 //        }
     }
     public ServiceUserEntity createServiceUserEntityFromDTO (ServiceUserEntity serviceUserEntity, ServiceUserDTO dto, ContactDataEntity contactDataEntity){
-        serviceUserEntity.setName(dto.getName());
-        serviceUserEntity.setSurname(dto.getSurname());
+        serviceUserEntity.setName(dto.getName().trim());
+        serviceUserEntity.setSurname(dto.getSurname().trim());
         serviceUserEntity.setComments(dto.getComments());
         serviceUserEntity.setHasPolishPesel(dto.getHasPolishPESEL());
         if (dto.getHasPolishPESEL())

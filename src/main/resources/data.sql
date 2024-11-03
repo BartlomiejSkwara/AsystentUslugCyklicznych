@@ -98,7 +98,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `business` WRITE;
 /*!40000 ALTER TABLE `business` DISABLE KEYS */;
-INSERT INTO `business` (contact_data_id,id_business,nip,regon,name,comments,address_address_id) VALUES (1,1,'2142151','3214125125',' Huta Szkła Ozdobnego',NULL,1),(2,2,'2142151','3214125125','Doofenshmirtz Evil INC','Blah blah blah',2),(6,3,'235143215','6345315','Petrochem',NULL,3),(7,4,'6134531','1343125','Akaromi BioCorp',NULL,4),(8,5,'32415','12351','Arasaka Corporation',NULL,5),(9,6,'12421421','6132432','Blizzard Entertainment','Po prostu nie :>',6);
+INSERT INTO `business` (contact_data_id,id_business,nip,regon,name,comments,address_address_id) VALUES (1,1,'2142151','3214125125','Huta Szkła Ozdobnego',NULL,1),(2,2,'2142151','3214125125','Doofenshmirtz Evil INC','Blah blah blah',2),(6,3,'235143215','6345315','Petrochem',NULL,3),(7,4,'6134531','1343125','Akaromi BioCorp',NULL,4),(8,5,'32415','12351','Arasaka Corporation',NULL,5),(9,6,'12421421','6132432','Blizzard Entertainment','Po prostu nie :>',6);
 /*!40000 ALTER TABLE `business` ENABLE KEYS */;
 UNLOCK TABLES;
 

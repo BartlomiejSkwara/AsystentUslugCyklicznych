@@ -70,7 +70,6 @@ public class CyclicalServiceDto {
     @Size(max=40, message = "Podany numer zgody jest za długi !!!")
     private final String  agreementNumber;
 
-    @NotBlank(message = "Nie określono opisu usługi !!!")
     @Size(max=255, message = "Podany opis usługi jest za długi  !!!")
     private final String description;
 

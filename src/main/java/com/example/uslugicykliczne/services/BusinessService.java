@@ -75,7 +75,7 @@ public class BusinessService {
 
     }
     public BusinessEntity createBusinessEntityFromDTO(BusinessEntity businessEntity, BusinessDTO dto, ContactDataEntity contactDataEntity,AddressEntity addressEntity ){
-        businessEntity.setName(dto.getName());
+        businessEntity.setName(dto.getName().trim());
         businessEntity.setComments(dto.getComments());
         businessEntity.setContactData(contactDataEntity);
         businessEntity.setAddress(addressEntity);

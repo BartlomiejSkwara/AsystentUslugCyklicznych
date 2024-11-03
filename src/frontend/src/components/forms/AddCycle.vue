@@ -292,7 +292,7 @@ export default {
     submitForm() {
       const payload = {
         agreementNumber: this.form.agreementNumber,
-        description: this.form.description || null,
+        description: this.form.description || '',
         oneTime: this.form.oneTime,
         cycleStart: this.form.cycleStart,
         certificateLengthInYears: this.form.cycleEnd,
@@ -330,7 +330,15 @@ export default {
       this.$router.push('/Cycles');
     },
     getBusinessID(name) {
-      const business = this.businesses.find(bus => bus.name === name);
+      console.log(name);
+      
+      
+      const business = this.businesses.find(bus => {
+        console.log(bus);
+        return bus.name === name
+      });
+      console.log(business);
+      
       return business ? business.idBusiness : null;
     },
     getUserID(fullName) {
