@@ -64,15 +64,6 @@
             </div>
         </div>
 
-
-
-
-
-
-
-
-
-        
         <div class="collapse" id="certHistory">
             <div class="card card-body">
               <h3>Historia Certyfikatów</h3>
@@ -104,7 +95,7 @@
         </div>
         
         <br>
-        <button class="btn btn-danger" type="button" @click="goBack">Powrót</button>
+        <button class="btn btn-danger" type="button" @click="goBack" style="float: right">Powrót</button>
     </div>
   </template>
   

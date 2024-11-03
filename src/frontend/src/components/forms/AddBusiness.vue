@@ -6,9 +6,29 @@
         <label for="name">Nazwa: <span class="text-danger">*</span></label>
         <input type="text" id="name" v-model="form.name" required>
       </div>
+<!--      <div>-->
+<!--        <label for="address">Adres: <span class="text-danger">*</span></label>-->
+<!--        <input type="text" id="address" v-model="form.adres" required>-->
+<!--      </div>-->
       <div>
-        <label for="address">Adres: <span class="text-danger">*</span></label>
-        <input type="text" id="address" v-model="form.adres" required>
+        <label for="locality">Miejscowość: <span class="text-danger">*</span></label>
+        <input type="text" id="locality" v-model="form.locality" required>
+      </div>
+      <div>
+        <label for="postalCode">Kod pocztowy: <span class="text-danger">*</span></label>
+        <input type="text" id="postalCode" v-model="form.postalCode" required>
+      </div>
+      <div>
+        <label for="street">Ulica: <span class="text-danger">*</span></label>
+        <input type="text" id="street" v-model="form.street" required>
+      </div>
+      <div>
+        <label for="propertyNumber">Numer posesji: <span class="text-danger">*</span></label>
+        <input type="text" id="propertyNumber" v-model="form.propertyNumber" required>
+      </div>
+      <div>
+        <label for="apartmentNumber">Numer lokalu: <span class="text-danger">*</span></label>
+        <input type="text" id="apartmentNumber" v-model="form.apartmentNumber" required>
       </div>
       <div>
         <label for="nip">NIP: <span class="text-danger">*</span></label>
@@ -16,7 +36,7 @@
       </div>
       <div>
         <label for="regon">REGON: </label>
-        <input type="text" id="regon" v-model="form.regon" required>
+        <input type="text" id="regon" v-model="form.regon">
       </div>
       <div>
         <label for="commentsBusiness">Opis:</label>
@@ -48,7 +68,8 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" @click="goBack">Powrót</button>
+      <button v-if="standalone" type="button" style="float: right" @click="goBack">Powrót</button>
+      <br>
     </form>
   </div>
 
@@ -73,7 +94,12 @@ export default {
       form: {
         idBusiness: null,
         name: '',
-        adres: '',
+        // adres: '',
+        locality: '',
+        postalCode: '',
+        street: '',
+        propertyNumber: '',
+        apartmentNumber: '',
         nip: '',
         regon: '',
         comments: '',
@@ -103,9 +129,13 @@ export default {
           .then(business => {
             this.form.idBusiness = business.idBusiness;
             this.form.name = business.name;
-            this.form.adres = business.adres;
+            this.form.locality = business.address.locality;
+            this.form.postalCode = business.address.postalCode;
+            this.form.street = business.address.street;
+            this.form.propertyNumber = business.address.propertyNumber;
+            this.form.apartmentNumber = business.address.apartmentNumber;
             this.form.nip = business.nip;
-            this.form.regon = business.regon;
+            this.form.regon = business.regon || '';
             this.form.comments = business.comments;
 
             if (business.contactData) {
@@ -141,7 +171,12 @@ export default {
         
       const payload = {
         name: this.form.name,
-        adres: this.form.adres,
+        // adres: this.form.adres,
+        locality: this.form.locality,
+        postalCode: this.form.postalCode,
+        street: this.form.street,
+        propertyNumber: this.form.propertyNumber,
+        apartmentNumber: this.form.apartmentNumber,
         nip: this.form.nip,
         regon: this.form.regon,
         comments: this.form.comments,

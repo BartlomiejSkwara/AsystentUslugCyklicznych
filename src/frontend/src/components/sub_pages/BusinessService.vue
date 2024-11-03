@@ -7,7 +7,7 @@
         <input type="text" class="input" v-model="searchFields.name" placeholder="Nazwa" style="margin-bottom: 10px; margin-right: 10px;">
         <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
           <input type="text" class="input" v-model="searchFields.nip" placeholder="NIP" style="margin-bottom: 10px; margin-right: 10px;">
-          <input type="text" class="input" v-model="searchFields.regon" placeholder="REGON" style="margin-bottom: 10px; margin-right: 10px;">
+<!--          <input type="text" class="input" v-model="searchFields.regon" placeholder="REGON" style="margin-bottom: 10px; margin-right: 10px;">-->
         </div>
         <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>
       </div>
@@ -17,7 +17,7 @@
       <tr>
         <th>ID</th>
         <th>Nazwa</th>
-        <th>Adres</th>
+<!--        <th>Adres</th>-->
         <th>Dane kontaktowe</th>
         <th>Opis</th>
         <th>NIP</th>
@@ -29,12 +29,12 @@
       <tr v-for="business in filteredBusinesses" :key="business.idBusiness">
         <td>{{ business.idBusiness }}</td>
         <td @click="toggleDetails(business.idBusiness)" class="clickable">{{ business.name }}</td>
-        <td>{{ business.adres }}</td>
+<!--        <td>{{ business.adres }}</td>-->
         <td>
           {{ business.contactData ? business.contactData.idContactData : 'N/A' }}
           <button v-if="business.contactData" @click="viewContactData(business.idBusiness)" class="view-button" data-bs-toggle="modal" data-bs-target="#contactModal">...</button>
         </td>
-        <td>{{ business.comments }}</td>
+        <td>{{ business.comments || '' }}</td>
         <td>{{ business.nip }}</td>
         <td>{{ business.regon }}</td>
         <td>
@@ -81,6 +81,13 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
+            <div v-if="addressDetails">
+              <p><strong>Miasto:</strong> {{ addressDetails.locality }}</p>
+              <p><strong>Kod pocztowy:</strong> {{ addressDetails.postalCode }}</p>
+              <p><strong>Ulica:</strong> {{ addressDetails.street }}</p>
+              <p><strong>Numer posesji:</strong> {{ addressDetails.propertyNumber }}</p>
+              <p><strong>Numer lokalu:</strong> {{ addressDetails.apartmentNumber }}</p>
+            </div>
             <div v-if="contactDataDetails">
               <p><strong>Emaile:</strong></p>
               <ul>
@@ -147,6 +154,7 @@ export default {
       showAdditionalFields: false,
       showModal: false,
       contactDataDetails: null,
+      addressDetails: null,
       expandedBusiness: null,
       selectedUserData: null,
       expandedBusinessDetails: [],
@@ -160,8 +168,7 @@ export default {
       return this.businesses.filter(business => {
         return (
             business.name.toLowerCase().includes(this.searchFields.name.toLowerCase()) &&
-            business.nip.toLowerCase().includes(this.searchFields.nip.toLowerCase()) &&
-            business.regon.toLowerCase().includes(this.searchFields.regon.toLowerCase())
+            business.nip.toLowerCase().includes(this.searchFields.nip.toLowerCase())
         );
       });
     },
@@ -268,16 +275,17 @@ export default {
     viewContactData(id) {
       this.showModal = true;
       this.contactDataDetails = null;
+      this.addressDetails = null;
       fetchWrapper(this, `/api/business/get/${id}`)
           .then(response => response.json())
           .then(data => {
             this.contactDataDetails = data.contactData;
+            this.addressDetails = data.address;
           })
           .catch(error => {
             console.error("There has been a problem with your fetch operation:", error);
           });
     },
-    //////
     viewUserData(UserDataId) {
       this.selectedUserData = null; // Reset details
       fetchWrapper(this, `/api/serviceUser/get/${UserDataId}`)
@@ -289,7 +297,6 @@ export default {
             console.error("Problem z operacją:", error);
           });
     },
-    ////////
     formatDate(date) {
       const d = new Date(date);
       const year = d.getFullYear();
