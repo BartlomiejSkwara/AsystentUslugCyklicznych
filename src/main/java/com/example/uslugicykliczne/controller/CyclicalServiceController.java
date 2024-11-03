@@ -25,15 +25,24 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cyclicalservice")
-@RequiredArgsConstructor
 public class CyclicalServiceController {
 
 
+    public CyclicalServiceController(CyclicalServiceRepo cyclicalServiceRepo, ValidationUtility validationUtility, CyclicalServiceService cyclicalServiceService, StatusChangeRepo statusChangeRepo) {
+        this.cyclicalServiceRepo = cyclicalServiceRepo;
+        this.validationUtility = validationUtility;
+        this.cyclicalServiceService = cyclicalServiceService;
+        this.statusChangeRepo = statusChangeRepo;
+        statusExclusionLists = new ArrayList<>();
+        statusExclusionLists.add(List.of(StatusEnum.CANCELED,StatusEnum.MARKED_AS_NON_RENEWABLE,StatusEnum.RENEWED,StatusEnum.RENEWED_ELSEWHERE,StatusEnum.EXPIRED));
+
+    }
 
     public record Comment(Optional<@Size(max = 255, message = "Specified comment is too long")String> comment){};
     public record StatusAndComment(Optional<@Size(max = 255, message = "Specified comment is too long")String> comment,
@@ -45,6 +54,7 @@ public class CyclicalServiceController {
     private final ValidationUtility validationUtility;
     private final CyclicalServiceService cyclicalServiceService;
     private final StatusChangeRepo statusChangeRepo;
+    private final List<List<StatusEnum>> statusExclusionLists;
 
     @GetMapping("/getAllByUser")
     public List<CyclicalServiceProjection> getAllByUser(@RequestParam() Integer userID) {
@@ -56,16 +66,32 @@ public class CyclicalServiceController {
         return cyclicalServiceService.getAllByFindingMode(businessID,SERVICE_FINDING_MODE.BY_BUSINESS_ID);
     }
 
-    @GetMapping("/getAll")
-    public List<CyclicalServiceProjection> getAllServices(@RequestParam(required = false) String days, HttpServletResponse httpServletResponse){
+    @PostMapping("/forceDailyCheck")
+    public void forceDailyCheck(){
+        cyclicalServiceRepo.removeExpiredIgnores();
+        cyclicalServiceRepo.customUpdateAwaitingRenewal();
+        cyclicalServiceRepo.setExpiredStatus();
+    }
+
+    @GetMapping("/getAllAwaiting")
+    public List<CyclicalServiceProjection> getAllServicesAwaiting(@RequestParam(required = false) String days, HttpServletResponse httpServletResponse){
         if(days == null)
-            return cyclicalServiceService.getAllByFindingMode(-1, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
+            return cyclicalServiceService.getAllByFindingModeExcluding(statusExclusionLists.get(0),-1, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
 
         int nDays = 7;
         if (days.equals("7") || days.equals("14")||days.equals("30")||days.equals("60"))
             nDays = Integer.parseInt(days);
-        return cyclicalServiceService.getAllByFindingMode(nDays, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
+        return cyclicalServiceService.getAllByFindingModeExcluding(statusExclusionLists.get(0),nDays, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
     }
+    @GetMapping("/getAll")
+    public List<CyclicalServiceProjection> getAllServices(HttpServletResponse httpServletResponse){
+        return cyclicalServiceService.getAllByFindingModeExcluding(List.of(StatusEnum.EXPIRED),-1, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
+    }
+    @GetMapping("/getAllExpired")
+    public List<CyclicalServiceProjection> getAllExpiredServices(HttpServletResponse httpServletResponse){
+        return cyclicalServiceService.getAllByFindingModeIncluding(List.of(StatusEnum.EXPIRED),-1, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
+    }
+
 
 
     @GetMapping("/statusChangeHistory/{id}")
@@ -83,7 +109,10 @@ public class CyclicalServiceController {
         }
 
         if (statusAndComment.requestedStateChange.equals(StatusEnum.RENEWED.getMaskValue())||
-                statusAndComment.requestedStateChange.equals(StatusEnum.MARKED_FOR_CANCEL.getMaskValue()))
+                statusAndComment.requestedStateChange.equals(StatusEnum.MARKED_FOR_CANCEL.getMaskValue())||
+                statusAndComment.requestedStateChange.equals(StatusEnum.NEW.getMaskValue())||
+                statusAndComment.requestedStateChange.equals(StatusEnum.IGNORE.getMaskValue())
+        )
             return ResponseEntity.badRequest().body("Ej ej ej, od tego jest osobny endpoint :>");
 
         boolean statusIsCorrect = false;
@@ -106,6 +135,13 @@ public class CyclicalServiceController {
         }
         return cyclicalServiceService.requestRenewal(id,comment.comment.orElseGet(() -> null));
     }
+
+    @PostMapping("/ignore/{id}")
+    public ResponseEntity<?> changeStatusToIgnore(@PathVariable Integer id, @Validated @RequestParam Integer days){
+
+        return cyclicalServiceService.ignore(id,days);
+    }
+
 
     @PostMapping("/cancelRequest/{id}")
     public ResponseEntity<?> cancelRequest(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){

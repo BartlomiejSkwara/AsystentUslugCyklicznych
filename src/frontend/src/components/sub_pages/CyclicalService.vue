@@ -12,7 +12,9 @@
       <button @click="fetchCycles(14)" :class="{ active: selectedDays === 14 }">14 dni</button>
       <button @click="fetchCycles(30)" :class="{ active: selectedDays === 30 }">30 dni</button>
       <button @click="fetchCycles(60)" :class="{ active: selectedDays === 60 }">60 dni</button>
-      <button @click="fetchAllCycles" :class="{ active: selectedDays === 'all' }">Wszystkie</button>
+      <button @click="fetchAllCycles" :class="{ active: selectedDays === 'all' }">Wszystkie Nie Odnowione</button>
+      <button @click="fetchAllCycles(1)" :class="{ active: selectedDays === 'getAll' }">Wszystkie </button>
+      <button @click="fetchAllCycles(2)" :class="{ active: selectedDays === 'getAllExpired' }">Wygaszone </button>
 
     <select v-model="selectedStatus">
       <option value="all">Wszystkie statusy</option>
@@ -174,7 +176,7 @@
 
 <script>
 // import { eventBus } from '@/eventBus.js'; // Import eventBus
-import { getCookie,fetchWrapper, STATUS_TYPES_LIST, decodeStatus, hasStatus, decodeSignatureType, translateCardType } from '@/utility';
+import { getCookie,fetchWrapper, STATUS_TYPES_LIST, decodeStatus, hasStatus, translateCardType } from '@/utility';
 
 export default {
   name: 'CyclesList',
@@ -257,9 +259,7 @@ export default {
       }
     },
 
-    decodeSignature(sig){
-      return decodeSignatureType(sig)
-    },
+
     renewCycle(cycSerId){
       this.$router.push(`/renew-cycle/${cycSerId}`)
     },
@@ -385,7 +385,7 @@ export default {
     },
     fetchCycles(days) {
       this.selectedDays = days;
-      fetchWrapper(this,`/api/cyclicalservice/getAll?days=${days}`)
+      fetchWrapper(this,`/api/cyclicalservice/getAllAwaiting?days=${days}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error("Network response was not ok " + response.statusText);
@@ -403,11 +403,23 @@ export default {
             console.error("There has been a problem with your fetch operation:", error);
           });
     },
-    async fetchAllCycles() {
+    async fetchAllCycles(type) {
       
+      let strType = "getAllAwaiting";
       this.selectedDays = 'all';
+
+      if(type == 1){
+        strType = "getAll"
+        this.selectedDays = 'getAll'
+      }
+      else if (type == 2){
+        strType = "getAllExpired"
+        this.selectedDays = 'getAllExpired'
+
+      }
+
       try {
-        const response = await fetchWrapper(this,`/api/cyclicalservice/getAll`, {
+        const response = await fetchWrapper(this,`/api/cyclicalservice/`+strType, {
             method: 'GET',
         });
 
@@ -425,6 +437,10 @@ export default {
 
 
     },
+
+    
+
+
     async deleteCycle(id) {
 
       if (confirm("Are you sure you want to delete this cycle?")) {
@@ -515,6 +531,10 @@ export default {
       nonAvailable.push(this.STATUS_TYPES.CANCEL_REQUEST);
       nonAvailable.push(this.STATUS_TYPES.AWAITING_RENEWAL);
       nonAvailable.push(this.STATUS_TYPES.RENEWED);
+      nonAvailable.push(this.STATUS_TYPES.NEW);
+      nonAvailable.push(this.STATUS_TYPES.IGNORED);
+      nonAvailable.push(this.STATUS_TYPES.EXPIRED)
+
       let bitmask = this.bitmaskReferencedByModal;
 
       return Object.values(this.STATUS_TYPES).filter(curr => {

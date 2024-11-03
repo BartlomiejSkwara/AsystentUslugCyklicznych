@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class CyclicalServiceEntity {
     @Column(name = "agreementNumber",nullable = false, length = 40)
     private String agreementNumber;
 
+
+
     @Basic
     @Column(name = "description")
     private String description;
@@ -42,5 +45,9 @@ public class CyclicalServiceEntity {
     @Basic
     @Column(name = "status")
     private int statusBitmap;
+
+    @Basic
+    @Column(name = "ignoreTo",nullable = true)
+    private LocalDateTime ignoreTo;
 
 }

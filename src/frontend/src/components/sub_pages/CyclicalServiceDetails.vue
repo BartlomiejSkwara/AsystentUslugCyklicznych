@@ -9,7 +9,6 @@
 <!--                    <span><b>Cena: </b>{{ cycleInfo.price }}</span><br>-->
                     <span><b>Usługa: </b>{{ cycleInfo.oneTime === true ? 'Jednorazowa' : 'Cykliczna'}}</span><br>
                     <span><b>Numer Umowy: </b>{{ cycleInfo.agreementNumber }}</span><br>
-                    <!-- <span><b>Dokument: </b>{{decodedSignature}}</span><br> -->
 
                     <span><b>Opis usługi: </b>{{ cycleInfo.description }}</span><br>
                     <span><b>Obecnie przypisane Statusy: </b></span>
@@ -55,7 +54,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(change, index) in statusChangeHistory" :key="index">
-                    <td>{{ change.statusTypeName }}</td>
+                    <td>{{ decodeStatus(change.statusTypeName)[0] }}</td>
                     <td>{{ formatDate(change.changeDate) }}</td>
                     <td>{{ change.comment }}</td>
                   </tr>
@@ -110,7 +109,7 @@
   </template>
   
   <script>  
-  import { decodeSignatureType, decodeStatus, fetchWrapper, translateCardType } from '@/utility';
+  import { fetchWrapper, translateCardType,decodeStatus } from '@/utility';
   export default {
     name: 'CyclicalServiceDetails',
     data() {
@@ -129,11 +128,10 @@
       // this.cycleId = this.$route.params.id; 
     },
     computed:{
-      decodedSignature(){
-        return decodeSignatureType(this.cycleInfo.signatureType);
-      }
+
     },
     methods: {
+      decodeStatus,
       translateCardType,
       formatDate(date) {
       const d = new Date(date);

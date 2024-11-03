@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { decodeSignatureType, fetchWrapper, getCookie, refreshCSRF, translateCardType } from '@/utility';
+import {fetchWrapper, getCookie, refreshCSRF, translateCardType } from '@/utility';
 import ServiceUserAdd from './ServiceUserAdd.vue';
 import AddBusiness from './AddBusiness.vue';
 
@@ -202,10 +202,6 @@ export default {
 
       }
     },
-    decodeSig(sig){
-      return decodeSignatureType(sig);
-    },
-
     fetchCycle() {
       const userId = this.$route.query.serviceUserId || 1; // Default userID or from route params
       const targetAgreementNumber = this.$route.query.agreementNumber; // Get agreementNumber from route

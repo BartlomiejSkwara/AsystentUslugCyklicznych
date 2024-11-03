@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import { getCookie, fetchWrapper, decodeSignatureType,translateCardType } from '@/utility';
+import { getCookie, fetchWrapper,translateCardType } from '@/utility';
 
 export default {
   name: 'ServiceUserList',
@@ -225,9 +225,7 @@ export default {
       
       return d2.getFullYear()-d1.getFullYear();
     },
-    decodeSignature(sig){
-      return decodeSignatureType(sig);
-    },
+
     toggleSearchFields() {
       this.showAdditionalFields = !this.showAdditionalFields;
     },

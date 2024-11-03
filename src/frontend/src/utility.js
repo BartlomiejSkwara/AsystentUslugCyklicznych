@@ -26,9 +26,9 @@ export  function refreshCSRF(){
 export function translateCardType(id){
   switch (id) {
     case 1:
-      return "SIMPLYSIGN PODPIS"
+      return "SIMPLYSIGN Podpis"
     case 2:
-      return "SIMPLYSIGN PPIECZĘĆ"
+      return "SIMPLYSIGN Pieczęć"
     case 3:
       return "Fizyczny Podpis"
     case 4:
@@ -55,18 +55,7 @@ export async function fetchWrapper(context, url, init={}){
     return response;
 }
 
-export function decodeSignatureType(type){
-  switch (type) {
-    case 0:
-      return "Podpis Elektroniczny Mobilny SimplySign"
-    case 1:
-      return "Podpis Elektroniczny Karta + Czytnik"
-    case 2:
-      return "Pieczęć Elektroniczna Mobilna SimplySign"
-    default:
-      return "Pieczęć Elektroniczna Karta + Czytnik"
-  }
-}
+
 
 export function decodeStatus(decodedStatus){
     let bitmask = decodedStatus;
@@ -129,6 +118,18 @@ export const STATUS_TYPES_LIST = {
     RENEWED:{
       mVal : 256,
       desc : "Odnowione"
+    },    
+    NEW:{
+      mVal : 512,
+      desc: "Nowy"
+    },
+    IGNORED:{
+      mVal : 1024,
+      desc: "Ignorowany"
+    },
+    EXPIRED:{
+      mVal : 2048,
+      desc: "Wygaszony"
     },
 
   }

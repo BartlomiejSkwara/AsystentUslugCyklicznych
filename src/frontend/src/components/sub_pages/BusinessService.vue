@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { getCookie, fetchWrapper, decodeSignatureType, translateCardType } from '@/utility';
+import { getCookie, fetchWrapper, translateCardType } from '@/utility';
 
 export default {
   name: 'BusinessService',
@@ -183,9 +183,7 @@ export default {
       
       return d2.getFullYear()-d1.getFullYear();
     },
-    decodeSignature(sig){
-      return decodeSignatureType(sig);
-    },
+
     toggleDetails(businessId) {
       if (this.expandedBusiness === businessId) {
         this.expandedBusiness = null;

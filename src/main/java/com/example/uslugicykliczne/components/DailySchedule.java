@@ -13,7 +13,10 @@ public class DailySchedule {
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void daily(){
+        cyclicalServiceRepo.removeExpiredIgnores();
         cyclicalServiceRepo.customUpdateAwaitingRenewal();
+        cyclicalServiceRepo.setExpiredStatus();
+
     }
 
 }

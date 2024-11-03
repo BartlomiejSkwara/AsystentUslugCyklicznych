@@ -5,6 +5,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 public record StatusChangeRecordProjection(Integer idStatusChange, String comment, LocalDateTime changeDate,
-                                           String statusTypeName) {
+                                           Integer statusTypeName) {
 
 }

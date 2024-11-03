@@ -23,7 +23,10 @@ interface CustomServiceRepo{
 
     Optional<CyclicalServiceEntity> customFindNameOfAccountAssignedToService(int serviceID);
     void customUpdateAwaitingRenewal();
+    void removeExpiredIgnores();
     CyclicalServiceProjection saveAndReturnProjection(CyclicalServiceEntity cyclicalServiceEntity);
+
+    void setExpiredStatus();
 }
 
 @RequiredArgsConstructor
@@ -173,8 +176,10 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
                 "update  CyclicalServiceEntity cse " +
                         "set cse.statusBitmap = 1 " +
                         "where cse.idCyclicalService in (:idList) "+
-                        "and cse.statusBitmap = 256"
+                        "and cse.statusBitmap = :renewedValue or cse.statusBitmap = :newValue"
         );
+        query.setParameter("renewedValue",StatusEnum.RENEWED.getMaskValue());
+        query.setParameter("newValue",StatusEnum.NEW.getMaskValue());
 
         query.setParameter("idList",idList);
         query.executeUpdate();
@@ -199,6 +204,76 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
 
 
     }
+
+    @Override
+    @Transactional
+    public void removeExpiredIgnores() {
+        Query disableSafeUpdate = entityManager.createNativeQuery("SET SQL_SAFE_UPDATES = 0");
+        disableSafeUpdate.executeUpdate();
+        Query query = entityManager.createNativeQuery(
+                "update  uslugi_cykliczne.cyclical_service cs " +
+                        "set cs.status = cs.status & ~(:targetStatus) , cs.ignore_to = null " +
+                        "where (cs.status & (:targetStatus)) != 0  and cs.ignore_to<:today"
+        );
+
+
+
+        query.setParameter("targetStatus", StatusEnum.IGNORE.getMaskValue());
+        query.setParameter("today",LocalDateTime.now());
+
+        query.executeUpdate();
+
+        Query enableSafeUpdate = entityManager.createNativeQuery("SET SQL_SAFE_UPDATES = 1");
+        enableSafeUpdate.executeUpdate();
+
+    }
+
+    @Override
+    @Transactional
+    public void setExpiredStatus() {
+        Query disableSafeUpdate = entityManager.createNativeQuery("SET SQL_SAFE_UPDATES = 0");
+        disableSafeUpdate.executeUpdate();
+
+        Query query = entityManager.createQuery(
+                "   select distinct ce.cyclicalServiceEntity.idCyclicalService from CertificateEntity ce" +
+                        "   where  ce.cyclicalServiceEntity.oneTime=false  and ce.mostRecent and  ce.validTo<:today "
+        );
+
+        query.setParameter("today", LocalDateTime.now());
+        List<Integer> idList =  (List<Integer>) query.getResultList();
+
+
+        query = entityManager.createQuery(
+                "update  CyclicalServiceEntity cse " +
+                        "set cse.statusBitmap = 2048 " +
+                        "where cse.idCyclicalService in (:idList) "
+        );
+//        query.setParameter("renewedValue",StatusEnum.RENEWED.getMaskValue());
+//        query.setParameter("newValue",StatusEnum.NEW.getMaskValue());
+
+        query.setParameter("idList",idList);
+        query.executeUpdate();
+
+
+        Query enableSafeUpdate = entityManager.createNativeQuery("SET SQL_SAFE_UPDATES = 1");
+        enableSafeUpdate.executeUpdate();
+
+        LocalDateTime now = LocalDateTime.now();
+        List<StatusChangeEntity> statusChangeEntities = new ArrayList<>();
+        for(int id:idList){
+            StatusChangeEntity statusChangeEntity = new StatusChangeEntity();
+            statusChangeEntity.setChangeDate(now);
+            statusChangeEntity.setStatusTypeEntity(entityManager.getReference(StatusTypeEntity.class,StatusEnum.EXPIRED.getMaskValue()));
+            statusChangeEntity.setComment("Dokonano automatycznego zmianu stanu na \""+StatusEnum.EXPIRED.getStatusName()+"\"");
+            statusChangeEntity.setCyclicalService(entityManager.getReference(CyclicalServiceEntity.class,id));
+            statusChangeEntities.add(statusChangeEntity);
+        }
+
+
+        statusChangeRepo.saveAll(statusChangeEntities);
+
+    }
+
 
     @Override
     public CyclicalServiceProjection saveAndReturnProjection(CyclicalServiceEntity cyclicalServiceEntity) {

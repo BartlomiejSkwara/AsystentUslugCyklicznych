@@ -24,7 +24,9 @@ public class CustomApplicationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        cyclicalServiceRepo.removeExpiredIgnores();
         cyclicalServiceRepo.customUpdateAwaitingRenewal();
+        cyclicalServiceRepo.setExpiredStatus();
 
 //        List<CyclicalServiceEntity> cyclicalServiceEntityList = cyclicalServiceRepo.findAllDatesBeforeWithNoMessageSent(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).plusDays(1));
 //

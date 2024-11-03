@@ -13,8 +13,10 @@ public enum StatusEnum {
     RENEWED_ELSEWHERE(1<<5,"Odnowiony gdzie indziej"),
     PAYMENT_DONE(1<<6, "Zapłata otrzymana"),
     INVOICE_SENT(1<<7,"Faktura wystawiona, Kod wysłany"),
-    RENEWED(1<<8,"Odnowiony");
-//    REQUESTED_RENEWAL(1<<9,"Zgłoszono prośbę o odnowienie");
+    RENEWED(1<<8,"Odnowiony"),
+    NEW(1<<9,"Nowy"),
+    IGNORE(1<<10,"Ignoruj"),
+    EXPIRED(1<<11,"Wygaśnięty");
 
 
     private final int maskValue;

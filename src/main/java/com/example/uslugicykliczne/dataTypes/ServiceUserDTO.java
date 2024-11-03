@@ -14,44 +14,44 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 public class ServiceUserDTO {
-    @NotBlank(message = "Login field is empty !!!")
-    @Size(max=40, message = "Login is too long !!!")
+    @NotBlank(message = "Pole login jest puste !!!")
+    @Size(max=40, message = "Podany login jest za długi !!!")
     private final String  login;
 
-//    @NotBlank(message = "Password field is empty!!!")
-    @Size(max=80, message = "Password is too long !!!")
+    @NotBlank(message = "Pole hasło jest puste !!!")
+    @Size(max=80, message = "Podane hasło jest za długie !!!")
     private final String password;
 
-    @NotBlank(message = "ServiceUser's name is empty !!!")
-    @Size(max=40, message = "ServiceUser's name is too long !!!")
+    @NotBlank(message = "Pole imie użytkownika jest puste !!!")
+    @Size(max=40, message = "Podane imie użytkownika jest za długie !!!")
     private final String  name;
 
-    @NotBlank(message = "ServiceUser's surname is empty!!!")
-    @Size(max=40, message = "ServiceUser's surname is too long !!!")
+    @NotBlank(message = "Pole nazwisko użytkownika jest puste!!!")
+    @Size(max=40, message = "Podane nazwisko użytkownika jest za długie !!!")
     private final String surname;
 
-    @NotEmpty(message = "No emails specified for ServiceUser ")
+    @NotEmpty(message = "Nie określono żadnego adresu email dla użytkownika usługi ")
     private final List<
-                @NotBlank(message = "ServiceUser's email is empty !!!")
-                @Size(max=40, message = "ServiceUser's email is too long !!!")
-                @Email(message = "ServiceUser's email is not a correct email !!!")
+                @NotBlank(message = "Podano pusty email !!!")
+                @Size(max=40, message = "Podany email jest za długi !!!")
+                @Email(message = "Podany email nie jest poprawny !!!")
                 String> emails;
 
-    @NotEmpty(message = "No phone number specified for ServiceUser ")
+    @NotEmpty(message = "Nie określono żadnego numeru telefonu dla użytkownika usługi")
     private final List<
-            @NotBlank(message = "ServiceUser's phone number is empty!!!")
-            @Size(max = 16 , message = "ServiceUser's phone number is too long !!!")
-            @Pattern(regexp = "^\\d+$", message = "ServiceUser's phone number has characters other than numbers!!!")
+            @NotBlank(message = "Podano pusty numer telefonu")
+            @Size(max = 16 , message = "Podany numer telefonu jest za długi")
+            @Pattern(regexp = "^\\d+$", message = "Numer telefonu może zawierać tylko liczby!!!")
             String> phoneNumbers;
 
-    @NotNull(message = "hasPolishPESEL not set !!!")
+    @NotNull(message = "Nie określono pola ma polski PESEL")
     private final Boolean hasPolishPESEL;
 
     private final String comments;
 
 
     private final Optional<
-            @Pattern(regexp = "^\\b[0-9]{11}\\b$", message = "Check pesel's length and if it consists only of numbers!!!")
+            @Pattern(regexp = "^\\b[0-9]{11}\\b$", message = "Sprawdź czy PESEL ma odpowiednią długość i czy składa się wyłącznie z cyfr !!!")
             String> taxId;
 
 

@@ -55,7 +55,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers(
                             "/api/authentication/login",
                             "/api/authentication/logout",
-                                "/api/business/**"
+                                "/api/cyclicalservice/**"
                                 )
                         .csrfTokenRepository(repo)
                         .csrfTokenRequestHandler(new SPATokenRequestHandler())
@@ -76,8 +76,11 @@ public class SecurityConfig {
                     .requestMatchers("/api/authentication/login").permitAll()
                     .requestMatchers("/api/authentication/logout").hasAnyRole("user","editor","admin")
                     .requestMatchers(
-                            "/api/cyclicalservice/getAll?days=${days}",
+                            "/api/cyclicalservice/getAllAwaiting?days=${days}",
+                            "/api/cyclicalservice/getAllAwaiting",
                             "/api/cyclicalservice/getAll",
+                            "/api/cyclicalservice/getAllExpired",
+
                             "/api/cyclicalservice/getAllByUser",
                             "/api/cyclicalservice/getAllByBusiness",
                             "/api/cyclicalservice/renewalRequest/*",
@@ -102,6 +105,7 @@ public class SecurityConfig {
                             "/api/business/insertBody",
                             "/api/business/getAllByUser",
                             "/api/accountData/getAll",
+                            "/api/cyclicalservice/ignore/**",
 //                            "/api/accountData/register",
                             "/api/accountData/changeUserRole"
                             ).hasAnyRole("editor","admin")

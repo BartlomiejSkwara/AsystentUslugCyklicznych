@@ -28,7 +28,7 @@ class  CustomStatusChangeRepoImpl implements  CustomStatusChangeRepo{
     @Override
     public List<StatusChangeRecordProjection> findByServiceIdWithChronologicalOrder(Integer id) {
         Query query = entityManager.createQuery(
-                "select new com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection(sce.idStatusChange, sce.comment,sce.changeDate, sce.statusTypeEntity.name) " +
+                "select new com.example.uslugicykliczne.dataTypes.projections.StatusChangeRecordProjection(sce.idStatusChange, sce.comment,sce.changeDate, sce.statusTypeEntity.id) " +
                         "from  StatusChangeEntity sce where sce.cyclicalService.idCyclicalService=:serId order by sce.changeDate asc "
         );
         query.setParameter("serId",id);

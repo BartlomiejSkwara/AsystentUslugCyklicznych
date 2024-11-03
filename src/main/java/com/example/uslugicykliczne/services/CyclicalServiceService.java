@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,7 +101,7 @@ public class CyclicalServiceService {
         if(businessEntityOptional.isPresent() && serviceUserEntityOptional.isPresent()){
 
             CyclicalServiceEntity insertedEntity = createCyclicalServiceEntityFromDTO(new CyclicalServiceEntity(),cyclicalServiceDto,serviceUserEntityOptional.get(),businessEntityOptional.get());
-            insertedEntity.setStatusBitmap(StatusEnum.RENEWED.getMaskValue());
+            insertedEntity.setStatusBitmap(StatusEnum.NEW.getMaskValue());
             AccountDataEntity accountDataEntity = null;
 
 //            Optional<AccountDataEntity> optionalAccountDataEntity = accountDataRepo.findById(cyclicalServiceDto.getRelatedAccountId());
@@ -213,7 +214,7 @@ public class CyclicalServiceService {
 
     public void changeServiceStatus(CyclicalServiceEntity cyclicalService,Integer requestedStatusChange) {
         int statusBitmap = cyclicalService.getStatusBitmap();
-        if(StatusUtility.hasStatus(statusBitmap,StatusEnum.RENEWED)){
+        if(StatusUtility.hasStatus(statusBitmap,StatusEnum.RENEWED)||StatusUtility.hasStatus(statusBitmap,StatusEnum.NEW)){
             statusBitmap = 0;
         }
 
@@ -260,7 +261,7 @@ public class CyclicalServiceService {
             return new ResponseEntity<>("Don't modify resources you don't own !!!", HttpStatus.FORBIDDEN);
 
 
-        if (cyclicalService.getStatusBitmap()!=StatusEnum.RENEWED.getMaskValue()){
+        if (cyclicalService.getStatusBitmap()!=StatusEnum.RENEWED.getMaskValue()||cyclicalService.getStatusBitmap()!=StatusEnum.NEW.getMaskValue()){
             return ResponseEntity.badRequest().body("You can only request renewal of service that has finished last renewal process");
         }
         changeServiceStatus(cyclicalService,StatusEnum.AWAITING_RENEWAL.getMaskValue());
@@ -272,6 +273,20 @@ public class CyclicalServiceService {
     }
 
 
+    public List<CyclicalServiceProjection> getAllByFindingModeExcluding(List<StatusEnum> excludedStatuses, int nDays,SERVICE_FINDING_MODE serviceFindingMode){
+        List<CyclicalServiceProjection> found = getAllByFindingMode(nDays, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
+        for (StatusEnum statusEnum : excludedStatuses) {
+            found.removeIf(proj-> StatusUtility.hasStatus(proj.getStatusBitmask(),statusEnum));
+        }
+        return found;
+    }
+    public List<CyclicalServiceProjection> getAllByFindingModeIncluding(List<StatusEnum> includedStatuses, int nDays,SERVICE_FINDING_MODE serviceFindingMode){
+        List<CyclicalServiceProjection> found = getAllByFindingMode(nDays, SERVICE_FINDING_MODE.IN_NEXT_N_DAYS);
+        for (StatusEnum statusEnum : includedStatuses) {
+            found.removeIf(proj-> !StatusUtility.hasStatus(proj.getStatusBitmask(),statusEnum));
+        }
+        return found;
+    }
 
     public List<CyclicalServiceProjection> getAllByFindingMode(int nDays,SERVICE_FINDING_MODE serviceFindingMode) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -326,5 +341,31 @@ public class CyclicalServiceService {
 
 
         return certificateRepo.findByServiceIdWithChronologicalOrder(serviceId);
+    }
+
+    public ResponseEntity<?> ignore(Integer id, Integer days) {
+        Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findById(id);
+        if(optionalCyclicalServiceEntity.isEmpty())
+            return ResponseEntity.badRequest().body("Nie można ignorować nie istniejącej usługi");
+
+        CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
+        changeServiceStatus(cyclicalService,StatusEnum.IGNORE.getMaskValue());
+
+        Optional<CertificateEntity> certificateEntity = certificateRepo.findMostRecentCertificate(id);
+        if (certificateEntity.isEmpty())
+            return ResponseEntity.badRequest().body("Error");
+        if(certificateEntity.get().getValidTo().isBefore(LocalDateTime.now().plusDays(days))){
+            return ResponseEntity.badRequest().body("Nie można ignorować ignorować na okres 7 dni przed okresem wygaśnięcia");
+
+        }
+
+
+        serviceStatusHistoryService.addNewStatusHistoryRecord(null,StatusEnum.IGNORE,"Zmieniono status na \"Ignorowany\" na kolejne "+days+" dni",id);
+
+
+        cyclicalService.setIgnoreTo(LocalDateTime.now().plusDays(days));
+        cyclicalServiceRepo.save(cyclicalService);
+        return ResponseEntity.ok(cyclicalService.getStatusBitmap());
+
     }
 }

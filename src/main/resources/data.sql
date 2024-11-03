@@ -108,7 +108,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `cyclical_service` WRITE;
 /*!40000 ALTER TABLE `cyclical_service` DISABLE KEYS */;
-INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,service_user_id_service_user,agreement_number,description,status) VALUES (2,1,_binary '\0',1,'1234124','Pięć ton eternitu w wiórach',256),(2,2,_binary '',1,'42425331551','Dwie tony rudy ołowiu',256),(5,3,_binary '\0',7,'5142','Amortyzacja dla chomika dżungarskiego',256),(3,4,_binary '\0',9,'51324','4 tony stali nierdzewnej',256),(1,5,_binary '\0',2,'21532153','800 kg rudy sfalerytu',256),(2,6,_binary '\0',4,'9243124','300 kg auremitu',256);
+INSERT INTO `cyclical_service` (business_id_business,id_cyclical_service,one_time,service_user_id_service_user,agreement_number,description,status) VALUES (2,1,_binary '\0',1,'1234124','Pięć ton eternitu w wiórach',256),(2,2,_binary '',1,'42425331551','Dwie tony rudy ołowiu',256),(5,3,_binary '\0',7,'5142','Amortyzacja dla chomika dżungarskiego',256),(3,4,_binary '\0',9,'51324','4 tony stali nierdzewnej',512),(1,5,_binary '\0',2,'21532153','800 kg rudy sfalerytu',512),(2,6,_binary '\0',4,'9243124','300 kg auremitu',512);
 /*!40000 ALTER TABLE `cyclical_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,7 +133,7 @@ UNLOCK TABLES;
 --
 LOCK TABLES `status_type` WRITE;
 /*!40000 ALTER TABLE `status_type` DISABLE KEYS */;
-INSERT INTO `status_type` (id_status_type,status_name) VALUES (1,"AWAITING_RENEWAL"),(2,"PRO_FORM_SENT"),(4,"MARKED_FOR_CANCEL"),(8,"CANCELED"),(16,"MARKED_AS_NON_RENEWABLE"),(32,"RENEWED_ELSEWHERE"),(64,"PAYMENT_DONE"),(128,"INVOICE_SENT"),(256,"RENEWED");
+INSERT INTO `status_type` (id_status_type,status_name) VALUES (1,"AWAITING_RENEWAL"),(2,"PRO_FORM_SENT"),(4,"MARKED_FOR_CANCEL"),(8,"CANCELED"),(16,"MARKED_AS_NON_RENEWABLE"),(32,"RENEWED_ELSEWHERE"),(64,"PAYMENT_DONE"),(128,"INVOICE_SENT"),(256,"RENEWED"),(512,"NEW"),(1024,"IGNORE"),(2048,"EXPIRED");
 /*!40000 ALTER TABLE `status_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
