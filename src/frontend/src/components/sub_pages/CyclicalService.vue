@@ -8,11 +8,11 @@
       </div>
     </div>
     <div style="display: inline-block;" class="days-filter">
-      <button @click="fetchCycles(7)" :class="{ active: selectedDays === 7 }">7 dni</button>
-      <button @click="fetchCycles(14)" :class="{ active: selectedDays === 14 }">14 dni</button>
-      <button @click="fetchCycles(30)" :class="{ active: selectedDays === 30 }">30 dni</button>
-      <button @click="fetchCycles(60)" :class="{ active: selectedDays === 60 }">60 dni</button>
-      <button @click="fetchAllCycles" :class="{ active: selectedDays === 'all' }">Wszystkie</button>
+      <button @click="fetchCycles(7)" :class="{ active: selectedDays === 7, 'dni-7': selectedDays === 7 }">7 dni</button>
+      <button @click="fetchCycles(14)" :class="{ active: selectedDays === 14, 'dni-14': selectedDays === 14 }">14 dni</button>
+      <button @click="fetchCycles(30)" :class="{ active: selectedDays === 30, 'dni-30': selectedDays === 30 }">30 dni</button>
+      <button @click="fetchCycles(60)" :class="{ active: selectedDays === 60, 'dni-60': selectedDays === 60 }">60 dni</button>
+      <button @click="fetchAllCycles" :class="{ active: selectedDays === 'all', 'dni-all': selectedDays === 'all' }">Wszystkie</button>
 
     <select v-model="selectedStatus">
       <option value="all">Wszystkie statusy</option>

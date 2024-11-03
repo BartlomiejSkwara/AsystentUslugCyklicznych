@@ -59,7 +59,7 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" @click="goBack">Powrót</button>
+      <button v-if="standalone" type="button" @click="goBack" style="float: right">Powrót</button>
     </form>
   </div>
 </template>

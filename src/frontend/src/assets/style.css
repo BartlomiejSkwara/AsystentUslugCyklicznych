@@ -139,13 +139,17 @@ button[type="button"].renew-button {
 }
 
 button[type="submit"] {
-    background-color: #505950;
+    background-color: #16bd16;
     color: white;
     border: none;
     padding: 8px 12px;
     cursor: pointer;
     border-radius: 5px;
     margin-right: 5px;
+}
+
+button[type="submit"]:hover {
+    background-color: #119310;
 }
 
 .dialog-overlay {
@@ -262,3 +266,25 @@ button[type="submit"] {
 .modal-footer.modal-bg{
     background-color: rgba(80,89,80,0.05)
 }
+
+.dni-60 {
+    background-color: #42b983 !important;
+    border-color: #42b983 !important;
+}
+.dni-30 {
+    background-color: #368ebc !important;
+    border-color: #368ebc !important;
+}
+.dni-14 {
+    background-color: #ae6a0e !important;
+    border-color: #ae6a0e !important;
+}
+.dni-7 {
+    background-color: orange !important;
+    border-color: orange !important;
+}
+.dni-all {
+    background-color: #505950 !important;
+    border-color: #505950 !important;
+}
+

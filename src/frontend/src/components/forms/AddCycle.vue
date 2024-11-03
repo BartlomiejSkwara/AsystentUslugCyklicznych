@@ -81,11 +81,11 @@
 
       <div>
         <label for="description">Opis:</label>
-        <input type="text" id="description" v-model="form.description" required>
+        <input type="text" id="description" v-model="form.description">
       </div>
       <p class="text-danger" style="font-size: 0.9em">* pozycje obowiązkowe</p>
       <button type="submit">Zapisz</button>
-      <button type="button" @click="goBack">Powrót</button>
+      <button type="button" @click="goBack" style="float: right">Powrót</button>
     </form>
   </div>
 
@@ -296,7 +296,7 @@ export default {
     submitForm() {
       const payload = {
         agreementNumber: this.form.agreementNumber,
-        description: this.form.description,
+        description: this.form.description || null,
         oneTime: this.form.oneTime,
         cycleStart: this.form.cycleStart,
         certificateLengthInYears: this.form.cycleEnd,
