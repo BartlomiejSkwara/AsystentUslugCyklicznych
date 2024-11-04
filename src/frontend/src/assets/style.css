@@ -277,10 +277,35 @@ button[type="submit"]:hover {
     border-color: orange !important;
 }
 .dni-all {
-    background-color: #505950 !important;
-    border-color: #505950 !important;
+    background-color: #25c625 !important;
+    border-color: #25c625 !important;
+}
+.notRenewed {
+    background-color: #cc4343 !important;
+    border-color: #cc4343 !important;
+}
+.expired {
+    background-color: red !important;
+    border-color: red !important;
+}
+
+.input_button_place {
+    display: flex;
+    align-items: center;
+}
+
+.input_size {
+    width: 75% !important;
+    margin-right: 5px
+}
+
+.button_add_contact {
+    background-color: #007bff !important;
+    color: white;
+    border: 1px solid #007bff !important;
+    margin-top: 5px;
 }
 
 .form-control{
-    border: 10x solid #000000;
+    border: 10px solid #000000;
 }
