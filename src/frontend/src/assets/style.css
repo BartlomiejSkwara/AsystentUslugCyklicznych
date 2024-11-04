@@ -259,27 +259,64 @@ button[type="submit"]:hover {
 
 
 
-
+.expired-d {
+    background-color:var(--expired) !important;
+    border-color:var(--expired) !important;
+}
+.cancelled-d {
+    background-color:var(--cancelled) !important;
+    border-color:var(--cancelled) !important;
+}
 .dni-60 {
-    background-color: #42b983 !important;
-    border-color: #42b983 !important;
+    background-color:var(--lessThenSixty-days) !important;
+    border-color:var(--lessThenSixty-days) !important;
 }
 .dni-30 {
-    background-color: #368ebc !important;
-    border-color: #368ebc !important;
+    background-color: var(--lessThenThirty-days) !important;
+    border-color: var(--lessThenThirty-days) !important;
 }
 .dni-14 {
-    background-color: #ae6a0e !important;
-    border-color: #ae6a0e !important;
+    background-color: var(--lessThenFourteen-days)!important;
+    border-color: var(--lessThenFourteen-days) !important;
 }
 .dni-7 {
-    background-color: orange !important;
-    border-color: orange !important;
+    background-color: var(--lessThenSeven-days) !important;
+    border-color: var(--lessThenSeven-days) !important;
 }
 .dni-all {
-    background-color: #505950 !important;
-    border-color: #505950 !important;
+    background-color: var(--moreThenSixty-days) !important;
+    border-color: var(--moreThenSixty-days) !important;
 }
+
+
+
+.textE {
+    color:var(--expired) !important;
+}
+.textC {
+    color:var(--cancelled) !important;
+}
+.text60 {
+    color:var(--lessThenSixty-days) !important;
+}
+.text30 {
+    color: var(--lessThenThirty-days) !important;
+}
+.text14 {
+    color: var(--lessThenFourteen-days)!important;
+}
+.text7 {
+    color: var(--lessThenSeven-days) !important;
+}
+.textAll {
+    color: var(--moreThenSixty-days) !important;
+}
+
+
+
+
+
+
 
 .form-control{
     border: 10x solid #000000;

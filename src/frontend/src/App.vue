@@ -66,6 +66,21 @@ html{
 :root, [data-bs-theme=light]{
 
   --bs-border-color: #8e9092 !important;
+/* #505950 */
+  /* --moreThenSixty-days: #8e9092 !important;
+  --lessThenSixty-days: #25ba54 !important;
+  --lessThenThirty-days: #3db8ba !important;
+  --lessThenFourteen-days: #ba973d !important;
+  --lessThenSeven-days: #ba5100 !important;
+  --cancelled: #ba4343 !important;
+  --expired: #ba2500 !important; */
+  --moreThenSixty-days: #8e9092 !important;
+  --lessThenSixty-days:  forestgreen!important;
+  --lessThenThirty-days: dodgerblue !important;
+  --lessThenFourteen-days: orange !important;
+  --lessThenSeven-days: orangered !important;
+  --cancelled: crimson !important;
+  --expired:  firebrick !important;
 }
 
 </style>

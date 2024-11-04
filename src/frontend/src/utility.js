@@ -74,8 +74,8 @@ export function decodeStatus(decodedStatus){
     return statusesList;
 }
 
-export function hasStatus(statusBitmask, status) {
-    return (statusBitmask & status) !== 0;
+export function hasStatus(statusBitmask, statusValue) {
+    return (statusBitmask & statusValue) !== 0;
 }
 
 

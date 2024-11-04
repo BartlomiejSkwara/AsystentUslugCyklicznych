@@ -12,11 +12,11 @@
       </div>
       <div>
         <label for="valid_to">Data zakończenia:</label>
-        <input type="datetime-local" id="valid_to" v-model="form.valid_to" required />
+        <input type="datetime-local" id="valid_to" v-model="form.valid_to" class="form-control"  required />
       </div>
       <div>
         <label for="card_number">Numer karty:</label>
-        <input type="text" id="card_number" v-model="form.card_number" required />
+        <input type="text" id="card_number" v-model="form.card_number" class="form-control" required />
       </div>
       <div>
         <label for="card_type">Typ karty:</label>
@@ -28,11 +28,11 @@
       </div>
       <div>
         <label for="certificate_serial_number">Numer seryjny certyfikatu:</label>
-        <input type="text" id="certificate_serial_number" v-model="form.certificate_serial_number" required />
+        <input type="text" id="certificate_serial_number" v-model="form.certificate_serial_number" class="form-control"  required />
       </div>
       <div>
         <label for="name_in_organisation">Dane osobowe:</label>
-        <input type="text" id="name_in_organisation" v-model="form.name_in_organisation" required />
+        <input type="text" id="name_in_organisation" v-model="form.name_in_organisation" class="form-control" required />
       </div>
       <button type="submit">{{ isEdit ? 'Zapisz' : 'Zapisz' }}</button>
       <button type="button" @click="goBack">Powrót</button>

@@ -13,8 +13,8 @@
       <button @click="fetchCycles(30)" :class="{ active: selectedDays === 30, 'dni-30': selectedDays === 30 }">30 dni</button>
       <button @click="fetchCycles(60)" :class="{ active: selectedDays === 60, 'dni-60': selectedDays === 60 }">60 dni</button>
       <button @click="fetchAllCycles" :class="{ active: selectedDays === 'all', 'dni-all': selectedDays === 'all' }">Wszystkie Nie Odnowione</button>
-      <button @click="fetchAllCycles(1)" :class="{ active: selectedDays === 'getAll' }">Wszystkie </button>
-      <button @click="fetchAllCycles(2)" :class="{ active: selectedDays === 'getAllExpired' }">Wygaszone </button>
+      <button @click="fetchAllCycles(1)" :class="{ active: selectedDays === 'getAll', 'cancelled-d': selectedDays==='getAll'}">Wszystkie </button>
+      <button @click="fetchAllCycles(2)" :class="{ active: selectedDays === 'getAllExpired', 'expired-d': selectedDays==='getAllExpired' }">Wygaszone </button>
 
       <select v-model="selectedStatus">
       <option value="all">Wszystkie statusy</option>
@@ -49,7 +49,7 @@
         <td>
           <!-- {{statusesList.length}} -->
           <!-- tak wiem, to nie jest optymalne, ale szkoda mi pamięci XD -->
-          {{pickPriorityStatus(cycle.statusBitmask).result}}
+          <span :class="chooseStateColor(cycle)">{{pickPriorityStatus(cycle.statusBitmask).result}}</span>
           <button  v-if ="pickPriorityStatus(cycle.statusBitmask).moreThanOne"
           @click="switchStatusModalVisibility(cycle.statusBitmask)" class="view-button"
           data-bs-toggle="modal" data-bs-target="#statusDisplayModal"
@@ -233,6 +233,34 @@ export default {
   },
 
   methods: {
+    chooseStateColor(cycle){
+
+      if(hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.EXPIRED.mVal))
+        return 'textE';
+      else if(
+        hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.CANCELED.mVal)||
+        hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.RENEWED_ELSEWHERE.mVal)||
+        hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.MARKED_AS_NON_RENEWABLE.mVal)||
+        hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.IGNORED.mVal)
+      ){
+        return 'textC';        
+      }
+      
+
+      const certExpiresIn = ((new Date(cycle.certificate.validTo)).getTime()-Date.now())/1000/60/60/24;
+      
+      if(certExpiresIn<7)
+        return 'text7'
+      if(certExpiresIn<14)
+        return 'text14'
+      if(certExpiresIn<30)
+        return 'text30'
+      if(certExpiresIn<60)
+        return 'text60'
+
+      return 'textAll'
+      
+    },
     translateCardType,
     editCycle(id){
       // console.log(id)
