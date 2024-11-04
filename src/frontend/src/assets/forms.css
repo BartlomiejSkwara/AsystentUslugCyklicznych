@@ -89,7 +89,10 @@ form button {
 form button:hover {
     background-color: #0056b3;
 }
+div.modal-header{
+    background-color: rgba(80,89,80,0.05)
 
+}
 div.modal-body{
     background-color: rgba(80,89,80,0.05)
 
@@ -98,3 +101,4 @@ div.modal-footer{
     background-color: rgba(80,89,80,0.05)
 
 }
+

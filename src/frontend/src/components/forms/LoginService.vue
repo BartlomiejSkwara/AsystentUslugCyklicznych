@@ -6,11 +6,11 @@
         <h2>Zaloguj</h2>
         <div>
           <label for="loginUsername">Login:</label>
-          <input type="text" id="loginUsername" v-model="loginForm.login" required>
+          <input type="text" class="form-control" id="loginUsername" v-model="loginForm.login" required>
         </div>
         <div>
           <label for="loginPassword">Hasło:</label>
-          <input type="password" id="loginPassword" v-model="loginForm.password" required>
+          <input type="password" class="form-control" id="loginPassword" v-model="loginForm.password" required>
         </div>
         <button type="submit">Zaloguj</button>
       </form>

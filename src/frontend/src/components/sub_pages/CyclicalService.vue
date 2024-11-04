@@ -275,7 +275,7 @@ export default {
     },
 
     requestRenewalElligable(uname,statusBitmask){
-      return (uname == this.$store.state.username)&&(hasStatus(statusBitmask,this.STATUS_TYPES.RENEWED.mVal))
+      return (uname == this.$store.state.username)&&(hasStatus(statusBitmask,this.STATUS_TYPES.RENEWED.mVal)||hasStatus(statusBitmask,this.STATUS_TYPES.NEW.mVal))
     },
     cancelRequestElligable(uname,statusBitmask){
       

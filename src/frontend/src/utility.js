@@ -78,6 +78,7 @@ export function hasStatus(statusBitmask, status) {
     return (statusBitmask & status) !== 0;
 }
 
+
 export const STATUS_TYPES_LIST = {
     BLANK: {
       mVal : 0,

@@ -4,11 +4,11 @@
     <form @submit.prevent="submitForm">
       <div>
         <label for="id_service">ID Płatności:</label>
-        <input type="number" id="id_service" v-model.number="form.id_service" required />
+        <input type="number" id="id_service" v-model.number="form.id_service" class="form-control" required />
       </div>
       <div>
         <label for="valid_from">Data rozpoczęcia:</label>
-        <input type="datetime-local" id="valid_from" v-model="form.valid_from" required />
+        <input type="datetime-local" id="valid_from" v-model="form.valid_from" class="form-control" required />
       </div>
       <div>
         <label for="valid_to">Data zakończenia:</label>

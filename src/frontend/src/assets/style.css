@@ -259,13 +259,6 @@ button[type="submit"]:hover {
 
 
 
-.modal-bg{
-    background-color: rgba(0, 255, 0, 0.05)
-}
-
-.modal-footer.modal-bg{
-    background-color: rgba(80,89,80,0.05)
-}
 
 .dni-60 {
     background-color: #42b983 !important;
@@ -288,3 +281,6 @@ button[type="submit"]:hover {
     border-color: #505950 !important;
 }
 
+.form-control{
+    border: 10x solid #000000;
+}

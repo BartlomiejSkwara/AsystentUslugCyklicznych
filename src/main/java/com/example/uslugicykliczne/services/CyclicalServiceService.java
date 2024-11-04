@@ -261,7 +261,7 @@ public class CyclicalServiceService {
             return new ResponseEntity<>("Don't modify resources you don't own !!!", HttpStatus.FORBIDDEN);
 
 
-        if (cyclicalService.getStatusBitmap()!=StatusEnum.RENEWED.getMaskValue()||cyclicalService.getStatusBitmap()!=StatusEnum.NEW.getMaskValue()){
+        if (!StatusUtility.hasStatus(cyclicalService.getStatusBitmap(),StatusEnum.RENEWED)&&!StatusUtility.hasStatus(cyclicalService.getStatusBitmap(),StatusEnum.NEW)){
             return ResponseEntity.badRequest().body("You can only request renewal of service that has finished last renewal process");
         }
         changeServiceStatus(cyclicalService,StatusEnum.AWAITING_RENEWAL.getMaskValue());

@@ -63,4 +63,9 @@ html{
   background-color: rgba(80,89,80,0.05)
 }
 
+:root, [data-bs-theme=light]{
+
+  --bs-border-color: #8e9092 !important;
+}
+
 </style>

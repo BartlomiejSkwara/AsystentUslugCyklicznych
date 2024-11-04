@@ -4,7 +4,7 @@
     <form @submit.prevent="submitForm">
       <div>
         <label for="agreementNumber">Numer umowy: <span class="text-danger">*</span></label>
-        <input type="text" id="agreementNumber" v-model="form.agreementNumber" required>
+        <input type="text" id="agreementNumber" v-model="form.agreementNumber" class="form-control"  required>
       </div>
       <div>
         <label for="oneTime">Jednorazowe: <span class="text-danger"> *</span></label>
@@ -16,7 +16,7 @@
       </div>
       <div>
         <label for="cycleStart">Data rozpoczęcia: <span class="text-danger">*</span></label>
-        <input type="datetime-local" id="cycleStart" v-model="form.cycleStart" required>
+        <input type="datetime-local"  id="cycleStart" v-model="form.cycleStart" class="form-control"  required>
       </div>
       <div>
         <label for="cycleEnd">Okres ważności certyfikatu w latach: <span class="text-danger"> *</span></label>
@@ -29,7 +29,7 @@
       </div>
       <div>
         <label for="cardNumber">Numer karty: <span class="text-danger">*</span></label>
-        <input type="text" id="cardNumber" v-model="form.cardNumber" @input="formatCardNumber" required>
+        <input type="text" id="cardNumber" v-model="form.cardNumber" @input="formatCardNumber" class="form-control"  required>
       </div>
       <div>
         <label for="cardType">Typ karty: <span class="text-danger"> *</span></label>
@@ -43,16 +43,16 @@
       </div>
       <div>
         <label for="certSerialNumber">Numer certyfikatu: <span class="text-danger">*</span></label>
-        <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" required>
+        <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" @input="formatCertSerialNumber" class="form-control"  required>
       </div>
       <div>
         <label for="nameInOrganisation">Stanowisko w organizacji: </label>
-        <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation">
+        <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation" class="form-control" >
       </div>
 
       <div>
         <label for="businessId">Firma: <span class="text-danger">*</span></label>
-        <input list="businesses" name="businesses" v-model="form.businessId" />
+        <input list="businesses" name="businesses" v-model="form.businessId" class="form-control" />
         <datalist id="businesses">
           <option v-for="business in businesses" :key="business.id">
             {{ business.name }}
@@ -66,7 +66,7 @@
       <div>
         <label for="serviceUserId">Użytkownik usługi: <span class="text-danger">*</span></label>
 
-        <input list="serviceUsers" name="serviceUsers" v-model="form.serviceUserId" />
+        <input list="serviceUsers" name="serviceUsers" v-model="form.serviceUserId" class="form-control"  />
         <datalist id="serviceUsers">
           <option v-for="user in serviceUsers" :key="user.id">
             {{ user.name + " " + user.surname }}
@@ -81,7 +81,7 @@
 
       <div>
         <label for="description">Opis:</label>
-        <input type="text" id="description" v-model="form.description">
+        <input type="text" id="description" v-model="form.description" class="form-control" >
       </div>
       <p class="text-danger" style="font-size: 0.9em">* pozycje obowiązkowe</p>
       <button type="submit">Zapisz</button>
@@ -139,7 +139,7 @@ export default {
       form: {
         agreementNumber: '',
         oneTime: false,
-        cycleStart: '',
+        cycleStart: this.getCurrentTime(),
         cycleEnd: 1,
         cardNumber: '',
         cardType: 1,
@@ -154,8 +154,7 @@ export default {
       }
     };
   },
-  computed: {
-  },
+
   mounted() {
     console.log(this.form);
     
@@ -171,6 +170,18 @@ export default {
 
   },
   methods: {
+    getCurrentTime() {
+      const now = new Date();
+    
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0'); 
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      console.log(`${year}-${month}-${day}T${hours}:${minutes}`);
+      
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    },
     translateCardType,
     formatCardNumber() {
       let cardNumber = this.form.cardNumber.replace(/\D/g, '');
@@ -178,6 +189,11 @@ export default {
       cardNumber = cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
 
       this.form.cardNumber = cardNumber.trim();
+    },
+    formatCertSerialNumber(){
+      let certNumber = this.form.certSerialNumber.replace(/\D/g, '');
+      this.form.certSerialNumber = certNumber.trim();
+
     },
 
     async submitUserForm(){

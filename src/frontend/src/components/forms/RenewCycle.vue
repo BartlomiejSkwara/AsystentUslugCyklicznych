@@ -13,7 +13,7 @@
       </div>
       <div>
         <label for="cardNumber">Numer karty:</label>
-        <input type="text" id="cardNumber" v-model="form.cardNumber" required>
+        <input type="text" id="cardNumber" v-model="form.cardNumber" class="form-control" required>
       </div>
       <!-- <div>
         <label for="cardType">Typ karty:</label>
@@ -24,11 +24,11 @@
       </div> -->
       <div>
         <label for="certSerialNumber">Numer certyfikatu:</label>
-        <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" required>
+        <input type="text" id="certSerialNumber" v-model="form.certSerialNumber"  @input="formatCertSerialNumber" class="form-control" required>
       </div>
       <div>
         <label for="nameInOrganisation">Stanowisko w organizacji: (opcjonalne)</label>
-        <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation">
+        <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation" class="form-control" >
       </div>
       <button type="submit">Zapisz</button>
       <button type="button" @click="goBack">Powrót</button>
@@ -59,6 +59,12 @@ export default {
     this.setDefaultData();
   },
   methods: {
+    formatCertSerialNumber(){
+      let certNumber = this.form.certSerialNumber.replace(/\D/g, '');
+      this.form.certSerialNumber = certNumber.trim();
+
+    },
+
     setDefaultData() {
       const now = new Date();
       const offset = 2 * 60 + 2; // CEST UTC+2

@@ -4,24 +4,24 @@
     <form  @submit.prevent="submitForm" :style="styleModifier">
       <div>
         <label for="serviceUserName">Imię: <span class="text-danger">*</span></label>
-        <input type="text" id="serviceUserName" v-model="form.name" required />
+        <input type="text" id="serviceUserName" v-model="form.name" class="form-control" required />
       </div>
       <div>
         <label for="surname">Nazwisko: <span class="text-danger">*</span></label>
-        <input type="text" id="surname" v-model="form.surname" required />
+        <input type="text" id="surname" v-model="form.surname" class="form-control" required />
       </div>
       <div>
         <label for="login">Login: <span class="text-danger">*</span></label>
-        <input type="text" id="login" v-model="form.login" required />
+        <input type="text" id="login" v-model="form.login" class="form-control" required />
       </div>
       <div>
         <label for="password">Hasło: <span class="text-danger">*</span></label>
-        <input type="password" id="password" v-model="form.password" />
+        <input type="password" id="password" v-model="form.password" class="form-control" />
       </div>
       <div>
         <label>Emaile: <span class="text-danger">*</span></label>
         <div v-for="(email, index) in form.emails" :key="index">
-          <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" required />
+          <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" class="form-control"  required />
           <button type="button" @click="removeEmail(index)">Usuń</button>
         </div>
         <button type="button" @click="addEmail">Dodaj nowy email</button>
@@ -29,7 +29,7 @@
       <div>
         <label>Numery telefonów: (max 16 znaków) <span class="text-danger">*</span></label>
         <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" required />
+          <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control"  required />
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
         <button type="button" @click="addPhoneNumber">Dodaj nowy telefon</button>
@@ -44,11 +44,11 @@
       </div>
       <div v-if="form.hasPolishPESEL">
         <label for="taxIdentificationNumber">PESEL (dokładnie 11 znaków): <span class="text-danger">*</span></label>
-        <input type="text" id="taxIdentificationNumber" v-model="form.taxId" />
+        <input type="text" id="taxIdentificationNumber" v-model="form.taxId" class="form-control" />
       </div>
       <div>
         <label for="commentsUser">Dodatkowy opis:</label>
-        <input type="text" id="commentsUser" v-model="form.comments" />
+        <input type="text" id="commentsUser" v-model="form.comments" class="form-control" />
       </div>
 
       <div class="form-check form-switch">
