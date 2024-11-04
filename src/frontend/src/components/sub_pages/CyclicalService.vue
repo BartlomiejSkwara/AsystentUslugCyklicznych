@@ -4,7 +4,7 @@
     <div class="container">
       <router-link v-if="isAdminOrEditor" to="/add-cycle" class="add-button">Dodaj nowy certyfikat</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
-        <input type="text" class="input" v-model="searchFields.agreementNumber" placeholder="Numer dokumentu" style="margin-bottom: 10px; margin-right: 10px">
+        <input type="text" class="input" v-model="searchFields.businessName" placeholder="Nazwa firmy" style="margin-bottom: 10px; margin-right: 10px">
       </div>
     </div>
     <div style="display: inline-block;" class="days-filter">
@@ -22,8 +22,6 @@
         {{ status.desc }}
       </option>
     </select>
-      <button @click="fetchAllCycles" style="margin-left: 5px" :class="{ active: selectedDays === 'all', 'notRenewed': selectedDays === 'all' }">Nie Odnowione</button>
-      <button @click="fetchAllCycles(2)" :class="{ active: selectedDays === 'getAllExpired', 'expired': selectedDays === 'getAllExpired' }">Wygasłe </button>
   </div>
 
     <table>
@@ -90,6 +88,10 @@
 
               <li v-if="requestRenewalElligable(cycle.accountUsername,cycle.statusBitmask)">
                 <a  class="dropdown-item " href="#" @click="switchRequestModalVisibility(cycle.getIdCyclicalService,STATUS_TYPES.AWAITING_RENEWAL,cycle.statusBitmask)" data-bs-toggle="modal" data-bs-target="#requestModal">Odnowienie Prośba</a>
+              </li>
+
+              <li v-if="isAdminOrEditor" >
+                <a   class="dropdown-item " href="#" @click="ignoreCycle(cycle.getIdCyclicalService)">Ignoruj Cykl</a>
               </li>
 
               <li v-if="isAdmin">
@@ -193,6 +195,7 @@ export default {
       searchFields: {
         agreementNumber: '',
         description: '',
+        businessName: '',
       },
       statusModalData:{
         showStatusModal: false,
@@ -286,6 +289,36 @@ export default {
       }
     },
 
+    async ignoreCycle(cycSerId) {
+      const daysToIgnore = prompt("Podaj liczbę dni ignorowania:");
+
+      if (daysToIgnore && !isNaN(daysToIgnore)) {
+        try {
+          const cookie = getCookie("XSRF-TOKEN");
+          const response = await fetchWrapper(this, `/api/cyclicalservice/ignore/${cycSerId}?days=${daysToIgnore}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-XSRF-TOKEN': cookie,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('');
+          }
+
+          alert(`Cykl ${cycSerId} zignorowany na ${daysToIgnore} dni`);
+          this.fetchCycles(this.selectedDays);
+
+        } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+          alert('Problem z operacją lub ignorowanie przekroczyło datę 7 dni od wygaśnięcia: ' + error.message);
+        }
+      } else {
+        alert('Podano złe dane');
+      }
+
+    },
 
     renewCycle(cycSerId){
       this.$router.push(`/renew-cycle/${cycSerId}`)
@@ -583,14 +616,11 @@ export default {
 
 
     filteredCycles() {
-      const searchAgreementLower = this.searchFields.agreementNumber.toLowerCase();
-      const searchDescriptionLower = this.searchFields.description.toLowerCase();
+      const searchBusinessLower = this.searchFields.businessName.toLowerCase();
 
       return this.cycles
           .filter(cycle => {
-            const matchesSearch = cycle.agreementNumber.toLowerCase().includes(searchAgreementLower) &&
-                cycle.description.toLowerCase().includes(searchDescriptionLower);
-
+            const matchesSearch = cycle.business.businessName.toLowerCase().includes(searchBusinessLower);
 
             let maxStatus = 0;
             Object.values(this.STATUS_TYPES).forEach(status => {
