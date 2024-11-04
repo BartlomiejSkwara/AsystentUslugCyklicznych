@@ -6,10 +6,6 @@
         <label for="name">Nazwa: <span class="text-danger">*</span></label>
         <input type="text" id="name" v-model="form.name" class="form-control" required>
       </div>
-<!--      <div>-->
-<!--        <label for="address">Adres: <span class="text-danger">*</span></label>-->
-<!--        <input type="text" id="address" v-model="form.adres" required>-->
-<!--      </div>-->
       <div>
         <label for="locality">Miejscowość: <span class="text-danger">*</span></label>
         <input type="text" id="locality" v-model="form.locality" class="form-control" required>
@@ -44,21 +40,21 @@
       </div>
       <div>
         <label>Emaile: <span class="text-danger">*</span></label>
-        <div v-for="(email, index) in form.emails" :key="index">
-          <input type="text" v-model="form.emails[index]" placeholder="Wpisz email" class="form-control" >
+        <div class="input_button_place" v-for="(email, index) in form.emails" :key="index">
+          <input type="text" v-model="form.emails[index]" placeholder="Wpisz email" class="form-control input_size" >
           <button type="button" @click="removeEmail(index)">Usuń</button>
         </div>
-        <button type="button" @click="addEmail">Dodaj nowy email</button>
+        <button type="button" class="button_add_contact" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
         <label>Numer telefonu: (max 16 cyfr) <span class="text-danger">*</span></label>
-        <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="text" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control" >
+        <div class="input_button_place" v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
+          <input type="text" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control input_size" >
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
-        <button type="button" @click="addPhoneNumber">Dodaj nowy numer telefonu</button>
-      
-      
+        <button type="button" class="button_add_contact" @click="addPhoneNumber">Dodaj nowy numer telefonu</button>
+
+
       </div>
       <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="ignoreDup" >
@@ -68,13 +64,24 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" style="float: right" @click="goBack">Powrót</button>
+      <button v-if="standalone" type="button" style="float: right" @click="switchRequestModalVisibility()" data-bs-toggle="modal" data-bs-target="#requestModal">Powrót</button>
       <br>
     </form>
   </div>
 
-
-
+  <div id="requestModal" class="modal fade" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content ">
+        <div class="modal-header modal-bg">
+          <h3>Czy na pewno chcesz opuścić formularz? Stracisz niezapisane postępy!</h3>
+        </div>
+        <div class="modal-footer modal-bg">
+          <button  id="closeRequest" class="btn btn-outline-success" data-bs-dismiss="modal">Kontynuuj</button>
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="goBack">Powrót</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 
@@ -94,7 +101,6 @@ export default {
       form: {
         idBusiness: null,
         name: '',
-        // adres: '',
         locality: '',
         postalCode: '',
         street: '',
@@ -108,12 +114,13 @@ export default {
       },
       errorMessage: "",
       ignoreDup: false,
+      showRequestModal: false,
     };
   },
   computed:{
     styleModifier(){
       return !this.standalone? {width: "100%"}:{};
-    }
+    },
   },
   mounted() {
     refreshCSRF();
@@ -123,6 +130,9 @@ export default {
     }
   },
   methods: {
+    switchRequestModalVisibility() {
+      this.showRequestModal = !this.showRequestModal;
+    },
     fetchBusiness() {
       fetchWrapper(this,`/api/business/get/${this.$route.query.idBusiness}`)
           .then(response => response.json())
@@ -171,7 +181,6 @@ export default {
         
       const payload = {
         name: this.form.name,
-        // adres: this.form.adres,
         locality: this.form.locality,
         postalCode: this.form.postalCode,
         street: this.form.street,

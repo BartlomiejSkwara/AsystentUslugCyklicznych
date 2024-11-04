@@ -4,7 +4,7 @@
     <form @submit.prevent="submitForm">
       <div>
         <label for="agreementNumber">Numer umowy: <span class="text-danger">*</span></label>
-        <input type="text" id="agreementNumber" v-model="form.agreementNumber" class="form-control"  required>
+        <input type="text" id="agreementNumber" v-model="form.agreementNumber" class="form-control" required>
       </div>
       <div>
         <label for="oneTime">Jednorazowe: <span class="text-danger"> *</span></label>
@@ -16,7 +16,7 @@
       </div>
       <div>
         <label for="cycleStart">Data rozpoczęcia: <span class="text-danger">*</span></label>
-        <input type="datetime-local"  id="cycleStart" v-model="form.cycleStart" class="form-control"  required>
+        <input type="datetime-local" id="cycleStart" v-model="form.cycleStart" class="form-control" required>
       </div>
       <div>
         <label for="cycleEnd">Okres ważności certyfikatu w latach: <span class="text-danger"> *</span></label>
@@ -29,7 +29,8 @@
       </div>
       <div>
         <label for="cardNumber">Numer karty: <span class="text-danger">*</span></label>
-        <input type="text" id="cardNumber" v-model="form.cardNumber" @input="formatCardNumber" class="form-control"  required>
+        <input type="text" id="cardNumber" v-model="form.cardNumber" @input="formatCardNumber" class="form-control"
+               required>
       </div>
       <div>
         <label for="cardType">Typ karty: <span class="text-danger"> *</span></label>
@@ -43,16 +44,18 @@
       </div>
       <div>
         <label for="certSerialNumber">Numer certyfikatu: <span class="text-danger">*</span></label>
-        <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" @input="formatCertSerialNumber" class="form-control"  required>
+        <input type="text" id="certSerialNumber" v-model="form.certSerialNumber" @input="formatCertSerialNumber"
+               class="form-control" required>
       </div>
       <div>
         <label for="nameInOrganisation">Stanowisko w organizacji: </label>
-        <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation" class="form-control" >
+        <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation" class="form-control">
       </div>
 
       <div>
         <label for="businessId">Firma: <span class="text-danger">*</span></label>
-        <input list="businesses" name="businesses" v-model="form.businessId" class="form-control" />
+        <div class="input_button_place">
+        <input list="businesses" name="businesses" v-model="form.businessId" class="input_size form-control"/>
         <datalist id="businesses">
           <option v-for="business in businesses" :key="business.id">
             {{ business.name }}
@@ -60,22 +63,22 @@
 
         </datalist>
 
-        <button class="btn btn-primary"   data-bs-toggle="modal" data-bs-target="#businessModal">Dodaj Nową</button>
+        <button class="btn btn-primary"   data-bs-toggle="modal" data-bs-target="#businessModal">Dodaj nową</button>
+        </div>
       </div>
-
       <div>
-        <label for="serviceUserId">Użytkownik usługi: <span class="text-danger">*</span></label>
+      <label for="serviceUserId">Użytkownik usługi: <span class="text-danger">*</span></label>
+      <div class="input_button_place">
+      <input list="serviceUsers" name="serviceUsers" v-model="form.serviceUserId" class="input_size form-control"/>
+      <datalist id="serviceUsers">
+        <option v-for="user in serviceUsers" :key="user.id">
+          {{ user.name + " " + user.surname }}
+        </option>
+      </datalist>
 
-        <input list="serviceUsers" name="serviceUsers" v-model="form.serviceUserId" class="form-control"  />
-        <datalist id="serviceUsers">
-          <option v-for="user in serviceUsers" :key="user.id">
-            {{ user.name + " " + user.surname }}
-          </option>
-        </datalist>
-
-        <button class="btn btn-primary"   data-bs-toggle="modal" data-bs-target="#userModal">Dodaj Nowego</button>
-
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">Dodaj nowego</button>
       </div>
+  </div>
 
 
 
@@ -118,7 +121,7 @@
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 </template>
 
 <script>
@@ -172,14 +175,14 @@ export default {
   methods: {
     getCurrentTime() {
       const now = new Date();
-    
+
       const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0'); 
+      const month = String(now.getMonth() + 1).padStart(2, '0');
       const day = String(now.getDate()).padStart(2, '0');
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
       console.log(`${year}-${month}-${day}T${hours}:${minutes}`);
-      
+
       return `${year}-${month}-${day}T${hours}:${minutes}`;
     },
     translateCardType,
