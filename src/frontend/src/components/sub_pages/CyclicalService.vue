@@ -51,7 +51,7 @@
         <td>
           <!-- {{statusesList.length}} -->
           <!-- tak wiem, to nie jest optymalne, ale szkoda mi pamięci XD -->
-          {{pickPriorityStatus(cycle.statusBitmask).result}}
+          <span :class="chooseStateColor(cycle)">{{pickPriorityStatus(cycle.statusBitmask).result}}</span>
           <button  v-if ="pickPriorityStatus(cycle.statusBitmask).moreThanOne"
           @click="switchStatusModalVisibility(cycle.statusBitmask)" class="view-button"
           data-bs-toggle="modal" data-bs-target="#statusDisplayModal"
@@ -235,6 +235,31 @@ export default {
   },
 
   methods: {
+    chooseStateColor(cycle){
+      if(hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.EXPIRED.mVal))
+        return 'textE';
+      else if(
+        hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.CANCELED.mVal)||
+        hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.RENEWED_ELSEWHERE.mVal)||
+        hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.MARKED_AS_NON_RENEWABLE.mVal)||
+        hasStatus(cycle.statusBitmask,STATUS_TYPES_LIST.IGNORED.mVal)
+      ){
+        return 'textC';        
+      }
+      
+      const certExpiresIn = ((new Date(cycle.certificate.validTo)).getTime()-Date.now())/1000/60/60/24;
+      
+      if(certExpiresIn<7)
+        return 'text7'
+      if(certExpiresIn<14)
+        return 'text14'
+      if(certExpiresIn<30)
+        return 'text30'
+      if(certExpiresIn<60)
+        return 'text60'
+      return 'textAll'
+      
+    },
     translateCardType,
     editCycle(id){
       // console.log(id)
