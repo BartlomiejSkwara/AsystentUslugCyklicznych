@@ -59,8 +59,22 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" @click="goBack" style="float: right">Powrót</button>
+      <button v-if="standalone" type="button" style="float: right" @click="switchRequestModalVisibility()" data-bs-toggle="modal" data-bs-target="#requestModal">Powrót</button>
     </form>
+  </div>
+
+  <div id="requestModal" class="modal fade" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content ">
+        <div class="modal-header modal-bg">
+          <h3>Czy na pewno chcesz opuścić formularz? Stracisz niezapisane postępy!</h3>
+        </div>
+        <div class="modal-footer modal-bg">
+          <button  id="closeRequest" class="btn btn-outline-success" data-bs-dismiss="modal">Kontynuuj</button>
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="goBack">Powrót</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -91,6 +105,7 @@ export default {
       },
       errorMessage: "",
       ignoreDup: false,
+      showRequestModal: false,
     };
   },
   computed:{
@@ -114,6 +129,9 @@ export default {
     }
   },
   methods: {
+    switchRequestModalVisibility() {
+      this.showRequestModal = !this.showRequestModal;
+    },
     fetchUser() {
       fetchWrapper(this,`/api/serviceUser/get/${this.$route.query.idServiceUser}`)
           .then(response => response.json())

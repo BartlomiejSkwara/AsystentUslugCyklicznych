@@ -49,7 +49,7 @@
       <div>
         <label>Numer telefonu: (max 16 cyfr) <span class="text-danger">*</span></label>
         <div class="input_button_place" v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="text" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control" >
+          <input type="text" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control input_size" >
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
         <button type="button" class="button_add_contact" @click="addPhoneNumber">Dodaj nowy numer telefonu</button>
@@ -64,20 +64,20 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" style="float: right" @click="handleGoBack">Powrót</button>
+      <button v-if="standalone" type="button" style="float: right" @click="switchRequestModalVisibility()" data-bs-toggle="modal" data-bs-target="#requestModal">Powrót</button>
       <br>
     </form>
   </div>
 
-  <div v-if="showRequestModal" id="requestModal" class="modal" tabindex="-1">
+  <div id="requestModal" class="modal fade" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Czy na pewno chcesz opuścić formularz?</h5>
+      <div class="modal-content ">
+        <div class="modal-header modal-bg">
+          <h3>Czy na pewno chcesz opuścić formularz? Stracisz niezapisane postępy!</h3>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="switchRequestModalVisibility">Kontynuuj</button>
-          <button type="button" class="btn btn-danger" @click="goBack">Powrót</button>
+        <div class="modal-footer modal-bg">
+          <button  id="closeRequest" class="btn btn-outline-success" data-bs-dismiss="modal">Kontynuuj</button>
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="goBack">Powrót</button>
         </div>
       </div>
     </div>
@@ -115,18 +115,12 @@ export default {
       errorMessage: "",
       ignoreDup: false,
       showRequestModal: false,
-      // showConfirmation: false
     };
   },
   computed:{
     styleModifier(){
       return !this.standalone? {width: "100%"}:{};
     },
-    isFormFilled() {
-      return Object.values(this.form).some(value =>
-          Array.isArray(value) ? value.some(v => v) : value
-      );
-    }
   },
   mounted() {
     refreshCSRF();
@@ -136,17 +130,8 @@ export default {
     }
   },
   methods: {
-    handleGoBack() {
-      console.log(this.isFormFilled)
-      if (this.isFormFilled) {
-        this.showRequestModal = true;
-      } else{
-        this.goBack();
-      }
-    },
     switchRequestModalVisibility() {
       this.showRequestModal = !this.showRequestModal;
-      console.log(this.showRequestModal)
     },
     fetchBusiness() {
       fetchWrapper(this,`/api/business/get/${this.$route.query.idBusiness}`)
