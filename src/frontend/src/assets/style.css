@@ -343,5 +343,5 @@ button[type="submit"]:hover {
 
 
 .form-control{
-    border: 10px solid #000000;
+    border: 0.1em solid #000000;
 }

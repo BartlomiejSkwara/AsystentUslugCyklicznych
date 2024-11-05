@@ -2,7 +2,7 @@ version: "3.7"
 services:
   mysql:
     image: mysql:8.0.33
-    container_name: mysql-uslugi-8.0.33
+    container_name: mymysql8
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: p2lain4old67java39fil8e

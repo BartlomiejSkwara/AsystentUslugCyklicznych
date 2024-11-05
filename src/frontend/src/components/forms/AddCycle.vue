@@ -8,7 +8,6 @@
       </div>
       <div>
         <label for="oneTime">Jednorazowe: <span class="text-danger"> *</span></label>
-        <br>
         <select id="oneTime" v-model="form.oneTime">
           <option :value="false">Nie</option>
           <option :value="true">Tak</option>
@@ -20,7 +19,6 @@
       </div>
       <div>
         <label for="cycleEnd">Okres ważności certyfikatu w latach: <span class="text-danger"> *</span></label>
-        <br>
         <select id="cycleEnd" v-model="form.cycleEnd" required>
           <option :value="1">1</option>
           <option :value="2">2</option>
@@ -34,7 +32,6 @@
       </div>
       <div>
         <label for="cardType">Typ karty: <span class="text-danger"> *</span></label>
-        <br>
         <select id="cardType" v-model="form.cardType" required>
           <option value=1>{{translateCardType(1)}}</option>
           <option value=2>{{translateCardType(2)}}</option>

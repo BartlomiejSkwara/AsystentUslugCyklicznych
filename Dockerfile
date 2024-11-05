@@ -13,8 +13,7 @@
 
 FROM openjdk:17-alpine
 WORKDIR /app
-LABEL authors="Krisent"
-ADD target/UslugiCykliczne-0.2.0.jar app.jar
+ADD target/UslugiCykliczne-0.9.0.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar","app.jar"]
 

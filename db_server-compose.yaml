@@ -24,7 +24,7 @@ services:
       interval: 3s
       timeout: 30s
   spring:
-    image: bartlomiejskwara/cyclical-services:1.0
+    image: bartlomiejskwara/cyclical-services:1.51
     container_name: spring
     restart: on-failure
     ports:
