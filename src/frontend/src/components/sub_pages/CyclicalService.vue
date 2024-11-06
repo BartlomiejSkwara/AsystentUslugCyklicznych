@@ -36,14 +36,17 @@
         <th>Firma</th>
         <th>Użytkownik</th>
 
-        <th>Ważne do:</th>
+        <th @click="sortBy('validTo')">
+          <u>Ważne do</u>
+          <span :class="getSortIcon('validTo')"></span>
+        </th>
 <!--        <th>Typ karty </th>-->
         <th></th>
         <th></th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="cycle in filteredCycles" :key="cycle.getIdCyclicalService">
+      <tr v-for="cycle in paginatedCycles" :key="cycle.getIdCyclicalService">
         <td>{{ cycle.getIdCyclicalService }}</td>
         <td>{{ translateCardType(cycle.certificate.cardType) }}</td>
         <td>
@@ -109,6 +112,13 @@
       </tr>
       </tbody>
     </table>
+
+    <div class="pagination" v-if="totalPages > 1">
+      <button @click="prevPage" :disabled="currentPage === 1">Poprzednia</button>
+      <span>{{ currentPage }} / {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Następna</button>
+    </div>
+
   </div>
   <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#requestModal"
     @click="switchRequestModalVisibility(0,STATUS_TYPES.BLANK,0)"
@@ -218,6 +228,8 @@ export default {
       selectedStatus: 'all',
       STATUS_TYPES: STATUS_TYPES_LIST,
       comment:'',
+      currentPage: 1,
+      cyclesPerPage: 8,
       // userRole: 'ROLE_test', // Przechowuje bieżącą rolę użytkownika
       // username: ''
     };
@@ -434,8 +446,27 @@ export default {
       this.showAdditionalFields = !this.showAdditionalFields;
     },
     sortBy(key) {
-      this.sortOrders[key] = this.sortOrders[key] * 1 || -1;
-      this.sortKey = key;
+      if (this.sortKey === key) {
+        this.sortAsc = !this.sortAsc;
+      } else {
+        this.sortKey = key;
+        this.sortAsc = true;
+      }
+      this.sortList();
+    },
+
+    sortList() {
+      if (this.sortKey === 'validTo') {
+        this.cycles.sort((a, b) => {
+          const dateA = new Date(a.certificate.validTo);
+          const dateB = new Date(b.certificate.validTo);
+          return this.sortAsc ? dateA - dateB : dateB - dateA;
+        });
+      } else if (this.sortKey === 'getIdCyclicalService') {
+        this.cycles.sort((a, b) => {
+          return this.sortAsc ? a.getIdCyclicalService - b.getIdCyclicalService : b.getIdCyclicalService - a.getIdCyclicalService;
+        });
+      }
     },
     getSortIcon(key) {
       if (this.sortKey === key) {
@@ -573,6 +604,17 @@ export default {
       return answ;
     },
 
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+
 
   },
   computed: {
@@ -612,6 +654,15 @@ export default {
     },
     isAdmin() {
       return this.$store.state.role === "ROLE_admin";
+    },
+
+    paginatedCycles() {
+      const start = (this.currentPage - 1) * this.cyclesPerPage;
+      const end = start + this.cyclesPerPage;
+      return this.filteredCycles.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredCycles.length / this.cyclesPerPage);
     },
 
 

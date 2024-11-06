@@ -26,7 +26,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="business in filteredBusinesses" :key="business.idBusiness">
+      <tr v-for="business in paginatedBusinesses" :key="business.idBusiness">
         <td>{{ business.idBusiness }}</td>
         <td @click="toggleDetails(business.idBusiness)" class="clickable">{{ business.name }}</td>
 <!--        <td>{{ business.adres }}</td>-->
@@ -44,6 +44,12 @@
       </tr>
       </tbody>
     </table>
+
+    <div class="pagination" v-if="totalPages > 1">
+      <button @click="prevPage" :disabled="currentPage === 1">Poprzednia</button>
+      <span>{{ currentPage }} / {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Następna</button>
+    </div>
 
 
     <div v-if="expandedBusiness !== null">
@@ -158,6 +164,8 @@ export default {
       expandedBusiness: null,
       selectedUserData: null,
       expandedBusinessDetails: [],
+      currentPage: 1,
+      businessesPerPage: 8,
     };
   },
   computed: {
@@ -172,6 +180,15 @@ export default {
         );
       });
     },
+    paginatedBusinesses() {
+      const start = (this.currentPage - 1) * this.businessesPerPage;
+      const end = start + this.businessesPerPage;
+      return this.filteredBusinesses.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredBusinesses.length / this.businessesPerPage);
+    },
+
     sortedExpandedBusinessDetails() {
       return this.expandedBusinessDetails.slice().sort((a, b) => {
         return new Date(a.validTo) - new Date(b.validTo);
@@ -189,6 +206,17 @@ export default {
       // console.log(this.expandedBusinessDetails,eDate);
       
       return d2.getFullYear()-d1.getFullYear();
+    },
+
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
     },
 
     toggleDetails(businessId) {

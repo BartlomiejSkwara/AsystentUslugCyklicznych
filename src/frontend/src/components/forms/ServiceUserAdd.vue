@@ -20,19 +20,19 @@
       </div>
       <div>
         <label>Emaile: <span class="text-danger">*</span></label>
-        <div v-for="(email, index) in form.emails" :key="index">
-          <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" class="form-control"  required />
+        <div class="input_button_place" v-for="(email, index) in form.emails" :key="index">
+          <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" class="input_size form-control"  required />
           <button type="button" @click="removeEmail(index)">Usuń</button>
         </div>
-        <button type="button" @click="addEmail">Dodaj nowy email</button>
+        <button type="button" class="button_add_contact" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
         <label>Numery telefonów: (max 16 znaków) <span class="text-danger">*</span></label>
-        <div v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control"  required />
+        <div class="input_button_place" v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
+          <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="input_size form-control"  required />
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
-        <button type="button" @click="addPhoneNumber">Dodaj nowy telefon</button>
+        <button type="button" class="button_add_contact" @click="addPhoneNumber">Dodaj nowy telefon</button>
       </div>
       <div>
         <label for="hasPolishPESEL">Polski PESEL?: <span class="text-danger">*</span></label>
