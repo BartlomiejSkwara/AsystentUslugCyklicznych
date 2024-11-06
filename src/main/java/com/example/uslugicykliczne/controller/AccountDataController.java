@@ -38,7 +38,7 @@ public class AccountDataController {
 //    }
 
     @PostMapping("/changeUserRole")
-    public ResponseEntity<?> register(@RequestParam Integer accountId, @RequestParam String role){
+    public ResponseEntity<?> changeUserRole(@RequestParam Integer accountId, @RequestParam String role){
         return accountManagementService.changeUserRole(accountId,role);
 
     }

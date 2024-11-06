@@ -9,7 +9,6 @@ import java.util.Objects;
 @Data
 @Table(name = "StatusType", schema = "uslugi_cykliczne", catalog = "")
 public class StatusTypeEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "idStatusType")
     private int idStatusType;

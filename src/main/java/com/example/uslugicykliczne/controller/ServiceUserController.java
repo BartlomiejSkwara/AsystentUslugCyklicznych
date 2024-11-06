@@ -8,6 +8,7 @@ import com.example.uslugicykliczne.entity.ServiceUserEntity;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
 import com.example.uslugicykliczne.services.ServiceUserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ public class ServiceUserController {
     private final ServiceUserRepo serviceUserRepo;
     private final ServiceUserService serviceUserService;
     private final ValidationUtility validationUtility;
+
+
 
     ServiceUserController(ServiceUserRepo serviceUserRepo, ServiceUserService serviceUserService, ValidationUtility validationUtility){
         this.serviceUserRepo = serviceUserRepo;
