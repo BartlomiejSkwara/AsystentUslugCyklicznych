@@ -134,7 +134,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `service_user` WRITE;
 /*!40000 ALTER TABLE `service_user` DISABLE KEYS */;
-INSERT INTO `service_user` (contact_data_id, has_polishpesel, id_service_user, name, surname,tax_identification_number, comments,account_data) VALUES (3,_binary '\0',1,'crazy','steve',NULL,NULL,1),(4,_binary '',2,'Mieszko','Pierwszy','96696696611',NULL,2),(5,_binary '\0',3,'Michael','Byrd',NULL,'Mostly orders a suspiciously large amounts of feathers',3),(10,_binary '\0',4,'Big','E',NULL,NULL,4),(11,_binary '\0',5,'Ku\'gath','Plaguefather ',NULL,NULL,5),(12,_binary '\0',6,'Aaron','Burr ',NULL,NULL,6),(13,_binary '\0',7,'Roboute','Guilliman',NULL,NULL,7),(14,_binary '\0',8,'Sandro','the Great',NULL,NULL,8),(15,_binary '\0',9,'Crag','Hack',NULL,NULL,9),(16,_binary '\0',10,'Karlach','Cliffgate',NULL,NULL,10);
+INSERT INTO `service_user` (contact_data_id, has_polishpesel, id_service_user, name, surname,tax_identification_number, comments,account_data) VALUES (3,_binary '\0',1,'admin','admin',NULL,NULL,1),(4,_binary '',2,'Mieszko','Pierwszy','96696696611',NULL,2),(5,_binary '\0',3,'Michael','Byrd',NULL,'Mostly orders a suspiciously large amounts of feathers',3),(10,_binary '\0',4,'Big','E',NULL,NULL,4),(11,_binary '\0',5,'Ku\'gath','Plaguefather ',NULL,NULL,5),(12,_binary '\0',6,'Aaron','Burr ',NULL,NULL,6),(13,_binary '\0',7,'Roboute','Guilliman',NULL,NULL,7),(14,_binary '\0',8,'Sandro','the Great',NULL,NULL,8),(15,_binary '\0',9,'Crag','Hack',NULL,NULL,9),(16,_binary '\0',10,'Karlach','Cliffgate',NULL,NULL,10);
 UNLOCK TABLES;
 
 SET FOREIGN_KEY_CHECKS=1;

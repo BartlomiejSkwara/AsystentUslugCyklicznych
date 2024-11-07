@@ -191,7 +191,8 @@ export default {
       this.form.cardNumber = cardNumber.trim();
     },
     formatCertSerialNumber(){
-      let certNumber = this.form.certSerialNumber.replace(/\D/g, '');
+      let certNumber = this.form.certSerialNumber.toLocaleUpperCase();
+      certNumber = certNumber.replace(/[^0-9ABCDEF]/g, '');
       this.form.certSerialNumber = certNumber.trim();
 
     },

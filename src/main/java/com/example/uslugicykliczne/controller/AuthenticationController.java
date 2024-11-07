@@ -3,23 +3,19 @@ package com.example.uslugicykliczne.controller;
 import com.example.uslugicykliczne.ValidationUtility;
 import com.example.uslugicykliczne.dataTypes.LoginValidationRecord;
 //import com.example.uslugicykliczne.dataTypes.RegistrationValidationRecord;
-import com.example.uslugicykliczne.entity.AccountDataEntity;
-import com.example.uslugicykliczne.security.CustomUserDetails;
 import com.example.uslugicykliczne.services.AccountManagementService;
+import com.example.uslugicykliczne.services.ActivityTrackerService;
 import com.example.uslugicykliczne.services.JWTService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/authentication")
@@ -28,6 +24,7 @@ public class AuthenticationController {
     private final ValidationUtility validationUtility;
     private final JWTService jwtService;
     private final AccountManagementService accountManagementService;
+    private final ActivityTrackerService activityTrackerService;
 
     @GetMapping("/requestToken")
     public ResponseEntity<String> requestToken(){
@@ -39,18 +36,33 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
         }
         accountManagementService.login(loginValidationRecord,httpServletResponse);
-
+        activityTrackerService.addUserActivity(loginValidationRecord.login(), LocalDateTime.now());
 
         return ResponseEntity.ok("Successfully logged in ");
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse httpServletResponse){
+
+        activityTrackerService.removeUserActivity(SecurityContextHolder.getContext().getAuthentication().getName());
+
         jwtService.addTokenToResponse(httpServletResponse, "");
         httpServletResponse.setHeader("frontRole","");
-        return ResponseEntity.ok("Logging out was successfull");
+        return ResponseEntity.ok("Z powodzeniem wylogowano użytkownika");
     }
 
+    @GetMapping("/getRecentActivities")
+    public HashMap<String, LocalDateTime> getRecentActivities(HttpServletResponse httpServletResponse){
+        return  activityTrackerService.getActivities();
+    }
+
+    @PostMapping("/forceLogout")
+    public ResponseEntity<?> forceLogout(
+            @RequestParam(required = true) String login,
+            HttpServletResponse httpServletResponse){
+        activityTrackerService.forceLogout(login);
+        return ResponseEntity.ok("Z powodzeniem wymuszono wylogowanie");
+    }
 
 
 

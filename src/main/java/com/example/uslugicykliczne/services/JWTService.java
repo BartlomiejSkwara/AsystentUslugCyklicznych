@@ -25,6 +25,8 @@ public class JWTService {
 
     @Value("${jwt.token.key}")
     private String key;
+    @Value("${jwt.token.lifetime-in-minutes}")
+    private long tokenLifetimeInMinutes;
     private SecretKey getSecretKey(){
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
     }
@@ -66,7 +68,7 @@ public class JWTService {
         return jwtBuilder
                 .subject(userDetails.getUsername())
                 .issuedAt(now)
-                .expiration(Date.from(now.toInstant().plusSeconds(30*60)))
+                .expiration(Date.from(now.toInstant().plusSeconds(tokenLifetimeInMinutes*60)))
                 .signWith(getSecretKey())
                 .compact();
 

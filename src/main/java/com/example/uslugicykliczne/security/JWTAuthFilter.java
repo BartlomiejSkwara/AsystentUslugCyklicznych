@@ -1,5 +1,6 @@
 package com.example.uslugicykliczne.security;
 
+import com.example.uslugicykliczne.services.ActivityTrackerService;
 import com.example.uslugicykliczne.services.JWTService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -19,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.security.SignatureException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -28,7 +30,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final UserDetailsService userDetailsService;
-
+    private final ActivityTrackerService activityTrackerService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
@@ -55,25 +57,31 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         try {
             final String username = jwtService.retrieveUsernameClaim(jwtToken);
+
             SecurityContext securityContext = SecurityContextHolder.getContext();
 
-            response.addHeader("frontRole",jwtService.retrieveSpecificClaim(jwtToken,claims -> claims.get("frontPerm")).toString());
-            if (username!= null && securityContext.getAuthentication() == null){
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (jwtService.isTokenValid(userDetails, jwtToken)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    securityContext.setAuthentication(usernamePasswordAuthenticationToken);
+            if(activityTrackerService.removeFromMarkedForLogoutList(username)){
+                jwtService.removeTokenCookie(response);
 
-
-                    String newJwtToken = jwtService.generateJWT(userDetails);
-                    jwtService.addTokenToResponse(response,newJwtToken);
-
-
-                }
             }
+            else {
+                response.addHeader("frontRole",jwtService.retrieveSpecificClaim(jwtToken,claims -> claims.get("frontPerm")).toString());
+                if (username!= null && securityContext.getAuthentication() == null){
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    if (jwtService.isTokenValid(userDetails, jwtToken)) {
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        securityContext.setAuthentication(usernamePasswordAuthenticationToken);
 
-        //ExpiredJwtException | SignatureException expiredJwtException
+
+                        String newJwtToken = jwtService.generateJWT(userDetails);
+                        jwtService.addTokenToResponse(response,newJwtToken);
+
+                    }
+                }
+                activityTrackerService.addUserActivity(username, LocalDateTime.now());
+            }
+            //ExpiredJwtException | SignatureException expiredJwtException
         }catch (Exception e){
             //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             jwtService.removeTokenCookie(response);

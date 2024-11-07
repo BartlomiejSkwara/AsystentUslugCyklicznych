@@ -102,6 +102,23 @@ public class CyclicalServiceController {
     public List<CertificateProjectionRecord> certificateRecordProjections(@PathVariable Integer id){
         return cyclicalServiceService.getCertificatesRelatedToService(id);
     }
+
+
+    @PostMapping("/renewalRequest/{id}")
+    public ResponseEntity<?> requestRenewal(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
+        }
+        return cyclicalServiceService.requestRenewal(id,comment.comment.orElseGet(() -> null));
+    }
+
+    @PostMapping("/ignore/{id}")
+    public ResponseEntity<?> changeStatusToIgnore(@PathVariable Integer id, @Validated @RequestParam Integer days){
+
+        return cyclicalServiceService.ignore(id,days);
+    }
+
+
     @PostMapping("/statusChange/{id}")
     public ResponseEntity<?> changeStatus(@PathVariable Integer id, @Validated @RequestBody StatusAndComment statusAndComment, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -127,21 +144,6 @@ public class CyclicalServiceController {
 
         return cyclicalServiceService.changeServiceStatusAndUpdateDB(id,statusAndComment.requestedStateChange,statusAndComment.comment.orElseGet(() -> null));
     }
-
-    @PostMapping("/renewalRequest/{id}")
-    public ResponseEntity<?> requestRenewal(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return ResponseEntity.badRequest().body(validationUtility.validationMessagesToJSON(bindingResult));
-        }
-        return cyclicalServiceService.requestRenewal(id,comment.comment.orElseGet(() -> null));
-    }
-
-    @PostMapping("/ignore/{id}")
-    public ResponseEntity<?> changeStatusToIgnore(@PathVariable Integer id, @Validated @RequestParam Integer days){
-
-        return cyclicalServiceService.ignore(id,days);
-    }
-
 
     @PostMapping("/cancelRequest/{id}")
     public ResponseEntity<?> cancelRequest(@PathVariable Integer id, @Validated @RequestBody Comment comment, BindingResult bindingResult){

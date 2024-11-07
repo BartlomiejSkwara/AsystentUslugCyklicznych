@@ -194,7 +194,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
             StatusChangeEntity statusChangeEntity = new StatusChangeEntity();
             statusChangeEntity.setChangeDate(now);
             statusChangeEntity.setStatusTypeEntity(entityManager.getReference(StatusTypeEntity.class,StatusEnum.AWAITING_RENEWAL.getMaskValue()));
-            statusChangeEntity.setComment("Dokonano automatycznego zmianu stanu na \""+StatusEnum.AWAITING_RENEWAL.getStatusName()+"\"");
+            statusChangeEntity.setComment("Dokonano automatycznej zmiany stanu na \""+StatusEnum.AWAITING_RENEWAL.getStatusName()+"\"");
             statusChangeEntity.setCyclicalService(entityManager.getReference(CyclicalServiceEntity.class,id));
             statusChangeEntities.add(statusChangeEntity);
         }
@@ -264,7 +264,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
             StatusChangeEntity statusChangeEntity = new StatusChangeEntity();
             statusChangeEntity.setChangeDate(now);
             statusChangeEntity.setStatusTypeEntity(entityManager.getReference(StatusTypeEntity.class,StatusEnum.EXPIRED.getMaskValue()));
-            statusChangeEntity.setComment("Dokonano automatycznego zmianu stanu na \""+StatusEnum.EXPIRED.getStatusName()+"\"");
+            statusChangeEntity.setComment("Dokonano automatycznej zmiany stanu na \""+StatusEnum.EXPIRED.getStatusName()+"\"");
             statusChangeEntity.setCyclicalService(entityManager.getReference(CyclicalServiceEntity.class,id));
             statusChangeEntities.add(statusChangeEntity);
         }

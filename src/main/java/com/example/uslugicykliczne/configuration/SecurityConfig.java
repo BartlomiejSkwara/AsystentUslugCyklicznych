@@ -55,7 +55,8 @@ public class SecurityConfig {
                         .ignoringRequestMatchers(
                             "/api/authentication/login",
                             "/api/authentication/logout",
-                                "/api/cyclicalservice/**"
+                                "/api/cyclicalservice/forceDailyCheck"
+                                ,"/api/**"
                                 )
                         .csrfTokenRepository(repo)
                         .csrfTokenRequestHandler(new SPATokenRequestHandler())

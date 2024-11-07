@@ -64,7 +64,7 @@ public class ServiceUserService {
         }
 
         serviceUserRepo.save(createServiceUserEntityFromDTO(serviceUserEntity.get(), serviceUserDTO,contactDataEntity));
-        return ResponseEntity.ok("Successfully updated the user");
+        return ResponseEntity.ok("Z powodzeniem zaktualizowano dane użytkownika usługi !!!");
     }
 
     @Transactional
@@ -83,7 +83,7 @@ public class ServiceUserService {
 
             AccountDataEntity accountDataEntity = accountManagementService.register(serviceUserDTO.getPassword(), serviceUserDTO.getLogin());
             if(accountDataEntity==null){
-                return ResponseEntity.badRequest().body("Użytkownik o takiej nazwie już istnieje !!! ");
+                return ResponseEntity.badRequest().body("Zarejestrowano już taki login !!! ");
             }
 
             ContactDataEntity contactDataEntity = contactDataService.insertContactDataEntity(serviceUserDTO.getEmails(),serviceUserDTO.getPhoneNumbers());
@@ -94,7 +94,7 @@ public class ServiceUserService {
 
             serviceUserRepo.save(sue);
             /// TODO może jakaś walidacja czy poprawnie dodano maile i numery
-            return ResponseEntity.ok("Successfully added the user");
+            return ResponseEntity.ok("Z powodzeniem dodano dane użytkownika usługi !!!");
         //}
 //        else {
 //            StringBuilder error = new StringBuilder("There can't be Customers with duplicate:");

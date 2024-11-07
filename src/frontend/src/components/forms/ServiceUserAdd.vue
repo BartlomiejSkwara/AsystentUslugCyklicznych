@@ -15,8 +15,14 @@
         <input type="text" id="login" v-model="form.login" class="form-control" required />
       </div>
       <div>
-        <label for="password">Hasło: <span class="text-danger">*</span></label>
-        <input type="password" id="password" v-model="form.password" class="form-control" />
+        <span v-if="formMode==='edit'">
+          <label for="password">Hasło: </label>
+          <input type="password" id="password" v-model="form.password" class="form-control" />
+        </span>
+        <span v-else>
+          <label for="password">Hasło: <span  class="text-danger" >* </span></label>
+          <input type="password" id="password" v-model="form.password" class="form-control" required/>
+        </span>
       </div>
       <div>
         <label>Emaile: <span class="text-danger">*</span></label>
@@ -178,7 +184,7 @@ export default {
         name: this.form.name,
         surname: this.form.surname,
         login: this.form.login,
-        password: this.form.password,
+        password: this.form.password.trim(),
         hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
         comments: this.form.comments,
         emails: this.form.emails,

@@ -31,7 +31,7 @@ public class BusinessService {
     public ResponseEntity<String> updateBusinessEntity(Integer id,BusinessDTO businessDTO,boolean duplicateCheck){
         Optional<BusinessEntity> businessEntityOptional = businessRepo.findBusinessWithContactDataById(id);
         if (businessEntityOptional.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Can't edit nonexistent business !!!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nie można edytować nieistniejącej firmy !!!");
 
 
         ContactDataEntity contactDataEntity = businessEntityOptional.get().getContactData();
@@ -55,7 +55,7 @@ public class BusinessService {
         contactDataService.updateContactDataEntity(contactDataEntity,businessDTO.getEmails(),businessDTO.getPhoneNumbers());
 
         businessRepo.save(createBusinessEntityFromDTO(businessEntityOptional.get(), businessDTO, contactDataEntity,addressEntity));
-        return ResponseEntity.ok("Successfully updated the business");
+        return ResponseEntity.ok("Z powodzeniem zaktualizowano dane firmy !!!");
     }
 
     public ResponseEntity<String> insertNewBusinessEntity(BusinessDTO businessDTO,boolean duplicateCheck){
@@ -71,7 +71,7 @@ public class BusinessService {
         ContactDataEntity contactDataEntity = contactDataService.insertContactDataEntity(businessDTO.getEmails(),businessDTO.getPhoneNumbers());
 
         businessRepo.save(createBusinessEntityFromDTO(new BusinessEntity() ,businessDTO,contactDataEntity,addressEntity));
-        return ResponseEntity.ok("Successfully added the user");
+        return ResponseEntity.ok("Z powodzeniem dodano firmę");
 
     }
     public BusinessEntity createBusinessEntityFromDTO(BusinessEntity businessEntity, BusinessDTO dto, ContactDataEntity contactDataEntity,AddressEntity addressEntity ){

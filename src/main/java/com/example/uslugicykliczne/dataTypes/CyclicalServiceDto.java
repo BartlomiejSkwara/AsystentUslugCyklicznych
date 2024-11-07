@@ -46,7 +46,7 @@ public class CyclicalServiceDto {
 
     @NotBlank(message = "Nie określono numeru seryjnego certyfikatu !!!")
     @Size(max=40, message = "Podany numery seryjny jest za długi !!!")
-    @Pattern(regexp = "^\\d+$", message = "Numer seryjny certyfikatu może zawierać tylko liczby!!!")
+    @Pattern(regexp = "^[0-9ABCDEF]+$", message = "Numer seryjny certyfikatu może zawierać tylko liczby!!!")
     private final String  certSerialNumber;
 
 

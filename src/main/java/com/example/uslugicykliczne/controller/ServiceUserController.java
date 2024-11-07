@@ -60,7 +60,7 @@ public class ServiceUserController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete (@PathVariable Integer id ){
         serviceUserService.deleteServiceUser(id);
-        return ResponseEntity.ok().body("Customer was deleted");
+        return ResponseEntity.ok().body("Z powodzeniem usunięto użytkownika");
 
     }
 

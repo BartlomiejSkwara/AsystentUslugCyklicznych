@@ -235,13 +235,13 @@ public class CyclicalServiceService {
 
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.findCyclicalServiceAcDataJoin(serviceId);
         if(optionalCyclicalServiceEntity.isEmpty())
-            return ResponseEntity.badRequest().body("Can't renew nonexistent service");
+            return ResponseEntity.badRequest().body("Nie można odnowić usługi która nie istnieje !!!");
 
         CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
 
 
         if(!SecurityContextHolder.getContext().getAuthentication().getName().equals(cyclicalService.getServiceUser().getAccountDataEntity().getUsername()))
-            return new ResponseEntity<>("Don't modify resources you don't own !!!", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Nie modyfikuj cudzych zasobów !!!", HttpStatus.FORBIDDEN);
 
         changeServiceStatus(cyclicalService,StatusEnum.MARKED_FOR_CANCEL.getMaskValue());
 
@@ -254,15 +254,15 @@ public class CyclicalServiceService {
     public ResponseEntity<?> requestRenewal(Integer serviceId, String statusChangeComment){
         Optional<CyclicalServiceEntity> optionalCyclicalServiceEntity = cyclicalServiceRepo.customFindNameOfAccountAssignedToService(serviceId);
         if(optionalCyclicalServiceEntity.isEmpty())
-            return ResponseEntity.badRequest().body("Can't renew nonexistent service");
+            return ResponseEntity.badRequest().body("Nie można odnowić usługi która nie istnieje !!!");
         CyclicalServiceEntity cyclicalService = optionalCyclicalServiceEntity.get();
 
         if(!SecurityContextHolder.getContext().getAuthentication().getName().equals(cyclicalService.getServiceUser().getAccountDataEntity().getUsername()))
-            return new ResponseEntity<>("Don't modify resources you don't own !!!", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Nie modyfikuj cudzych zasobów !!!", HttpStatus.FORBIDDEN);
 
 
         if (!StatusUtility.hasStatus(cyclicalService.getStatusBitmap(),StatusEnum.RENEWED)&&!StatusUtility.hasStatus(cyclicalService.getStatusBitmap(),StatusEnum.NEW)){
-            return ResponseEntity.badRequest().body("You can only request renewal of service that has finished last renewal process");
+            return ResponseEntity.badRequest().body("Można prosić o odnowienie tylko gdy usługa jest Nowa lub została Odnowiona ");
         }
         changeServiceStatus(cyclicalService,StatusEnum.AWAITING_RENEWAL.getMaskValue());
         serviceStatusHistoryService.addNewStatusHistoryRecord(null,StatusEnum.AWAITING_RENEWAL.getMaskValue(),statusChangeComment,cyclicalService.getIdCyclicalService());

@@ -24,7 +24,7 @@
     </select>
   </div>
 
-    <table>
+    <table >
       <thead>
       <tr>
         <th @click="sortBy('getIdCyclicalService')">

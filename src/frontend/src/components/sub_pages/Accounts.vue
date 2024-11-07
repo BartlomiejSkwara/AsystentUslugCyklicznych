@@ -1,56 +1,43 @@
 <template>
     <div>
-      <h1 style="margin-bottom: 20px;">Lista kont użytkowników systemu</h1>
-      <div class="container">
-        <button  class="add-button" @click="switchRequestModalVisibility()"
+      <h1 style="margin-bottom: 20px;">Aktywni użytkownicy</h1>
+      <div class="container ">
+        <!-- <button  class="add-button" @click="switchRequestModalVisibility()"
         data-bs-toggle="modal" data-bs-target="#registerModal"        
-        >Dodaj nowe konto</button>
+        >Dodaj nowe konto</button> -->
         <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
           <input type="text" class="input" v-model="searchFields.username" placeholder="Username" style="margin-bottom: 10px; margin-right: 10px;">
           <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
             <input type="text" class="input" v-model="searchFields.role" placeholder="Rola" style="margin-bottom: 10px; margin-right: 10px;">
             <!-- <input type="text" class="input" v-model="searchFields.id" placeholder="REGON" style="margin-bottom: 10px; margin-right: 10px;"> -->
           </div>
-          <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>
+          <button class="btn btn-danger "  type="button" @click="fetchAccounts">
+                Odśwież
+            </button>
+          <!-- <button @click="toggleSearchFields" style="margin-left: 10px;">+</button> -->
         </div>
       </div>
-      <table>
+
+
+      <table class=" custom-container">
         <thead>
         <tr>
-          <th>ID</th>
-          <th>Username</th>
-          <th>Rola</th>
+          <th>Login</th>
+          <th>Ostatnio aktywny</th>
+          <!-- <th>Rola</th> -->
           <th></th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="account in filteredAccounts" :key="account.idLoginCredentials">
-          <td>{{ account.idLoginCredentials }}</td>
-          <td>{{ account.username }}</td>
-          <td>{{ account.role }}</td>
+          <td>{{ account[0] }}</td>
+          <td>{{ account[1] == 0 ? "teraz" : account[1]+" min temu"}} </td>
+          <!-- <td>{{ account.role }}</td> -->
           <td>
-<!--            BAZOWAC NA CYKLACH-->
-            <div class="dropdown ">
-              <button class="btn btn-primary dropdown-toggle" style="background-color: gray;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Nadaj rolę:
-              </button>
-              <ul class="dropdown-menu">
-                <li v-if="account.role === 'ROLE_user' ">
-                  <a class="dropdown-item " href="#">Admin</a>
-                  <a class="dropdown-item " href="#">Edytor</a>
-                </li>
+            <button class="btn btn-danger "  type="button" @click="forceLogout(account[0])">
+                Wygaś Żeton
+            </button>
 
-                <li v-if="account.role === 'ROLE_editor' ">
-                  <a class="dropdown-item " href="#">Admin</a>
-                  <a class="dropdown-item " href="#">User</a>
-                </li>
-
-                <li v-if="account.role === 'ROLE_admin'">
-                  <a class="dropdown-item " href="#">Edytor</a>
-                  <a class="dropdown-item " href="#">User</a>
-                </li>
-              </ul>
-            </div>
           </td>
         </tr>
         </tbody>
@@ -124,8 +111,10 @@
       filteredAccounts() {
         return this.accounts.filter(account => {
           return (
-            account.username.toLowerCase().includes(this.searchFields.username.toLowerCase()) &&
-            account.role.toLowerCase().includes(this.searchFields.role.toLowerCase())
+            account[0].toLowerCase().includes(this.searchFields.username.toLowerCase())
+            
+            //&&
+            // account.role.toLowerCase().includes(this.searchFields.role.toLowerCase())
           );
         });
       }
@@ -134,9 +123,39 @@
       this.fetchAccounts();
     },
     methods: {
+
+        async forceLogout(login){
+          try {
+                const cookie = getCookie('XSRF-TOKEN');
+
+                const response = await fetchWrapper(this,`/api/authentication/forceLogout?login=${login}`, {
+                    method: 'POST',
+                    headers:{
+                      'X-XSRF-TOKEN': cookie
+
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok " + response.statusText);
+                }
+
+                const role = response.headers.get('frontRole');
+                this.$store.commit('setRole', role);
+                
+                this.accounts.splice(this.accounts.findIndex(ac=>ac[0]==login),1)
+                alert(`Z powodzeniem dokonano operacji wygaszenia żetonu użytkownika ${login}!`);
+
+                // const data = await response.json();
+                
+
+            } catch (error) {
+                console.error("There has been a problem with your fetch operation:", error);
+            }
+        },
         async fetchAccounts(){
             try {
-                const response = await fetchWrapper(this,`/api/accountData/getAll`, {
+                const response = await fetchWrapper(this,`/api/authentication/getRecentActivities`, {
                     method: 'GET',
                 });
 
@@ -147,10 +166,17 @@
                 const role = response.headers.get('frontRole');
                 this.$store.commit('setRole', role);
                 const data = await response.json();
-                this.accounts = data;
+                this.accounts = Object.entries(data);
+                this.accounts.forEach(account=>{
+                  const minutes = -1*((new Date(account[1])).getTime()-Date.now())/1000/60;
+                  account[1] = minutes.toFixed(0);
+                })
+
+
             } catch (error) {
                 console.error("There has been a problem with your fetch operation:", error);
             }
+            
         },
         toggleSearchFields() {
             this.showAdditionalFields = !this.showAdditionalFields;
@@ -225,7 +251,7 @@
           }
         
         },
-
+          
         closeModal() {
         this.showModal = false;
         }
@@ -236,7 +262,11 @@
   <style src="@/assets/style.css"></style>
   
   <style>
-
+  @media (min-width: 1200px) { 
+      .custom-container {
+          max-width: 720px; 
+      }
+  }
   .close {
     color: #aaa;
     float: right;
