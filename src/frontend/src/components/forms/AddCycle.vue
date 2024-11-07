@@ -85,8 +85,22 @@
       </div>
       <p class="text-danger" style="font-size: 0.9em">* pozycje obowiązkowe</p>
       <button type="submit">Zapisz</button>
-      <button type="button" @click="goBack" style="float: right">Powrót</button>
+      <button type="button" @click="checkFormAndOpenModal" style="float: right">Powrót</button>
     </form>
+  </div>
+
+  <div id="requestModal" class="modal fade" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content ">
+        <div class="modal-header modal-bg">
+          <h3>Czy na pewno chcesz opuścić formularz? Stracisz niezapisane postępy!</h3>
+        </div>
+        <div class="modal-footer modal-bg">
+          <button class="btn btn-outline-success" data-bs-dismiss="modal">Kontynuuj</button>
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="goBack">Powrót</button>
+        </div>
+      </div>
+    </div>
   </div>
 
 <!--  DOTĄD COFAJ-->
@@ -150,8 +164,16 @@ export default {
         description: '',
         signatureType: 0,
         idCyclicalService:null
-      }
+      },
+      showRequestModal: false,
     };
+  },
+
+  computed: {
+    isFormFilled() {
+      return this.form.agreementNumber || this.form.certSerialNumber || this.form.cardNumber ||
+          this.form.description || this.form.businessId || this.form.serviceUserId || this.form.nameInOrganisation;
+    },
   },
 
   mounted() {
@@ -341,6 +363,17 @@ export default {
           .catch(error => {
             console.error('Error saving cyclical service:', error);
           });
+    },
+    checkFormAndOpenModal() {
+      if (this.isFormFilled) {
+        const modalElement = document.body.appendChild(document.getElementById('requestModal'));
+        if (modalElement) {
+          const modalInstance = new window.bootstrap.Modal(modalElement);
+          modalInstance.show();
+        }
+      } else {
+        this.$router.push('/Cycles');
+      }
     },
     goBack() {
       this.$router.push('/Cycles');
