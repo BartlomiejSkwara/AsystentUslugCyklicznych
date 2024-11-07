@@ -54,7 +54,7 @@
       </div>
       <div>
         <label for="commentsUser">Dodatkowy opis:</label>
-        <input type="text" id="commentsUser" v-model="form.comments" class="form-control" />
+        <textarea type="text" id="commentsUser" v-model="form.comments" class="form-control" />
       </div>
 
       <div class="form-check form-switch">
@@ -65,7 +65,7 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" style="float: right" @click="switchRequestModalVisibility()" data-bs-toggle="modal" data-bs-target="#requestModal">Powrót</button>
+      <button v-if="standalone" type="button" style="float: right" @click="checkFormAndOpenModal">Powrót</button>
     </form>
   </div>
 
@@ -117,7 +117,15 @@ export default {
   computed:{
     styleModifier(){
       return !this.standalone? {width: "100%"}:{};
-    }
+    },
+
+    isFormFilled() {
+      return this.form.name || this.form.surname || this.form.login || this.form.password ||
+          this.form.taxId || this.form.comments || this.form.emails.some(email => email) ||
+          this.form.phoneNumbers.some(phone => phone);
+    },
+
+
   },
   mounted() {
     refreshCSRF();
@@ -230,6 +238,17 @@ export default {
 
       }
       return null;
+    },
+    checkFormAndOpenModal() {
+      if (this.isFormFilled) {
+        const modalElement = document.getElementById('requestModal');
+        if (modalElement) {
+          const modalInstance = new window.bootstrap.Modal(modalElement);
+          modalInstance.show();
+        }
+      } else {
+        this.goBack();
+      }
     },
     goBack() {
       this.$router.push('/ServiceUser');

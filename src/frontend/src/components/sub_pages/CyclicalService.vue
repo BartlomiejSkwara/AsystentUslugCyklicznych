@@ -5,6 +5,7 @@
       <router-link v-if="isAdminOrEditor" to="/add-cycle" class="add-button">Dodaj nowy certyfikat</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
         <input type="text" class="input" v-model="searchFields.businessName" placeholder="Nazwa firmy" style="margin-bottom: 10px; margin-right: 10px">
+        <input type="text" class="input" v-model="searchFields.name" placeholder="Nazwa użytkownika" style="margin-bottom: 10px; margin-right: 10px">
       </div>
     </div>
     <div style="display: inline-block;" class="days-filter">
@@ -14,7 +15,7 @@
       <button @click="fetchCycles(60)" :class="{ active: selectedDays === 60, 'dni-60': selectedDays === 60 }">60 dni</button>
       <button @click="fetchAllCycles" :class="{ active: selectedDays === 'all', 'dni-all': selectedDays === 'all' }">Wszystkie Nie Odnowione</button>
       <button @click="fetchAllCycles(1)" :class="{ active: selectedDays === 'getAll', 'cancelled-d': selectedDays==='getAll'}">Wszystkie </button>
-      <button @click="fetchAllCycles(2)" :class="{ active: selectedDays === 'getAllExpired', 'expired-d': selectedDays==='getAllExpired' }">Wygaszone </button>
+      <button @click="fetchAllCycles(2)" :class="{ active: selectedDays === 'getAllExpired', 'expired-d': selectedDays==='getAllExpired' }">Wygasłe </button>
 
       <select v-model="selectedStatus">
       <option value="all">Wszystkie statusy</option>
@@ -203,9 +204,8 @@ export default {
         getIdCyclicalService: 1
       },
       searchFields: {
-        agreementNumber: '',
-        description: '',
         businessName: '',
+        name: ''
       },
       statusModalData:{
         showStatusModal: false,
@@ -668,10 +668,12 @@ export default {
 
     filteredCycles() {
       const searchBusinessLower = this.searchFields.businessName.toLowerCase();
+      const searchNameLower = this.searchFields.name.toLowerCase();
 
       return this.cycles
           .filter(cycle => {
-            const matchesSearch = cycle.business.businessName.toLowerCase().includes(searchBusinessLower);
+            const matchesSearch = cycle.business.businessName.toLowerCase().includes(searchBusinessLower) &&
+            cycle.serviceUser.name.toLowerCase().includes(searchNameLower);
 
             let maxStatus = 0;
             Object.values(this.STATUS_TYPES).forEach(status => {

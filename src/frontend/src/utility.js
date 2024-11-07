@@ -130,7 +130,7 @@ export const STATUS_TYPES_LIST = {
     },
     EXPIRED:{
       mVal : 2048,
-      desc: "Wygaszony"
+      desc: "Wygasły"
     },
 
   }

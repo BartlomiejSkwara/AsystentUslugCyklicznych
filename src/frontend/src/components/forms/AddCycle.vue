@@ -81,7 +81,7 @@
 
       <div>
         <label for="description">Opis:</label>
-        <input type="text" id="description" v-model="form.description" class="form-control" >
+        <textarea maxlength="255" type="text" id="description" v-model="form.description" class="form-control" />
       </div>
       <p class="text-danger" style="font-size: 0.9em">* pozycje obowiązkowe</p>
       <button type="submit">Zapisz</button>
@@ -89,8 +89,7 @@
     </form>
   </div>
 
-
-
+<!--  DOTĄD COFAJ-->
 
   <div id="userModal" class="modal fade" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -206,17 +205,14 @@ export default {
         this.form.serviceUserId = newUserName;
       }
     },
-    async submitBusinessForm(){  
-
+    async submitBusinessForm(){
       let newName = await this.$refs.businessForm.submitForm()
       if(newName!=null){
         document.getElementById("closeBusinessForm").click();
         await this.fetchBusinesses();
-        
+
 
         this.form.businessId = newName;
-
-
       }
     },
     fetchCycle() {
@@ -307,6 +303,9 @@ export default {
       }
     },
     submitForm() {
+      if (this.getBusinessID(this.form.businessId) === null || this.getUserID(this.form.serviceUserId) === null) {
+        return;
+      }
       const payload = {
         agreementNumber: this.form.agreementNumber,
         description: this.form.description || '',

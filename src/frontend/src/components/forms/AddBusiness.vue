@@ -36,7 +36,7 @@
       </div>
       <div>
         <label for="commentsBusiness">Opis:</label>
-        <input type="text" id="commentsBusiness" v-model="form.comments" class="form-control" >
+        <textarea type="text" id="commentsBusiness" v-model="form.comments" class="form-control" />
       </div>
       <div>
         <label>Emaile: <span class="text-danger">*</span></label>
@@ -64,10 +64,12 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" style="float: right" @click="switchRequestModalVisibility()" data-bs-toggle="modal" data-bs-target="#requestModal">Powrót</button>
+      <button v-if="standalone" type="button" style="float: right" @click="checkFormAndOpenModal">Powrót</button>
       <br>
     </form>
   </div>
+
+<!--  POWRÓT DO TEGO JAK COŚ-->
 
   <div id="requestModal" class="modal fade" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -76,7 +78,7 @@
           <h3>Czy na pewno chcesz opuścić formularz? Stracisz niezapisane postępy!</h3>
         </div>
         <div class="modal-footer modal-bg">
-          <button  id="closeRequest" class="btn btn-outline-success" data-bs-dismiss="modal">Kontynuuj</button>
+          <button class="btn btn-outline-success" data-bs-dismiss="modal">Kontynuuj</button>
           <button class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="goBack">Powrót</button>
         </div>
       </div>
@@ -121,6 +123,13 @@ export default {
     styleModifier(){
       return !this.standalone? {width: "100%"}:{};
     },
+
+    isFormFilled() {
+      return this.form.name || this.form.locality || this.form.postalCode || this.form.street ||
+          this.form.propertyNumber || this.form.apartmentNumber || this.form.nip || this.form.regon ||
+          this.form.comments || this.form.emails.some(email => email) || this.form.phoneNumbers.some(phone => phone);
+    },
+
   },
   mounted() {
     refreshCSRF();
@@ -130,9 +139,6 @@ export default {
     }
   },
   methods: {
-    switchRequestModalVisibility() {
-      this.showRequestModal = !this.showRequestModal;
-    },
     fetchBusiness() {
       fetchWrapper(this,`/api/business/get/${this.$route.query.idBusiness}`)
           .then(response => response.json())
@@ -234,6 +240,17 @@ export default {
       }
       
       return null;   
+    },
+    checkFormAndOpenModal() {
+      if (this.isFormFilled) {
+        const modalElement = document.getElementById('requestModal');
+        if (modalElement) {
+          const modalInstance = new window.bootstrap.Modal(modalElement);
+          modalInstance.show();
+        }
+      } else {
+        this.goBack();
+      }
     },
     goBack() {
       this.$router.push('/Business');
