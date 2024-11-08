@@ -51,11 +51,11 @@ public class CyclicalServiceService {
 
         Optional<CertificateEntity> oldCertificateEntityOptional = certificateRepo.findMostRecentCertificate(serviceId);
         if(oldCertificateEntityOptional.isEmpty())
-            return ResponseEntity.badRequest().body("Can't renew nonexistent service");
+            return ResponseEntity.badRequest().body("Nie można odnowić nie istniejącej usługi");
         CertificateEntity certificateEntity = oldCertificateEntityOptional.get();
 
         if(certificateEntity.getCyclicalServiceEntity().isOneTime())
-            return ResponseEntity.badRequest().body("Can't renew one time service");
+            return ResponseEntity.badRequest().body("Nie można odnowić usługi jednorazowej");
 
 
         if(certificateEntity.isRenewalMessageSent()){
@@ -75,7 +75,7 @@ public class CyclicalServiceService {
         serviceStatusHistoryService.addNewStatusHistoryRecord(null,StatusEnum.RENEWED,"Usługa została odnowiona",serviceId);
         certificateService.insertCertificateCreatedFromRenewalRecord(cyclicalService, serviceRenewalRecord,certificateEntity.getValidTo(),certificateEntity.getCardType());
 
-        return ResponseEntity.ok().body("The task was successfully renewed");
+        return ResponseEntity.ok().body("Z powodzeniem odnowiono usługę");
     }
 
     public ResponseEntity<String> insertNewCyclicalServiceEntity(@NotNull CyclicalServiceDto cyclicalServiceDto){
@@ -133,7 +133,7 @@ public class CyclicalServiceService {
     public ResponseEntity<String> updateCyclicalServiceEntity(Integer id, CyclicalServiceDto cyclicalServiceDto){
         Optional<CyclicalServiceEntity> cyclicalServiceEntityOptional = cyclicalServiceRepo.findById(id);
         if(cyclicalServiceEntityOptional.isEmpty())
-            return  ResponseEntity.internalServerError().body("Can't update nonexistant cyclical service");
+            return  ResponseEntity.internalServerError().body("Nie można zaktualizować danych nie istniejącej usługi");
         CyclicalServiceEntity updatedEntity = cyclicalServiceEntityOptional.get();
 
         Optional<ServiceUserEntity> serviceUserEntityOptional = serviceUserRepo.findById(cyclicalServiceDto.getServiceUserId());
@@ -170,7 +170,7 @@ public class CyclicalServiceService {
             //schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
 //            if(certificateEntity!=null){
 //                schedulingService.trySchedulingReminderWhenInserted(certificateEntity,insertedEntity);
-                return ResponseEntity.ok("Successfully added the cyclical service");
+                return ResponseEntity.ok("Z powodzeniem zaktualizowano dane usługi cyklicznej");
 //
 //            }
 //            return  ResponseEntity.internalServerError().body("Couldn't create certificate");

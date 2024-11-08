@@ -51,9 +51,13 @@ public class AuthenticationController {
         return ResponseEntity.ok("Z powodzeniem wylogowano użytkownika");
     }
 
+
+
+
     @GetMapping("/getRecentActivities")
-    public HashMap<String, LocalDateTime> getRecentActivities(HttpServletResponse httpServletResponse){
-        return  activityTrackerService.getActivities();
+    public HashMap<String, Integer> getRecentActivities(HttpServletResponse httpServletResponse){
+
+        return activityTrackerService.getCalculatedMinutesActivities() ;
     }
 
     @PostMapping("/forceLogout")

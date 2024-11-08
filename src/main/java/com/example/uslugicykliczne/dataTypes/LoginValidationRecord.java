@@ -4,10 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record LoginValidationRecord(
-        @NotBlank(message = "Login field is empty !!!")
-        @Size(max=40, message = "Login is too long !!!")
+        @NotBlank(message = "Nie podano loginu !!!")
+        @Size(max=40, message = "Podany login jest za długi !!!")
         String  login,
-        @NotBlank(message = "Password field is empty!!!")
+        @NotBlank(message = "Nie podano hasła !!!")
+        @Size(max=40, message = "Podane hasło jest za długie !!!")
         String password
 ) {
 }

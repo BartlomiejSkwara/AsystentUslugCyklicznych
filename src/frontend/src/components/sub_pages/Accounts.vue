@@ -167,10 +167,18 @@
                 this.$store.commit('setRole', role);
                 const data = await response.json();
                 this.accounts = Object.entries(data);
-                this.accounts.forEach(account=>{
-                  const minutes = -1*((new Date(account[1])).getTime()-Date.now())/1000/60;
-                  account[1] = minutes.toFixed(0);
-                })
+                // const serverTimezone = parseInt(response.headers.get("timezone"),10);
+                // let localTime = new Date(Date.now())
+                // console.log(localTime);
+                
+                // console.log(localTime.getTimezoneOffset()*1000*60," vs ",serverTimezone);
+                
+
+                // this.accounts.forEach(account=>{
+                  
+                //   const minutes = -1*((new Date(account[1])).getTime()-Date.now())/1000/60;
+                //   account[1] = minutes.toFixed(0);
+                // })
 
 
             } catch (error) {

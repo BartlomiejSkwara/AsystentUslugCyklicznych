@@ -47,6 +47,7 @@ public class ServiceUserDTO {
     @NotNull(message = "Nie określono pola ma polski PESEL")
     private final Boolean hasPolishPESEL;
 
+    @Size(max=255, message = "Podany komentarz jest za długi  !!!")
     private final String comments;
 
 

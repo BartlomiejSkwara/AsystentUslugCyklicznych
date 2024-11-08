@@ -183,15 +183,13 @@ public class CyclicalServiceController {
         return cyclicalServiceService.updateCyclicalServiceEntity(id, cyclicalServiceDto);
     }
 
-    ///TODO masowe usuwanie certyfikatów
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete (@PathVariable Integer id ){
         statusChangeRepo.deleteByCyclicalService(id);
         cyclicalServiceRepo.deleteById(id);
-        return ResponseEntity.ok().body("Cyclical service was deleted");
+        return ResponseEntity.ok().body("Usługa cykliczna została usunięta");
 
     }
-
 
 //    @GetMapping("/get/{id}")
 //    public ResponseEntity<CyclicalServiceEntity> getCyclicalService (@PathVariable Integer id ){

@@ -38,6 +38,7 @@ public class CyclicalServiceDto {
 
     @NotBlank(message = "Nie podano numeru karty !!!")
     @Size(max=40, message = "Podany numer karty jest za długi !!!")
+    @Pattern(regexp = "^[\\d\\s]+$", message = "Numer kart może zawierać tylko cyfry i spacje !!!")
     private final String  cardNumber;
 
     @NotNull(message = "Nie określono typu karty !!!")
