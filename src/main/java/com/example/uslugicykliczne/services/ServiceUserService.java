@@ -126,7 +126,7 @@ public class ServiceUserService {
             if (dto.getTaxId().isPresent())
                 serviceUserEntity.setTaxIdentificationNumber(dto.getTaxId().get());
             else
-                serviceUserEntity.setHasPolishPesel(false);
+                serviceUserEntity.setTaxIdentificationNumber(null);
         else
             serviceUserEntity.setTaxIdentificationNumber(null);
 

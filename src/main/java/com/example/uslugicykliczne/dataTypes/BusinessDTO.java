@@ -33,18 +33,16 @@ public class BusinessDTO {
     @Size(max=40, message = "Nazwa ulicy jest za długa !!!")
     private String street;
 
-
-    @NotNull(message = "Pole nr posesji jest puste !!!")
+    @Digits(integer = 10, fraction = 0, message = "Pole nr posesji musi być liczbą całkowitą !!!")
     private Integer propertyNumber;
 
-
-    @NotNull(message = "Pole nr lokalu jest puste !!!")
+    @Digits(integer = 10, fraction = 0, message = "Pole nr lokalu musi być liczbą całkowitą !!!")
     private Integer apartmentNumber;
 
 
 
     @NotBlank(message = "Pole nip jest puste !!!")
-    @Size(max=40, message = "Nip jest za długi !!!")
+    @Pattern(regexp = "^\\d{10}+$", message = "Sprawdź czy nip składa się z dziesięciu cyfr !!!")
     private final String  nip;
 
     private final Optional<
@@ -52,14 +50,12 @@ public class BusinessDTO {
             String> regon;
 
 
-    @NotEmpty(message = "Nie określono żadnego adresu email dla firmy ")
     private final List<
             @NotBlank(message = "Podano pusty email !!!")
             @Size(max=40, message = "Podany email jest za długi !!!")
             @Email(message = "Podany email nie jest poprawny !!!")
                     String> emails;
 
-    @NotEmpty(message = "Nie określono żadnego numeru telefonu dla firmy")
     private final List<
             @NotBlank(message = "Podano pusty numer telefonu")
             @Size(max = 16 , message = "Podany numer telefonu jest za długi")

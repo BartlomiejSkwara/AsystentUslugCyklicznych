@@ -24,10 +24,10 @@ public class AddressEntity {
     @Column(name="street", nullable = false,length = 40)
     private String street;
     @Basic
-    @Column(name="propertyNumber", nullable = false)
+    @Column(name="propertyNumber", nullable = true)
     private Integer propertyNumber;
     @Basic
-    @Column(name="apartmentNumber", nullable = false)
+    @Column(name="apartmentNumber", nullable = true )
     private Integer apartmentNumber;
 
     @Override

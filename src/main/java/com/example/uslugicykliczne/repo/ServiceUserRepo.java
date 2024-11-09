@@ -21,10 +21,10 @@ public interface ServiceUserRepo  extends ListCrudRepository<ServiceUserEntity,I
         return null;
     }
 
-    @Query("select distinct su from ServiceUserEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails JOIN FETCH su.accountDataEntity")
+    @Query("select distinct su from ServiceUserEntity su LEFT JOIN FETCH su.contactData cd LEFT JOIN FETCH cd.emails JOIN FETCH su.accountDataEntity")
     List<ServiceUserEntity> findJoinedEmailBy();
 
-    @Query("select distinct su from ServiceUserEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.phoneNumbers where su in (:oldSu)")
+    @Query("select distinct su from ServiceUserEntity su LEFT JOIN FETCH su.contactData cd LEFT JOIN FETCH cd.phoneNumbers where su in (:oldSu)")
     List<ServiceUserProjection> findJoinedPhoneBy(List<ServiceUserEntity> oldSu);
 
 
@@ -36,10 +36,10 @@ public interface ServiceUserRepo  extends ListCrudRepository<ServiceUserEntity,I
         }
         return Optional.empty();
     }
-    @Query("select su from ServiceUserEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails WHERE su.idServiceUser = :id")
+    @Query("select su from ServiceUserEntity su LEFT JOIN FETCH su.contactData cd LEFT JOIN FETCH cd.emails WHERE su.idServiceUser = :id")
     Optional<ServiceUserEntity> findSingleJoinedEmailBy(int id);
 
-    @Query("select su from ServiceUserEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.phoneNumbers where su = :oldSu")
+    @Query("select su from ServiceUserEntity su LEFT JOIN FETCH su.contactData cd LEFT JOIN FETCH cd.phoneNumbers where su = :oldSu")
     Optional<ServiceUserEntity> findSingleJoinedPhoneBy(ServiceUserEntity oldSu);
 
     List<ServiceUserProjection> findProjectionsBy();

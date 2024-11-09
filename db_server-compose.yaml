@@ -37,6 +37,7 @@ services:
       - customNetwork
     environment:
       MYSQL_HOST: mymysql8
+      NAZWA_PARAMETRU: WARTOŚĆ
 volumes:
   mysql-db:
     name: dbVolume

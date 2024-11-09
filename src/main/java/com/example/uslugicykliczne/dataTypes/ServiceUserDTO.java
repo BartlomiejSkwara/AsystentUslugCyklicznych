@@ -30,14 +30,12 @@ public class ServiceUserDTO {
     @Size(max=40, message = "Podane nazwisko użytkownika jest za długie !!!")
     private final String surname;
 
-    @NotEmpty(message = "Nie określono żadnego adresu email dla użytkownika usługi ")
     private final List<
                 @NotBlank(message = "Podano pusty email !!!")
                 @Size(max=40, message = "Podany email jest za długi !!!")
                 @Email(message = "Podany email nie jest poprawny !!!")
                 String> emails;
 
-    @NotEmpty(message = "Nie określono żadnego numeru telefonu dla użytkownika usługi")
     private final List<
             @NotBlank(message = "Podano pusty numer telefonu")
             @Size(max = 16 , message = "Podany numer telefonu jest za długi")

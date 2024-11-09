@@ -8,6 +8,7 @@ import com.example.uslugicykliczne.repo.EmailRepo;
 import com.example.uslugicykliczne.repo.PhoneNumberRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -34,6 +35,11 @@ public class ContactDataService {
 
     public ContactDataEntity insertContactDataEntity(List<String> emails, List<String> phoneNumbers){
         ContactDataEntity contactDataEntity = insertBlankContactDataEntity();
+        if (emails == null)
+            emails = new ArrayList<>();
+        if(phoneNumbers == null)
+            phoneNumbers = new ArrayList<>();
+
         emailService.insertNewEmailEntities(emails,contactDataEntity);
         phoneNumberService.insertNewPhoneNumberEntities(phoneNumbers,contactDataEntity);
         return contactDataEntity;
@@ -41,6 +47,10 @@ public class ContactDataService {
 
     public void  updateContactDataEntity(ContactDataEntity updatedEntity,List<String> emails, List<String> phoneNumbers){
 
+        if (emails == null)
+            emails = new ArrayList<>();
+        if(phoneNumbers == null)
+            phoneNumbers = new ArrayList<>();
 
         emailService.updateEmailEntities(updatedEntity.getEmails(),emails,updatedEntity);
         phoneNumberService.updatePhoneNumberEntities(updatedEntity.getPhoneNumbers(),phoneNumbers,updatedEntity);

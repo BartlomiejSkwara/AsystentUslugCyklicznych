@@ -21,7 +21,7 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
         return null;
     }
 
-    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails JOIN FETCH b.address where b in(:businessGroup)")
+    @Query("select distinct b from BusinessEntity b LEFT JOIN FETCH b.contactData cd LEFT JOIN FETCH cd.emails JOIN FETCH b.address where b in(:businessGroup)")
     List<BusinessEntity> findBJoinedEmailFromIdGroupBy(List<BusinessEntity> businessGroup);
 
 
@@ -36,9 +36,9 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
         }
         return null;
     }
-    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.emails JOIN FETCH b.address")
+    @Query("select distinct b from BusinessEntity b LEFT JOIN FETCH b.contactData cd LEFT JOIN FETCH cd.emails JOIN FETCH b.address")
     List<BusinessEntity> findBJoinedEmailBy();
-    @Query("select distinct b from BusinessEntity b JOIN FETCH b.contactData cd JOIN FETCH cd.phoneNumbers where b in (:oldB)")
+    @Query("select distinct b from BusinessEntity b LEFT JOIN FETCH b.contactData cd LEFT JOIN FETCH cd.phoneNumbers where b in (:oldB)")
     List<BusinessProjection> findBJoinedPhoneBy(List<BusinessEntity> oldB);
 
 
@@ -52,10 +52,10 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
     }
 
 
-    @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.emails JOIN FETCH su.address WHERE su.idBusiness = :id")
+    @Query("select su from BusinessEntity su LEFT JOIN FETCH su.contactData cd LEFT JOIN FETCH cd.emails JOIN FETCH su.address WHERE su.idBusiness = :id")
     Optional<BusinessEntity> findBSingleJoinedEmailBy(int id);
 
-    @Query("select su from BusinessEntity su JOIN FETCH su.contactData cd JOIN FETCH cd.phoneNumbers where su = :oldB")
+    @Query("select su from BusinessEntity su LEFT JOIN FETCH su.contactData cd LEFT JOIN FETCH cd.phoneNumbers where su = :oldB")
     Optional<BusinessEntity> findBSingleJoinedPhoneBy(BusinessEntity oldB);
 
 
