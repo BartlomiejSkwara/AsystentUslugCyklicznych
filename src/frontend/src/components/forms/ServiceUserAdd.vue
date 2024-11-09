@@ -27,7 +27,7 @@
       <div>
         <label>Emaile:</label>
         <div class="input_button_place" v-for="(email, index) in form.emails" :key="index">
-          <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" class="input_size form-control"  required />
+          <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" class="input_size form-control"   />
           <button type="button" @click="removeEmail(index)">Usuń</button>
         </div>
         <button type="button" class="button_add_contact" @click="addEmail">Dodaj nowy email</button>
@@ -35,7 +35,7 @@
       <div>
         <label>Numery telefonów:</label>
         <div class="input_button_place" v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="tel" maxlength="16" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="input_size form-control"  required />
+          <input type="tel" maxlength="16" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="input_size form-control"   />
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
         <button type="button" class="button_add_contact" @click="addPhoneNumber">Dodaj nowy telefon</button>
@@ -188,6 +188,11 @@ export default {
       }
     },
     async submitForm() {
+
+      let emailsCheck = this.form.emails.filter(str=>{str.trim.length!=0})
+      let numbersCheck = this.form.phoneNumbers.filter(str=>{str.trim.length!=0})
+      let peselCheck = this.form.taxId.trim().length==0? null : this.form.taxId
+
       const payload = {
         name: this.form.name,
         surname: this.form.surname,
@@ -195,9 +200,9 @@ export default {
         password: this.form.password.trim(),
         hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
         comments: this.form.comments,
-        emails: this.form.emails,
-        phoneNumbers: this.form.phoneNumbers,
-        taxId: this.form.hasPolishPESEL ? this.form.taxId : null
+        emails:  emailsCheck.length == 0 ? null : emailsCheck,
+        phoneNumbers: numbersCheck.length == 0 ? null : numbersCheck,
+        taxId: this.form.hasPolishPESEL ? peselCheck : null
       };
 
       // if (this.form.newPassword) {

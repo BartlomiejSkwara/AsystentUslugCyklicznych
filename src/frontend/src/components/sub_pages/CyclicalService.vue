@@ -78,6 +78,7 @@
         <td>
           <!-- Przycisk usuwania wyświetla się tylko dla roli admin lub editor -->
 
+
           <div class="dropdown ">
             <button class="btn btn-primary dropdown-toggle" style="background-color: gray;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               Działania 

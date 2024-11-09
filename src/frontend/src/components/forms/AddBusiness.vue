@@ -20,15 +20,15 @@
       </div>
       <div>
         <label for="propertyNumber">Numer posesji:</label>
-        <input type="text" id="propertyNumber" v-model="form.propertyNumber" class="form-control" required>
+        <input type="text" id="propertyNumber" v-model="form.propertyNumber" class="form-control">
       </div>
       <div>
         <label for="apartmentNumber">Numer lokalu:</label>
-        <input type="text" id="apartmentNumber" v-model="form.apartmentNumber" class="form-control" required>
+        <input type="text" id="apartmentNumber" v-model="form.apartmentNumber" class="form-control">
       </div>
       <div>
         <label for="nip">NIP: <span class="text-danger">*</span></label>
-        <input type="text" maxlength="10" id="nip" v-model="form.nip" class="form-control" required>
+        <input type="text" maxlength="10" id="nip" v-model="form.nip" class="form-control" @input="formatNIP" required>
       </div>
       <div>
         <label for="regon">REGON: </label>
@@ -139,6 +139,9 @@ export default {
     }
   },
   methods: {
+    formatNIP() {
+      this.form.nip=this.form.nip.replace(/\D/g, '');
+    },
     fetchBusiness() {
       fetchWrapper(this,`/api/business/get/${this.$route.query.idBusiness}`)
           .then(response => response.json())
@@ -184,7 +187,10 @@ export default {
     },
     async submitForm() {
 
-        
+      let emailsCheck = this.form.emails.filter(str=>{str.trim.length!=0})
+      let numbersCheck = this.form.phoneNumbers.filter(str=>{str.trim.length!=0})
+      
+    
       const payload = {
         name: this.form.name,
         locality: this.form.locality,
@@ -195,8 +201,8 @@ export default {
         nip: this.form.nip,
         regon: this.form.regon,
         comments: this.form.comments,
-        emails: this.form.emails,
-        phoneNumbers: this.form.phoneNumbers
+        emails: emailsCheck.length == 0 ? null : emailsCheck,
+        phoneNumbers: numbersCheck.length == 0 ? null : numbersCheck
       };
 
       let url = this.formMode === 'add'
