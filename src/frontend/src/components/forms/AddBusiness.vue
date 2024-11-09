@@ -68,22 +68,6 @@
       <br>
     </form>
   </div>
-
-<!--  POWRÓT DO TEGO JAK COŚ-->
-
-  <div id="requestModal" class="modal fade" tabindex="-1" aria-labelledby="requestModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content ">
-        <div class="modal-header modal-bg">
-          <h3>Czy na pewno chcesz opuścić formularz? Stracisz niezapisane postępy!</h3>
-        </div>
-        <div class="modal-footer modal-bg">
-          <button class="btn btn-outline-success" data-bs-dismiss="modal">Kontynuuj</button>
-          <button class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="goBack">Powrót</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 
@@ -249,10 +233,9 @@ export default {
     },
     checkFormAndOpenModal() {
       if (this.isFormFilled) {
-        const modalElement = document.getElementById('requestModal');
-        if (modalElement) {
-          const modalInstance = new window.bootstrap.Modal(modalElement);
-          modalInstance.show();
+        const confirmation = window.confirm('Czy na pewno chcesz opuścić formularz? Stracisz niezapisane postępy!');
+        if (confirmation) {
+          this.goBack();
         }
       } else {
         this.goBack();
