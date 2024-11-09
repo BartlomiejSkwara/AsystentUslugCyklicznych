@@ -19,16 +19,16 @@
         <input type="text" id="street" v-model="form.street" class="form-control" required>
       </div>
       <div>
-        <label for="propertyNumber">Numer posesji: <span class="text-danger">*</span></label>
+        <label for="propertyNumber">Numer posesji:</label>
         <input type="text" id="propertyNumber" v-model="form.propertyNumber" class="form-control" required>
       </div>
       <div>
-        <label for="apartmentNumber">Numer lokalu: <span class="text-danger">*</span></label>
+        <label for="apartmentNumber">Numer lokalu:</label>
         <input type="text" id="apartmentNumber" v-model="form.apartmentNumber" class="form-control" required>
       </div>
       <div>
         <label for="nip">NIP: <span class="text-danger">*</span></label>
-        <input type="text" id="nip" v-model="form.nip" class="form-control" required>
+        <input type="text" maxlength="10" id="nip" v-model="form.nip" class="form-control" required>
       </div>
       <div>
         <label for="regon">REGON: </label>
@@ -39,7 +39,7 @@
         <textarea type="text" id="commentsBusiness" v-model="form.comments" class="form-control" />
       </div>
       <div>
-        <label>Emaile: <span class="text-danger">*</span></label>
+        <label>Emaile:</label>
         <div class="input_button_place" v-for="(email, index) in form.emails" :key="index">
           <input type="text" v-model="form.emails[index]" placeholder="Wpisz email" class="form-control input_size" >
           <button type="button" @click="removeEmail(index)">Usuń</button>
@@ -47,9 +47,9 @@
         <button type="button" class="button_add_contact" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
-        <label>Numer telefonu: (max 16 cyfr) <span class="text-danger">*</span></label>
+        <label>Numery telefonów:</label>
         <div class="input_button_place" v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="text" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control input_size" >
+          <input type="text" maxlength="16" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control input_size" >
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
         <button type="button" class="button_add_contact" @click="addPhoneNumber">Dodaj nowy numer telefonu</button>

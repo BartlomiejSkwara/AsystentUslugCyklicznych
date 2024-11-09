@@ -4,12 +4,14 @@
     <div class="container">
       <router-link to="/add-user" class="add-button">Dodaj nowego użytkownika usługi</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
-        <input type="text" class="input" v-model="searchFields.surname" placeholder="Nazwisko" style="margin-bottom: 10px; margin-right: 10px;">
-        <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
-          <input type="text" class="input" v-model="searchFields.name" placeholder="Imię" style="margin-bottom: 10px; margin-right: 10px;">
-        </div>
-        <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>
+        <input type="text" class="input" v-model="searchQuery" placeholder="Szukaj" style="margin-bottom: 10px; margin-right: 10px;">
       </div>
+    </div>
+    <div style="margin-bottom: 10px; margin-left: 14%" >
+      <label><input type="checkbox" v-model="searchFields.name" checked> Imię</label>
+      <label style="margin-left: 10px;"><input type="checkbox" v-model="searchFields.surname" checked> Nazwisko</label>
+      <label style="margin-left: 20px;"><input type="checkbox" v-model="searchFields.email" checked> Email</label>
+      <label style="margin-left: 20px;"><input type="checkbox" v-model="searchFields.phone" checked> Telefon</label>
     </div>
     <table>
       <thead>
@@ -176,9 +178,12 @@ export default {
   data() {
     return {
       users: [],
+      searchQuery: '',
       searchFields: {
-        surname: '',
-        name: '',
+        name: true,
+        surname: true,
+        email: true,
+        phone: true,
       },
       showAdditionalFields: false,
       selectedUser: null,
@@ -195,12 +200,22 @@ export default {
     },
     filteredUsers() {
       return this.users.filter(user => {
-        return (
-            user.surname.toLowerCase().includes(this.searchFields.surname.toLowerCase()) &&
-            (!this.showAdditionalFields || (
-                user.name.toLowerCase().includes(this.searchFields.name.toLowerCase())
-            ))
-        );
+        let matches = false;
+
+        if (this.searchFields.name && user.name.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          matches = true;
+        }
+        if (this.searchFields.surname && user.surname.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          matches = true;
+        }
+        if (this.searchFields.email && user.contactData && user.contactData.emails.some(email => email.email.toLowerCase().includes(this.searchQuery.toLowerCase()))) {
+          matches = true;
+        }
+        if (this.searchFields.phone && user.contactData && user.contactData.phoneNumbers.some(phone => phone.number.includes(this.searchQuery))) {
+          matches = true;
+        }
+
+        return matches;
       });
     },
     paginatedUsers() {
