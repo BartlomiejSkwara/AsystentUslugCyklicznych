@@ -4,13 +4,14 @@
     <div class="container">
       <router-link to="/add-business" class="add-button">Dodaj nową firmę</router-link>
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
-        <input type="text" class="input" v-model="searchFields.name" placeholder="Nazwa" style="margin-bottom: 10px; margin-right: 10px;">
-        <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
-          <input type="text" class="input" v-model="searchFields.nip" placeholder="NIP" style="margin-bottom: 10px; margin-right: 10px;">
-<!--          <input type="text" class="input" v-model="searchFields.regon" placeholder="REGON" style="margin-bottom: 10px; margin-right: 10px;">-->
-        </div>
-        <button @click="toggleSearchFields" style="margin-left: 10px;">+</button>
+        <input type="text" class="input" v-model="searchQuery" placeholder="Szukaj" style="margin-bottom: 10px; margin-right: 10px;">
       </div>
+    </div>
+    <div style="margin-bottom: 10px; margin-left: 14%" >
+      <label><input type="checkbox" v-model="searchFields.name" checked> Nazwa</label>
+      <label style="margin-left: 10px;"><input type="checkbox" v-model="searchFields.email" checked> Email</label>
+      <label style="margin-left: 20px;"><input type="checkbox" v-model="searchFields.phone" checked> Telefon</label>
+      <label style="margin-left: 10px;"><input type="checkbox" v-model="searchFields.nip" checked> NIP</label>
     </div>
     <table>
       <thead>
@@ -152,10 +153,12 @@ export default {
   data() {
     return {
       businesses: [],
+      searchQuery: '',
       searchFields: {
-        name: '',
-        nip: '',
-        regon: ''
+        name: true,
+        nip: true,
+        email: true,
+        phone: true
       },
       showAdditionalFields: false,
       showModal: false,
@@ -174,10 +177,22 @@ export default {
     },
     filteredBusinesses() {
       return this.businesses.filter(business => {
-        return (
-            business.name.toLowerCase().includes(this.searchFields.name.toLowerCase()) &&
-            business.nip.toLowerCase().includes(this.searchFields.nip.toLowerCase())
-        );
+        let matches = false;
+
+        if (this.searchFields.name && business.name.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          matches = true;
+        }
+        if (this.searchFields.nip && business.nip.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          matches = true;
+        }
+        if (this.searchFields.email && business.contactData && business.contactData.emails.some(email => email.email.toLowerCase().includes(this.searchQuery.toLowerCase()))) {
+          matches = true;
+        }
+        if (this.searchFields.phone && business.contactData && business.contactData.phoneNumbers.some(phone => phone.number.includes(this.searchQuery))) {
+          matches = true;
+        }
+
+        return matches;
       });
     },
     paginatedBusinesses() {

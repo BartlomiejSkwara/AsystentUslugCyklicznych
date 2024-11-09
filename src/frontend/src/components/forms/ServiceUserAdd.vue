@@ -25,7 +25,7 @@
         </span>
       </div>
       <div>
-        <label>Emaile: <span class="text-danger">*</span></label>
+        <label>Emaile:</label>
         <div class="input_button_place" v-for="(email, index) in form.emails" :key="index">
           <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" class="input_size form-control"  required />
           <button type="button" @click="removeEmail(index)">Usuń</button>
@@ -33,15 +33,15 @@
         <button type="button" class="button_add_contact" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
-        <label>Numery telefonów: (max 16 znaków) <span class="text-danger">*</span></label>
+        <label>Numery telefonów:</label>
         <div class="input_button_place" v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="tel" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="input_size form-control"  required />
+          <input type="tel" maxlength="16" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="input_size form-control"  required />
           <button type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
         <button type="button" class="button_add_contact" @click="addPhoneNumber">Dodaj nowy telefon</button>
       </div>
       <div>
-        <label for="hasPolishPESEL">Polski PESEL?: <span class="text-danger">*</span></label>
+        <label for="hasPolishPESEL">Polski PESEL?:</label>
         <br>
         <select id="hasPolishPESEL" v-model="form.hasPolishPESEL">
           <option :value="true">Tak</option>
@@ -49,8 +49,8 @@
         </select>
       </div>
       <div v-if="form.hasPolishPESEL">
-        <label for="taxIdentificationNumber">PESEL (dokładnie 11 znaków): <span class="text-danger">*</span></label>
-        <input type="text" id="taxIdentificationNumber" v-model="form.taxId" class="form-control" />
+        <label for="taxIdentificationNumber">PESEL:</label>
+        <input type="text" maxlength="11" id="taxIdentificationNumber" v-model="form.taxId" class="form-control" />
       </div>
       <div>
         <label for="commentsUser">Dodatkowy opis:</label>
