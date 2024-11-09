@@ -33,10 +33,35 @@
 
                 <div class="col-md-4">
                   <h3>Użytkownik Usługi i Firma:</h3>
-                  <span><b>Nazwa Firmy: </b>{{ cycleInfo.business.businessName }}</span><br>
                   <span><b>Imię użytkownika usługi: </b>{{ cycleInfo.serviceUser.name }}</span><br>
                   <span><b>Nazwisko użytkownika usługi: </b>{{ cycleInfo.serviceUser.getSurname }}</span><br>
-                  <span><b>Stanowisko w firmie: </b>{{ cycleInfo.certificate.nameInOrganisation }}</span><br>
+                  <span><b>Maile użytkownika: </b></span>
+                  <ul>
+                    <li v-for="(email, index) in serviceUserContactData.emails" :key="index">
+                      {{ email.email }}
+                    </li>
+                  </ul>
+                  <span><b>Numery telefonów użytkownika: </b></span>
+                  <ul>
+                    <li v-for="(phone, index) in serviceUserContactData.phoneNumbers" :key="index">
+                      {{ phone.number }}
+                    </li>
+                  </ul>
+                  <span><b>Stanowisko w firmie: </b>{{ cycleInfo.certificate.nameInOrganisation || 'brak danych' }}</span><br>
+                  <span><b>----------------</b></span><br>
+                  <span><b>Nazwa Firmy: </b>{{ cycleInfo.business.businessName }}</span><br>
+                  <span><b>Maile firmy: </b></span>
+                  <ul>
+                    <li v-for="(email, index) in businessContactData.emails" :key="index">
+                      {{ email.email }}
+                    </li>
+                  </ul>
+                  <span><b>Numery telefonów firmy: </b></span>
+                  <ul>
+                    <li v-for="(phone, index) in businessContactData.phoneNumbers" :key="index">
+                      {{ phone.number }}
+                    </li>
+                  </ul>
                 </div>
             </div>
         </div>
@@ -109,13 +134,17 @@
         cycleInfo: this.$store.state.passedValue,
         statusList: [],
         statusChangeHistory: [],
-        certHistory:[]
+        certHistory:[],
+        serviceUserContactData: { emails: [], phoneNumbers: [] },
+        businessContactData: { emails: [], phoneNumbers: [] }
       };
     },
     mounted() {
       this.statusList = decodeStatus(this.cycleInfo.statusBitmask);
       this.fetchStatusChangeHistory();
       this.fetchCertHistory();
+      this.fetchBusinessContactData(this.cycleInfo.business.idBusiness);
+      this.fetchServiceUserContactData(this.cycleInfo.serviceUser.idServiceUser);
       // this.cycleId = this.$route.params.id; 
     },
     computed:{
@@ -174,6 +203,29 @@
             console.error("There has been a problem with your fetch operation:", error);
         }
         
+      },
+
+      async fetchBusinessContactData(idBusiness) {
+        try {
+          const response = await fetchWrapper(this, `/api/business/get/${idBusiness}`, {
+            method: 'GET',
+          });
+          const businessData = await response.json();
+          this.businessContactData = businessData.contactData || { emails: [], phoneNumbers: [] };
+        } catch (error) {
+          console.error("Błąd pobierania danych firmy:", error);
+        }
+      },
+      async fetchServiceUserContactData(idServiceUser) {
+        try {
+          const response = await fetchWrapper(this, `/api/serviceUser/get/${idServiceUser}`, {
+            method: 'GET',
+          });
+          const userData = await response.json();
+          this.serviceUserContactData = userData.contactData || { emails: [], phoneNumbers: [] };
+        } catch (error) {
+          console.error("Błąd pobierania danych użytkownika:", error);
+        }
       },
       
       

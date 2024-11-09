@@ -14,6 +14,9 @@
           <button class="btn btn-danger "  type="button" @click="fetchAccounts">
                 Odśwież
             </button>
+          <button class="btn btn-warning" style="margin-left: 5px" type="button" @click="dbWipe">
+            Usuń bazę
+          </button>
           <!-- <button @click="toggleSearchFields" style="margin-left: 10px;">+</button> -->
         </div>
       </div>
@@ -186,6 +189,34 @@
             }
             
         },
+      async dbWipe() {
+
+        const confirmed = window.confirm("Czy na pewno chcesz usunąć całą bazę danych? Tej operacji nie można cofnąć!");
+
+        if (!confirmed) {
+          return;
+        }
+
+        try {
+          const cookie = getCookie('XSRF-TOKEN');
+          const response = await fetchWrapper(this, '/api/specialActions/dbWipe', {
+            method: 'POST',
+            headers: {
+              'X-XSRF-TOKEN': cookie
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Wystąpił błąd podczas usuwania bazy danych');
+          }
+
+          alert('Z powodzeniem usunięto bazę danych');
+          this.fetchAccounts();
+        } catch (error) {
+          console.error('Wystąpił błąd:', error);
+          alert(error.message);
+        }
+      },
         toggleSearchFields() {
             this.showAdditionalFields = !this.showAdditionalFields;
         },
