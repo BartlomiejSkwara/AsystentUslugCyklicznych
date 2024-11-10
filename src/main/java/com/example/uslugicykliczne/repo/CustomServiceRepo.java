@@ -211,7 +211,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
         Query disableSafeUpdate = entityManager.createNativeQuery("SET SQL_SAFE_UPDATES = 0");
         disableSafeUpdate.executeUpdate();
         Query query = entityManager.createNativeQuery(
-                "update  uslugi_cykliczne.cyclical_service cs " +
+                "update  cyclical_service cs " +
                         "set cs.status = cs.status & ~(:targetStatus) , cs.ignore_to = null " +
                         "where (cs.status & (:targetStatus)) != 0  and cs.ignore_to<:today"
         );

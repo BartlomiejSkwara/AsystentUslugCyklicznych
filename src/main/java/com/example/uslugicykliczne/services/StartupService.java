@@ -35,9 +35,9 @@ public class StartupService {
 
             AccountDataEntity accountDataEntity = new AccountDataEntity();
             accountDataEntity.setRole("ROLE_admin");
-            accountDataEntity.setUsername("admin");
+            accountDataEntity.setUsername(env.getProperty("conf.admin.login"));
 
-            accountDataEntity.setHashedPassword(passwordEncoder.encode(env.getProperty("server.adminPassword")));
+            accountDataEntity.setHashedPassword(passwordEncoder.encode(env.getProperty("conf.admin.password")));
 
 
             ServiceUserEntity serviceUserEntity = new ServiceUserEntity();
