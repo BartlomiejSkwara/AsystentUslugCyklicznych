@@ -141,8 +141,8 @@ export default {
             this.form.surname = user.surname || '';
             this.form.login = user.accountDataEntity.username || '';
             this.form.password = '';
-            this.form.hasPolishPESEL = user.hasPolishPESEL !== undefined ? user.hasPolishPESEL : false;
-            this.form.taxId = user.taxId || null;
+            this.form.hasPolishPESEL = user.hasPolishPesel !== undefined ? user.hasPolishPesel : false;
+            this.form.taxId = user.taxIdentificationNumber || null;
             this.form.comments = user.comments || '';
 
             if (user.contactData) {
@@ -174,22 +174,41 @@ export default {
       }
     },
     async submitForm() {
+      //JEDNAK NADAL NIE DZIAŁA
+      let payload = {};
 
-      let emailsCheck = this.form.emails.filter(str=>{str.trim.length!=0})
-      let numbersCheck = this.form.phoneNumbers.filter(str=>{str.trim.length!=0})
-      let peselCheck = this.form.taxId.trim().length==0? null : this.form.taxId
+      if (this.formMode === 'edit') {
 
-      const payload = {
-        name: this.form.name,
-        surname: this.form.surname,
-        login: this.form.login,
-        password: this.form.password.trim(),
-        hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
-        comments: this.form.comments,
-        emails:  emailsCheck.length == 0 ? null : emailsCheck,
-        phoneNumbers: numbersCheck.length == 0 ? null : numbersCheck,
-        taxId: this.form.hasPolishPESEL ? peselCheck : null
-      };
+        payload = {
+          name: this.form.name,
+          surname: this.form.surname,
+          login: this.form.login,
+          password: this.form.password.trim(),
+          hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
+          comments: this.form.comments,
+          emails: this.form.emails,
+          phoneNumbers: this.form.phoneNumbers,  //PROBLEM MORALNY W OPISIE COMMITA
+          taxId: this.form.taxIdentificationNumber
+        };
+      }
+      else {
+        // szczerze trzeba to mocno przetestować bo coś się psuje
+        let emailsCheck = this.form.emails.filter(str => {str.trim.length !== 0})
+        let numbersCheck = this.form.phoneNumbers.filter(str => {str.trim.length != 0})
+        // let peselCheck = this.form.taxId.trim().length == 0 ? null : this.form.taxId
+
+        payload = {
+          name: this.form.name,
+          surname: this.form.surname,
+          login: this.form.login,
+          password: this.form.password.trim(),
+          hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
+          comments: this.form.comments,
+          emails: emailsCheck.length === 0 ? null : emailsCheck,
+          phoneNumbers: numbersCheck.length === 0 ? null : numbersCheck,
+          taxId: this.form.taxId
+        };
+      }
 
       // if (this.form.newPassword) {
       //   payload.password = this.form.newPassword; // Dodaj hasło tylko, jeśli jest ustawione

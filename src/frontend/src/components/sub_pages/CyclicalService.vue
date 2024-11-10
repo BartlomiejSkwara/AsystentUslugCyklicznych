@@ -8,9 +8,12 @@
 <!--        <input type="text" class="input" v-model="searchFields.name" placeholder="Nazwa użytkownika" style="margin-bottom: 10px; margin-right: 10px">-->
       </div>
     </div>
-    <div style="margin-bottom: 10px; margin-left: 20%" >
-      <label><input type="checkbox" v-model="searchFields.businessName" checked> Firma</label>
-      <label style="margin-left: 10px;"><input type="checkbox" v-model="searchFields.name" checked> Użytkownik</label>
+    <div style="background-color: #f0f0f0; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
+      <div style="display: flex; align-items: center;">
+        <h4 style="font-size: 14px; margin-right: 15px; margin-bottom: 0;"><b>Filtry wyszukiwania:</b></h4>
+        <label style="margin-right: 15px;"><input type="checkbox" v-model="searchFields.businessName" checked> Firma</label>
+        <label><input type="checkbox" v-model="searchFields.name" checked> Użytkownik</label>
+      </div>
     </div>
 
     <div style="display: inline-block;" class="days-filter">

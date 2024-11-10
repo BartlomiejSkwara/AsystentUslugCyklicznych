@@ -25,6 +25,7 @@
         <th>Dodatkowy opis</th>
         <th>Rola w systemie</th>
         <th></th>
+        <th></th>
       </tr>
       </thead>
       <tbody>
@@ -73,6 +74,11 @@
             </ul>
           </div>
         </td>
+        <td>
+          <span v-if="isWarning(user)" class="text-warning">
+            <i style="font-size: 13px" class="fas fa-exclamation-circle">Niepełne dane</i>
+          </span>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -120,13 +126,16 @@
           <div class="modal-body">
             <div v-if="contactDataDetails">
               <p><strong>Emaile:</strong></p>
-              <ul>
-                <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email }}</li>
+              <ul v-if="contactDataDetails.emails.length > 0">
+                <li v-for="email in contactDataDetails.emails" :key="email.idEmail">{{ email.email}}</li>
               </ul>
+              <p v-else>Nieznane</p>
+
               <p><strong>Numery telefonów:</strong></p>
-              <ul>
-                <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number }}</li>
+              <ul v-if="contactDataDetails.phoneNumbers.length > 0">
+                <li v-for="phone in contactDataDetails.phoneNumbers" :key="phone.idPhoneNumber">{{ phone.number}}</li>
               </ul>
+              <p v-else>Nieznane</p>
             </div>
             <div v-else>
               <p>Brak danych</p>
@@ -197,6 +206,15 @@ export default {
   computed: {
     isAdmin() {
       return this.$store.state.role === "ROLE_admin";
+    },
+    isWarning() {
+      return (user) => {
+        const noEmail = !user.contactData || !user.contactData.emails.length;
+        const noPhone = !user.contactData || !user.contactData.phoneNumbers.length;
+        const missingTaxID = user.hasPolishPesel && !user.taxIdentificationNumber;
+
+        return noEmail || noPhone || missingTaxID;
+      };
     },
     filteredUsers() {
       return this.users.filter(user => {
