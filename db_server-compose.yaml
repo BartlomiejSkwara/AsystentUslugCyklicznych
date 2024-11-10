@@ -24,7 +24,7 @@ services:
       interval: 3s
       timeout: 30s
   spring:
-    image: bartlomiejskwara/cyclical-services:1.53
+    image: bartlomiejskwara/cyclical-services:1.64
     container_name: spring
     restart: on-failure
     ports:
@@ -36,8 +36,14 @@ services:
     networks:
       - customNetwork
     environment:
-      MYSQL_HOST: mymysql8
-      NAZWA_PARAMETRU: WARTOŚĆ
+      conf.db.domain: mymysql8
+      conf.db.port: 3306
+      conf.db.password: p2lain4old67java39fil8e
+      conf.db.schema: uslugi_cykliczne
+      conf.server.port: 8080
+      conf.admin.password: 123
+      conf.admin.login: admin
+
 volumes:
   mysql-db:
     name: dbVolume
