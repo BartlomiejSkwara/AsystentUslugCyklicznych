@@ -7,11 +7,14 @@
         <input type="text" class="input" v-model="searchQuery" placeholder="Szukaj" style="margin-bottom: 10px; margin-right: 10px;">
       </div>
     </div>
-    <div style="margin-bottom: 10px; margin-left: 14%" >
-      <label><input type="checkbox" v-model="searchFields.name" checked> Nazwa</label>
-      <label style="margin-left: 10px;"><input type="checkbox" v-model="searchFields.email" checked> Email</label>
-      <label style="margin-left: 20px;"><input type="checkbox" v-model="searchFields.phone" checked> Telefon</label>
-      <label style="margin-left: 10px;"><input type="checkbox" v-model="searchFields.nip" checked> NIP</label>
+    <div class="search_filters">
+      <div style="display: flex; align-items: center;">
+        <h4 style="font-size: 14px; margin-right: 15px;"><b>Filtry wyszukiwania:</b></h4>
+        <label><input type="checkbox" v-model="searchFields.name" checked> Nazwa</label>
+        <label style="margin-left: 10px;"><input type="checkbox" v-model="searchFields.email" checked> Email</label>
+        <label style="margin-left: 20px;"><input type="checkbox" v-model="searchFields.phone" checked> Telefon</label>
+        <label style="margin-left: 10px;"><input type="checkbox" v-model="searchFields.nip" checked> NIP</label>
+      </div>
     </div>
     <table>
       <thead>
@@ -23,7 +26,7 @@
         <th>Opis</th>
         <th>NIP</th>
         <th>REGON</th>
-        <th>Działania</th>
+        <th style="width: 150px">Działania</th>
         <th></th>
       </tr>
       </thead>
@@ -45,7 +48,7 @@
         </td>
         <td>
           <span v-if="isWarning(business)" class="text-warning">
-            <i style="font-size: 13px" class="fas fa-exclamation-circle">Niepełne dane</i>
+            <h5 class="warn">&#33;</h5>
           </span>
         </td>
       </tr>
