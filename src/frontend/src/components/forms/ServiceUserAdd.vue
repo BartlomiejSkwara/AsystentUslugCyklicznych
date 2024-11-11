@@ -226,7 +226,6 @@ export default {
 
 
       let emailsCheck = this.form.emails.filter(str=> str.trim().length!==0 )
-      let peselCheck = this.form.hasPolishPESEL && this.form.taxId.trim().length===0? null : this.form.taxId
 
       payload = {
         name: this.form.name,
