@@ -8,9 +8,9 @@
 <!--        <input type="text" class="input" v-model="searchFields.name" placeholder="Nazwa użytkownika" style="margin-bottom: 10px; margin-right: 10px">-->
       </div>
     </div>
-    <div style="background-color: #f0f0f0; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
+    <div class="search_filters">
       <div style="display: flex; align-items: center;">
-        <h4 style="font-size: 14px; margin-right: 15px; margin-bottom: 0;"><b>Filtry wyszukiwania:</b></h4>
+        <h4 style="font-size: 14px; margin-right: 15px;"><b>Filtry wyszukiwania:</b></h4>
         <label style="margin-right: 15px;"><input type="checkbox" v-model="searchFields.businessName" checked> Firma</label>
         <label><input type="checkbox" v-model="searchFields.name" checked> Użytkownik</label>
       </div>
@@ -83,8 +83,8 @@
 
 
           <div class="dropdown ">
-            <button class="btn1 btn btn-primary dropdown-toggle" style="background-color: gray;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Działania 
+            <button class="btn1 btn btn-primary dropdown-toggle options" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Działania
             </button>
             <ul class="dropdown-menu">
               <li v-if="isAdminOrEditor" >

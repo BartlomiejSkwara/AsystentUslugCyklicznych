@@ -148,7 +148,7 @@ export default {
     // console.log(ref(1).intlTelInput);
     console.log(this.$refs.phoneNumber);
     console.log(this.$refs.phoneNumber[0].instance.getNumber());
-      
+
 
 
 
@@ -176,7 +176,7 @@ export default {
               this.form.phoneNumbers = user.contactData.phoneNumbers.map(phone => phone.number!=null?phone.number:null) || [];
 
               console.log(this.form.phoneNumbers);
-              
+
             } else {
               this.form.phoneNumbers =[];
 
@@ -206,7 +206,7 @@ export default {
     async submitForm() {
       //JEDNAK NADAL NIE DZIAŁA
       let payload = {};
-      
+
 
       let numbersCheck = [];
 
@@ -219,41 +219,27 @@ export default {
       let taxIdCheck = this.form.taxId;
       if(this.form.taxId != null)
         taxIdCheck = this.form.taxId.trim().length>0?this.form.taxId:null;
-      
+
       let passwordCheck = this.form.password;
       if(this.form.password != null)
         passwordCheck = this.form.password.trim().length>0?this.form.password:null;
-      
-      
-      if (this.formMode === 'edit') {
 
-        payload = {
-          name: this.form.name,
-          surname: this.form.surname,
-          login: this.form.login,
-          password: passwordCheck,
-          hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
-          comments: this.form.comments,
-          emails: this.form.emails,
-          phoneNumbers: numbersCheck.length>0?numbersCheck:null,  
-          taxId: taxIdCheck
-        };
-      }
-      else {
-        payload = {
-          name: this.form.name,
-          surname: this.form.surname,
-          login: this.form.login,
-          password: passwordCheck,
-          hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
-          comments: this.form.comments,
-          emails: this.form.emails.length === 0 ? null : this.form.emails,
-          phoneNumbers: numbersCheck.length>0?numbersCheck:null,  
-          taxId: taxIdCheck
-        };
-      }
-      console.log("5");
-      
+
+      let emailsCheck = this.form.emails.filter(str=> str.trim().length!==0 )
+      let peselCheck = this.form.hasPolishPESEL && this.form.taxId.trim().length===0? null : this.form.taxId
+
+      payload = {
+        name: this.form.name,
+        surname: this.form.surname,
+        login: this.form.login,
+        password: passwordCheck,
+        hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
+        comments: this.form.comments,
+        emails:  emailsCheck.length === 0 ? null : emailsCheck,
+        phoneNumbers: numbersCheck.length>0?numbersCheck:null,
+        taxId: taxIdCheck
+      };
+
       // if (this.form.newPassword) {
       //   payload.password = this.form.newPassword; // Dodaj hasło tylko, jeśli jest ustawione
       // }

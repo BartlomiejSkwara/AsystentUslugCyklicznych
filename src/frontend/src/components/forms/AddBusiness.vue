@@ -109,8 +109,8 @@ export default {
         nip: '',
         regon: '',
         comments: '',
-        emails: [], 
-        phoneNumbers: [] 
+        emails: [],
+        phoneNumbers: []
       },
       errorMessage: "",
       ignoreDup: false,
@@ -187,14 +187,16 @@ export default {
     },
     async submitForm() {
 
-      let emailsCheck = this.form.emails.filter(str=>{str.trim.length!=0})
+      let emailsCheck = this.form.emails.filter(str=> str.trim().length !==0)
+
+
       let numbersCheck = [];
       for (let i = 0; i <  this.form.phoneNumbers.length; i++) {
         let instance  = this.$refs.phoneNumberB[i].instance;
         numbersCheck.push(`+${instance.selectedCountryData.dialCode} ${this.form.phoneNumbers[i].replace(/\+\d+/,'')}`)
 
       }
-    
+
       const payload = {
         name: this.form.name,
         locality: this.form.locality,
@@ -205,7 +207,7 @@ export default {
         nip: this.form.nip,
         regon: this.form.regon,
         comments: this.form.comments,
-        emails: emailsCheck.length == 0 ? null : emailsCheck,
+        emails: emailsCheck.length === 0 ? null : emailsCheck,
         phoneNumbers: numbersCheck
       };
 
