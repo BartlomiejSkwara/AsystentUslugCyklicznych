@@ -120,7 +120,7 @@
         </div>
         
         <br>
-        <button class="btn btn-danger" type="button" @click="goBack" style="float: right">Powrót</button>
+        <button class="btn1 btn btn-danger" type="button" @click="goBack" style="float: right">Powrót</button>
     </div>
   </template>
   

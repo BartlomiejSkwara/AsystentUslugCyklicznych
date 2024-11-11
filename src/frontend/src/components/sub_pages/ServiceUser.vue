@@ -45,7 +45,7 @@
         <td> {{ user.accountDataEntity.role}}</td>
         <td>
           <div class="dropdown ">
-            <button class="btn btn-primary dropdown-toggle" style="background-color: gray;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn1 btn btn-primary dropdown-toggle" style="background-color: gray;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               Działania:
             </button>
             <ul class="dropdown-menu">
@@ -121,7 +121,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3>Dane kontaktowe użytkownika usługi</h3>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn1 btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <div v-if="contactDataDetails">
@@ -150,7 +150,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3>Dane przypisanej firmy</h3>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn1 btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <div v-if="selectedBusiness">

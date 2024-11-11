@@ -85,7 +85,7 @@
       </div>
       <p class="text-danger" style="font-size: 0.9em">* pozycje obowiązkowe</p>
       <button type="submit">Zapisz</button>
-      <button type="button" @click="checkFormAndOpenModal" style="float: right">Powrót</button>
+      <button class="btn1"  @click="checkFormAndOpenModal" style="float: right">Powrót</button>
     </form>
   </div>
 

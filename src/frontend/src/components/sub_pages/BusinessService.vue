@@ -91,7 +91,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h2>Dane kontaktowe firmy</h2>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn1 btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <div v-if="addressDetails">
@@ -127,7 +127,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h3>Dane kontaktowe użytkownika przypisanego do firmy</h3>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="btn1 btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <div v-if="selectedUserData">

@@ -38,8 +38,8 @@ public class ServiceUserDTO {
 
     private final List<
             @NotBlank(message = "Podano pusty numer telefonu")
-            @Size(max = 16 , message = "Podany numer telefonu jest za długi")
-            @Pattern(regexp = "^\\d+$", message = "Numer telefonu może zawierać tylko liczby!!!")
+            @Size(max = 20 , message = "Podany numer telefonu jest za długi")
+            @Pattern(regexp = "^\\+\\d+ [\\d\\s()-]+$", message = "Numer telefonu może zawierać tylko liczby!!!")
             String> phoneNumbers;
 
     @NotNull(message = "Nie określono pola ma polski PESEL")

@@ -42,17 +42,26 @@
         <label>Emaile:</label>
         <div class="input_button_place" v-for="(email, index) in form.emails" :key="index">
           <input type="text" v-model="form.emails[index]" placeholder="Wpisz email" class="form-control input_size" >
-          <button type="button" @click="removeEmail(index)">Usuń</button>
+          <button type="button"  class="btn1" @click="removeEmail(index)">Usuń</button>
         </div>
-        <button type="button" class="button_add_contact" @click="addEmail">Dodaj nowy email</button>
+        <button type="button"  class="btn1 button_add_contact" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
-        <label>Numery telefonów:</label>
+        <p>Numery telefonów:</p>
         <div class="input_button_place" v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="text" maxlength="16" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control input_size" >
-          <button type="button" @click="removePhoneNumber(index)">Usuń</button>
+          <!-- <input type="text" maxlength="16" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="form-control input_size" > -->
+          <IntlTelInput class="input_size form-control"
+            v-model="form.phoneNumbers[index]"
+            ref=phoneNumberB
+            @changeCountry="countryChange"
+            :options="{
+              initialCountry: 'pl',
+              strictMode: true
+
+            }" />
+          <button   type="button" class="btn1" @click="removePhoneNumber(index)">Usuń</button>
         </div>
-        <button type="button" class="button_add_contact" @click="addPhoneNumber">Dodaj nowy numer telefonu</button>
+        <button type="button"  class="btn1 button_add_contact" @click="addPhoneNumber">Dodaj nowy numer telefonu</button>
 
 
       </div>
@@ -64,7 +73,7 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" style="float: right" @click="checkFormAndOpenModal">Powrót</button>
+      <button v-if="standalone" class="btn1" style="float: right" @click="checkFormAndOpenModal">Powrót</button>
       <br>
     </form>
   </div>
@@ -73,8 +82,13 @@
 
 <script>
 import { fetchWrapper, getCookie, refreshCSRF } from '@/utility';
+import IntlTelInput from "intl-tel-input/vueWithUtils";
+import "intl-tel-input/styles";
 export default {
   name: 'BusinessForm',
+  components:{
+    IntlTelInput
+  },
   props:{
     standalone:{
       type: Boolean,
@@ -95,8 +109,8 @@ export default {
         nip: '',
         regon: '',
         comments: '',
-        emails: [''], // Initialize with one empty field
-        phoneNumbers: [''] // Initialize with one empty field
+        emails: [], 
+        phoneNumbers: [] 
       },
       errorMessage: "",
       ignoreDup: false,
@@ -142,11 +156,13 @@ export default {
             this.form.comments = business.comments;
 
             if (business.contactData) {
-              this.form.emails = business.contactData.emails.map(email => email.email);
-              this.form.phoneNumbers = business.contactData.phoneNumbers.map(phone => phone.number);
+              this.form.emails = business.contactData.emails.map(email => email.email) || [];
+              this.form.phoneNumbers = business.contactData.phoneNumbers.map(phone => phone.number) || [];
+              console.log(this.form.phoneNumbers);
+
             } else {
-              this.form.emails = [''];
-              this.form.phoneNumbers = [''];
+              this.form.emails = [];
+              this.form.phoneNumbers = [];
             }
           })
           .catch(error => {
@@ -157,7 +173,7 @@ export default {
       this.form.emails.push('');
     },
     removeEmail(index) {
-      if (this.form.emails.length > 1) {
+      if (this.form.emails.length > 0) {
         this.form.emails.splice(index, 1);
       }
     },
@@ -165,15 +181,19 @@ export default {
       this.form.phoneNumbers.push('');
     },
     removePhoneNumber(index) {
-      if (this.form.phoneNumbers.length > 1) {
+      if (this.form.phoneNumbers.length > 0) {
         this.form.phoneNumbers.splice(index, 1);
       }
     },
     async submitForm() {
 
       let emailsCheck = this.form.emails.filter(str=>{str.trim.length!=0})
-      let numbersCheck = this.form.phoneNumbers.filter(str=>{str.trim.length!=0})
-      
+      let numbersCheck = [];
+      for (let i = 0; i <  this.form.phoneNumbers.length; i++) {
+        let instance  = this.$refs.phoneNumberB[i].instance;
+        numbersCheck.push(`+${instance.selectedCountryData.dialCode} ${this.form.phoneNumbers[i].replace(/\+\d+/,'')}`)
+
+      }
     
       const payload = {
         name: this.form.name,
@@ -186,7 +206,7 @@ export default {
         regon: this.form.regon,
         comments: this.form.comments,
         emails: emailsCheck.length == 0 ? null : emailsCheck,
-        phoneNumbers: numbersCheck.length == 0 ? null : numbersCheck
+        phoneNumbers: numbersCheck
       };
 
       let url = this.formMode === 'add'

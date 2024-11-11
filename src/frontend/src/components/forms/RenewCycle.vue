@@ -31,7 +31,7 @@
         <input type="text" id="nameInOrganisation" v-model="form.nameInOrganisation" class="form-control" >
       </div>
       <button type="submit">Zapisz</button>
-      <button type="button" @click="goBack">Powrót</button>
+      <button class="btn1"  @click="goBack">Powrót</button>
     </form>
   </div>
 </template>

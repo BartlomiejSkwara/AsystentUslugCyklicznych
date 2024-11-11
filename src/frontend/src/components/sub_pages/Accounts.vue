@@ -11,10 +11,10 @@
             <input type="text" class="input" v-model="searchFields.role" placeholder="Rola" style="margin-bottom: 10px; margin-right: 10px;">
             <!-- <input type="text" class="input" v-model="searchFields.id" placeholder="REGON" style="margin-bottom: 10px; margin-right: 10px;"> -->
           </div>
-          <button class="btn btn-danger "  type="button" @click="fetchAccounts">
+          <button class="btn btn-danger btn1"  @click="fetchAccounts">
                 Odśwież
             </button>
-          <button class="btn btn-warning" style="margin-left: 5px" type="button" @click="dbWipe">
+          <button class="btn btn-warning btn1" style="margin-left: 5px" type="button" @click="dbWipe">
             Usuń bazę
           </button>
           <!-- <button @click="toggleSearchFields" style="margin-left: 10px;">+</button> -->

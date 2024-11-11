@@ -7,7 +7,7 @@
         <input type="file" id="file" @change="handleFileUpload" required />
       </div>
       <button type="submit">Upload</button>
-      <button type="button" @click="goBack">Back</button>
+      <button class="btn1" @click="goBack">Back</button>
     </form>
   </div>
 </template>

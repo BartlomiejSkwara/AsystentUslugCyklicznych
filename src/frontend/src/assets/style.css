@@ -113,7 +113,7 @@ th {
     margin-right: 5px;
 }
 
-button[type="button"] {
+button.btn1 {
     background-color: #dc3545;
     color: white;
     border: none;
@@ -122,19 +122,19 @@ button[type="button"] {
     border-radius: 5px;
 }
 
-button[type="button"]:hover {
+button.btn1:hover {
     background-color: #c82333;
 }
 
-button[type="button"].add-input {
+button.btn1.add-input {
     background-color: #ff9407;
 }
 
-button[type="button"].add-input:hover {
+button.btn1.add-input:hover {
     background-color: #b56803;
 }
 
-button[type="button"].renew-button {
+button.btn1.renew-button {
     background-color: #285c87;
 }
 

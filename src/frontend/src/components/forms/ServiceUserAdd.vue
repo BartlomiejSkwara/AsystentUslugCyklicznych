@@ -25,20 +25,29 @@
         </span>
       </div>
       <div>
-        <label>Emaile:</label>
+        <p>Emaile:</p>
         <div class="input_button_place" v-for="(email, index) in form.emails" :key="index">
           <input type="email" v-model="form.emails[index]" placeholder="Wpisz email" class="input_size form-control"   />
-          <button type="button" @click="removeEmail(index)">Usuń</button>
+          <button class="btn1"  @click="removeEmail(index)">Usuń</button>
         </div>
-        <button type="button" class="button_add_contact" @click="addEmail">Dodaj nowy email</button>
+        <button  class="btn1 button_add_contact" type="button" @click="addEmail">Dodaj nowy email</button>
       </div>
       <div>
-        <label>Numery telefonów:</label>
+        <p>Numery telefonów:</p>
         <div class="input_button_place" v-for="(phoneNumber, index) in form.phoneNumbers" :key="index">
-          <input type="tel" maxlength="16" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="input_size form-control"   />
-          <button type="button" @click="removePhoneNumber(index)">Usuń</button>
+          <IntlTelInput class="input_size form-control"
+            v-model="form.phoneNumbers[index]"
+            ref=phoneNumber
+            @changeCountry="countryChange"
+            :options="{
+              initialCountry: 'pl',
+              strictMode: true
+
+            }" />
+          <!-- <input type="tel" maxlength="16" v-model="form.phoneNumbers[index]" placeholder="Wpisz numer telefonu" class="input_size form-control"   /> -->
+          <button class="btn1" type="button" @click="removePhoneNumber(index)">Usuń</button>
         </div>
-        <button type="button" class="button_add_contact" @click="addPhoneNumber">Dodaj nowy telefon</button>
+        <button  class="btn1 button_add_contact" type="button" @click="addPhoneNumber">Dodaj nowy telefon</button>
       </div>
       <div>
         <label for="hasPolishPESEL">Polski PESEL?:</label>
@@ -65,15 +74,20 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" type="button" style="float: right" @click="checkFormAndOpenModal">Powrót</button>
+      <button v-if="standalone" class="btn1" style="float: right" @click="checkFormAndOpenModal">Powrót</button>
     </form>
   </div>
 </template>
 
 <script>
 import { getCookie,fetchWrapper, refreshCSRF } from '@/utility';
+import IntlTelInput from "intl-tel-input/vueWithUtils";
+import "intl-tel-input/styles";
 export default {
   name: 'UserForm',
+  components: {
+    IntlTelInput
+  },
   props:{
     standalone:{
       type: Boolean,
@@ -89,10 +103,10 @@ export default {
         surname: '',
         login: '',
         password: '',
-        emails: [''],
-        phoneNumbers: [''],
+        emails: [],
+        phoneNumbers: [],
         hasPolishPESEL: true,
-        taxId: '',
+        taxId: "",
         comments: ''
       },
       errorMessage: "",
@@ -129,6 +143,18 @@ export default {
     }
   },
   methods: {
+    countryChange(country){
+
+    // console.log(ref(1).intlTelInput);
+    console.log(this.$refs.phoneNumber);
+    console.log(this.$refs.phoneNumber[0].instance.getNumber());
+      
+
+
+
+    console.log("zmiana",country,"....");
+
+    },
     switchRequestModalVisibility() {
       this.showRequestModal = !this.showRequestModal;
     },
@@ -146,11 +172,15 @@ export default {
             this.form.comments = user.comments || '';
 
             if (user.contactData) {
-              this.form.emails = user.contactData.emails.map(email => email.email) || [''];
-              this.form.phoneNumbers = user.contactData.phoneNumbers.map(phone => phone.number) || [''];
+              this.form.emails = user.contactData.emails.map(email => email.email) || [];
+              this.form.phoneNumbers = user.contactData.phoneNumbers.map(phone => phone.number!=null?phone.number:null) || [];
+
+              console.log(this.form.phoneNumbers);
+              
             } else {
-              this.form.emails = [''];
-              this.form.phoneNumbers = [''];
+              this.form.phoneNumbers =[];
+
+              this.form.emails = [];
             }
           })
           .catch(error => {
@@ -161,7 +191,7 @@ export default {
       this.form.emails.push('');
     },
     removeEmail(index) {
-      if (this.form.emails.length > 1) {
+      if (this.form.emails.length > 0) {
         this.form.emails.splice(index, 1);
       }
     },
@@ -169,47 +199,61 @@ export default {
       this.form.phoneNumbers.push('');
     },
     removePhoneNumber(index) {
-      if (this.form.phoneNumbers.length > 1) {
+      if (this.form.phoneNumbers.length > 0) {
         this.form.phoneNumbers.splice(index, 1);
       }
     },
     async submitForm() {
       //JEDNAK NADAL NIE DZIAŁA
       let payload = {};
+      
 
+      let numbersCheck = [];
+
+      for (let i = 0; i <  this.form.phoneNumbers.length; i++) {
+        let instance  = this.$refs.phoneNumber[i].instance;
+        numbersCheck.push(`+${instance.selectedCountryData.dialCode} ${this.form.phoneNumbers[i].replace(/\+\d+/,'')}`)
+
+      }
+
+      let taxIdCheck = this.form.taxId;
+      if(this.form.taxId != null)
+        taxIdCheck = this.form.taxId.trim().length>0?this.form.taxId:null;
+      
+      let passwordCheck = this.form.password;
+      if(this.form.password != null)
+        passwordCheck = this.form.password.trim().length>0?this.form.password:null;
+      
+      
       if (this.formMode === 'edit') {
 
         payload = {
           name: this.form.name,
           surname: this.form.surname,
           login: this.form.login,
-          password: this.form.password.trim(),
+          password: passwordCheck,
           hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
           comments: this.form.comments,
           emails: this.form.emails,
-          phoneNumbers: this.form.phoneNumbers,  //PROBLEM MORALNY W OPISIE COMMITA
-          taxId: this.form.taxIdentificationNumber
+          phoneNumbers: numbersCheck.length>0?numbersCheck:null,  
+          taxId: taxIdCheck
         };
       }
       else {
-        // szczerze trzeba to mocno przetestować bo coś się psuje
-        let emailsCheck = this.form.emails.filter(str => {str.trim.length !== 0})
-        let numbersCheck = this.form.phoneNumbers.filter(str => {str.trim.length != 0})
-        // let peselCheck = this.form.taxId.trim().length == 0 ? null : this.form.taxId
-
         payload = {
           name: this.form.name,
           surname: this.form.surname,
           login: this.form.login,
-          password: this.form.password.trim(),
+          password: passwordCheck,
           hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
           comments: this.form.comments,
-          emails: emailsCheck.length === 0 ? null : emailsCheck,
-          phoneNumbers: numbersCheck.length === 0 ? null : numbersCheck,
-          taxId: this.form.taxId
+          emails: this.form.emails.length === 0 ? null : this.form.emails,
+          phoneNumbers: numbersCheck.length>0?numbersCheck:null,  
+          taxId: taxIdCheck
         };
       }
-
+      console.log("5");
+      
       // if (this.form.newPassword) {
       //   payload.password = this.form.newPassword; // Dodaj hasło tylko, jeśli jest ustawione
       // }

@@ -35,7 +35,7 @@
         <input type="text" id="name_in_organisation" v-model="form.name_in_organisation" class="form-control" required />
       </div>
       <button type="submit">{{ isEdit ? 'Zapisz' : 'Zapisz' }}</button>
-      <button type="button" @click="goBack">Powrót</button>
+      <button class="btn1" @click="goBack">Powrót</button>
     </form>
   </div>
 </template>
