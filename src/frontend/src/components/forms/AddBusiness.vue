@@ -171,8 +171,8 @@ export default {
     },
     async submitForm() {
 
-      let emailsCheck = this.form.emails.filter(str=>{str.trim.length!=0})
-      let numbersCheck = this.form.phoneNumbers.filter(str=>{str.trim.length!=0})
+      let emailsCheck = this.form.emails.filter(str=> str.trim().length !==0)
+      let numbersCheck = this.form.phoneNumbers.filter(str=> str.trim().length !==0)
       
     
       const payload = {
@@ -185,8 +185,8 @@ export default {
         nip: this.form.nip,
         regon: this.form.regon,
         comments: this.form.comments,
-        emails: emailsCheck.length == 0 ? null : emailsCheck,
-        phoneNumbers: numbersCheck.length == 0 ? null : numbersCheck
+        emails: emailsCheck.length === 0 ? null : emailsCheck,
+        phoneNumbers: numbersCheck.length === 0 ? null : numbersCheck
       };
 
       let url = this.formMode === 'add'

@@ -189,7 +189,8 @@ export default {
         const noEmail = !business.contactData || !business.contactData.emails.length;
         const noPhone = !business.contactData || !business.contactData.phoneNumbers.length;
         const noREGON = !business.regon;
-        return noEmail || noPhone || noREGON;
+        const noPropertyNumber = !business.address.propertyNumber;
+        return noEmail || noPhone || noREGON || noPropertyNumber;
       };
     },
     filteredBusinesses() {

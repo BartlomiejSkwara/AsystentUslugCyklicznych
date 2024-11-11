@@ -174,41 +174,22 @@ export default {
       }
     },
     async submitForm() {
-      //JEDNAK NADAL NIE DZIAŁA
-      let payload = {};
 
-      if (this.formMode === 'edit') {
+      let emailsCheck = this.form.emails.filter(str=> str.trim().length!==0 )
+      let numbersCheck = this.form.phoneNumbers.filter(str=> str.trim().length!==0 )
+      let peselCheck = this.form.hasPolishPESEL && this.form.taxId.trim().length===0? null : this.form.taxId
 
-        payload = {
-          name: this.form.name,
-          surname: this.form.surname,
-          login: this.form.login,
-          password: this.form.password.trim(),
-          hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
-          comments: this.form.comments,
-          emails: this.form.emails,
-          phoneNumbers: this.form.phoneNumbers,  //PROBLEM MORALNY W OPISIE COMMITA
-          taxId: this.form.taxIdentificationNumber
-        };
-      }
-      else {
-        // szczerze trzeba to mocno przetestować bo coś się psuje
-        let emailsCheck = this.form.emails.filter(str => {str.trim.length !== 0})
-        let numbersCheck = this.form.phoneNumbers.filter(str => {str.trim.length != 0})
-        // let peselCheck = this.form.taxId.trim().length == 0 ? null : this.form.taxId
-
-        payload = {
-          name: this.form.name,
-          surname: this.form.surname,
-          login: this.form.login,
-          password: this.form.password.trim(),
-          hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
-          comments: this.form.comments,
-          emails: emailsCheck.length === 0 ? null : emailsCheck,
-          phoneNumbers: numbersCheck.length === 0 ? null : numbersCheck,
-          taxId: this.form.taxId
-        };
-      }
+      const payload = {
+        name: this.form.name,
+        surname: this.form.surname,
+        login: this.form.login,
+        password: this.form.password.trim(),
+        hasPolishPESEL: this.form.hasPolishPESEL ? 1 : 0,
+        comments: this.form.comments,
+        emails:  emailsCheck.length === 0 ? null : emailsCheck,
+        phoneNumbers: numbersCheck.length === 0 ? null : numbersCheck,
+        taxId: this.form.hasPolishPESEL ? peselCheck : null
+      };
 
       // if (this.form.newPassword) {
       //   payload.password = this.form.newPassword; // Dodaj hasło tylko, jeśli jest ustawione
