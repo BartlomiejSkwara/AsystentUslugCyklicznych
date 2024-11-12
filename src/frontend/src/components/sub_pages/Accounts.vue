@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1 style="margin-bottom: 20px;">Aktywni użytkownicy</h1>
+      <h1 style="margin-bottom: 20px;">Panel administratora</h1>
       <div class="container ">
         <!-- <button  class="add-button" @click="switchRequestModalVisibility()"
         data-bs-toggle="modal" data-bs-target="#registerModal"        
@@ -11,11 +11,14 @@
             <input type="text" class="input" v-model="searchFields.role" placeholder="Rola" style="margin-bottom: 10px; margin-right: 10px;">
             <!-- <input type="text" class="input" v-model="searchFields.id" placeholder="REGON" style="margin-bottom: 10px; margin-right: 10px;"> -->
           </div>
-          <button class="btn btn-danger btn1"  @click="fetchAccounts">
-                Odśwież
+          <button class="btn btn-primary"  @click="fetchAccounts">
+                Odśwież Użytkowników
             </button>
           <button class="btn btn-warning btn1" style="margin-left: 5px" type="button" @click="dbWipe">
             Usuń bazę
+          </button>
+          <button class="btn btn-warning" style="margin-left: 5px" type="button" @click="forceDailyCheck">
+            Aktualizuj Stany
           </button>
           <!-- <button @click="toggleSearchFields" style="margin-left: 10px;">+</button> -->
         </div>
@@ -211,6 +214,35 @@
           }
 
           alert('Z powodzeniem usunięto bazę danych');
+          this.fetchAccounts();
+        } catch (error) {
+          console.error('Wystąpił błąd:', error);
+          alert(error.message);
+        }
+      },
+
+      async forceDailyCheck() {
+
+        const confirmed = window.confirm("Czy na pewno odświeżyć stany usług cyklicznych ?");
+
+        if (!confirmed) {
+          return;
+        }
+
+        try {
+          const cookie = getCookie('XSRF-TOKEN');
+          const response = await fetchWrapper(this, '/api/cyclicalservice/forceDailyCheck', {
+            method: 'POST',
+            headers: {
+              'X-XSRF-TOKEN': cookie
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Wystąpił błąd podczas usuwania bazy danych');
+          }
+
+          alert('Z powodzeniem odświeżono stany usług cyklicznych');
           this.fetchAccounts();
         } catch (error) {
           console.error('Wystąpił błąd:', error);

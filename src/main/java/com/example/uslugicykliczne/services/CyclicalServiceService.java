@@ -34,7 +34,7 @@ public class CyclicalServiceService {
     private final CertificateService certificateService;
     private final EntityManager entityManager;
     private final CertificateRepo certificateRepo;
-    private final SchedulingService schedulingService;
+//    private final SchedulingService schedulingService;
     private final ServiceStatusHistoryService serviceStatusHistoryService;
     private final StatusChangeRepo statusChangeRepo;
     private final AccountDataRepo accountDataRepo;
@@ -116,7 +116,7 @@ public class CyclicalServiceService {
             //cyclicalServiceEntity.setCertificates(dto.getRenewalPeriod());
             //schedulingService.trySchedulingReminderWhenInserted(insertedEntity);
             if(certificateEntity!=null){
-                schedulingService.trySchedulingReminderWhenInserted(certificateEntity,insertedEntity);
+//                schedulingService.trySchedulingReminderWhenInserted(certificateEntity,insertedEntity);
                 return ResponseEntity.ok("Successfully added the cyclical service");
 
             }

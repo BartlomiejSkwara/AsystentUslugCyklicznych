@@ -30,7 +30,7 @@
       <li v-if="hasRole(['ROLE_admin'])">
         <router-link to="/Accounts" class="nav-link text-white">
           <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
-          Aktywni Użytkownicy
+          Panel administratora
         </router-link>
       </li>
     </ul>

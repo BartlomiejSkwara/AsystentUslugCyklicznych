@@ -56,7 +56,7 @@ public class SecurityConfig {
                             "/api/authentication/login",
                             "/api/authentication/logout",
                                 "/api/cyclicalservice/forceDailyCheck"
-                                ,"/api/**"
+//                                ,"/api/**"
                                 )
                         .csrfTokenRepository(repo)
                         .csrfTokenRequestHandler(new SPATokenRequestHandler())

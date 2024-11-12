@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StartupService {
-    private final SchedulingService schedulingService;
+//    private final SchedulingService schedulingService;
     private final CyclicalServiceRepo cyclicalServiceRepo;
     private final AccountDataRepo accountDataRepo;
     private final PasswordEncoder passwordEncoder;

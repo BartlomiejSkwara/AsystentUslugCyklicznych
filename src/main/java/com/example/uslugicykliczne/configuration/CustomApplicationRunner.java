@@ -9,7 +9,7 @@ import com.example.uslugicykliczne.repo.CyclicalServiceRepo;
 import com.example.uslugicykliczne.repo.ServiceUserRepo;
 import com.example.uslugicykliczne.repo.StatusTypeRepo;
 import com.example.uslugicykliczne.services.ContactDataService;
-import com.example.uslugicykliczne.services.SchedulingService;
+//import com.example.uslugicykliczne.services.SchedulingService;
 import com.example.uslugicykliczne.services.StartupService;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
