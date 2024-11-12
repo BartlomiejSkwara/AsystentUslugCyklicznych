@@ -687,7 +687,16 @@ export default {
             this.searchFields.name && cycle.serviceUser.getSurname.toLowerCase().includes(this.searchQuery.toLowerCase())) {
           matches = true;
         }
-        return matches;
+
+        let maxStatus = 0;
+        Object.values(this.STATUS_TYPES).forEach(status => {
+          if ((cycle.statusBitmask & status.mVal) === status.mVal) {
+            maxStatus = Math.max(maxStatus, status.mVal);
+          }
+        });
+
+        const matchesStatus = this.selectedStatus === 'all' || this.selectedStatus == maxStatus;
+        return matches && matchesStatus;
       });
     }
   }
