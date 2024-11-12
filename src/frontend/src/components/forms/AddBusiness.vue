@@ -160,7 +160,9 @@ export default {
     setPostalCodePattern() {
       const countryCode = this.form.countryCode;
       const countryData = this.countries.find(country => country.countryCode === countryCode);
-      this.postalCodePattern = countryData ? countryData.pattern : '';
+      this.postalCodePattern = countryData ? countryData.pattern.source : '';
+      
+
       console.log(this.postalCodePattern)
       return this.postalCodePattern
     },
