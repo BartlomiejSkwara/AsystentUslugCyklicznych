@@ -7,12 +7,25 @@
         <input type="text" id="name" v-model="form.name" class="form-control" required>
       </div>
       <div>
-        <label for="locality">Miejscowość: <span class="text-danger">*</span></label>
+        <label for="locality">Miejscowość: <span class="text-danger"> *</span></label>
         <input type="text" id="locality" v-model="form.locality" class="form-control" required>
       </div>
       <div>
-        <label for="postalCode">Kod pocztowy: <span class="text-danger">*</span></label>
-        <input type="text" id="postalCode" v-model="form.postalCode" class="form-control" required>
+        <label for="countryCode">Kod kraju:<span class="text-danger"> *</span></label>
+        <select id="countryCode" v-model="form.countryCode" @change="setPostalCodePattern" class="form-control">
+          <option v-for="country in countries" :key="country.countryCode" :value="country.countryCode">
+            {{ country.countryCode }}
+          </option>
+        </select>
+
+        <label for="postalCode">Kod pocztowy:<span class="text-danger"> *</span></label>
+        <input
+            type="text"
+            id="postalCode"
+            v-model="form.postalCode"
+            :pattern="postalCodePattern"
+            class="form-control"
+            required>
       </div>
       <div>
         <label for="street">Ulica: <span class="text-danger">*</span></label>
@@ -84,6 +97,8 @@
 import { fetchWrapper, getCookie, refreshCSRF } from '@/utility';
 import IntlTelInput from "intl-tel-input/vueWithUtils";
 import "intl-tel-input/styles";
+import { postalCodeData } from "@monarkit/postal-code-data";
+
 export default {
   name: 'BusinessForm',
   components:{
@@ -110,11 +125,15 @@ export default {
         regon: '',
         comments: '',
         emails: [],
-        phoneNumbers: []
+        phoneNumbers: [],
+        countryCode: 'PL'
       },
       errorMessage: "",
       ignoreDup: false,
       showRequestModal: false,
+      countries: postalCodeData,
+      postalCodePattern: '^[0-9]{2}-?[0-9]{3}$',
+
     };
   },
   computed:{
@@ -131,12 +150,20 @@ export default {
   },
   mounted() {
     refreshCSRF();
+    this.setPostalCodePattern();
     if (this.$route.query.idBusiness) {
       this.formMode = 'edit';
       this.fetchBusiness();
     }
   },
   methods: {
+    setPostalCodePattern() {
+      const countryCode = this.form.countryCode;
+      const countryData = this.countries.find(country => country.countryCode === countryCode);
+      this.postalCodePattern = countryData ? countryData.pattern : '';
+      console.log(this.postalCodePattern)
+      return this.postalCodePattern
+    },
     formatNIP() {
       this.form.nip=this.form.nip.replace(/\D/g, '');
     },

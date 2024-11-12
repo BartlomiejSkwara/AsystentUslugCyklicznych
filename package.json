@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@monarkit/postal-code-data": "^1.0.18"
+  }
+}
