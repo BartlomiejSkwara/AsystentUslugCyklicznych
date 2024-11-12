@@ -160,7 +160,7 @@
               <p><strong>Nazwa firmy:</strong> {{ selectedBusiness.name }}</p>
               <p><strong>NIP:</strong> {{ selectedBusiness.nip }}</p>
               <p><strong>REGON:</strong> {{ selectedBusiness.regon }}</p>
-              <p><strong>Adres:</strong> {{ selectedBusiness.adres }}</p>
+              <p><strong>Adres:</strong> {{ selectedBusiness.address.locality + ' ' + selectedBusiness.address.street + ' ' + selectedBusiness.address.propertyNumber + ' m.' + selectedBusiness.address.apartmentNumber }}</p>
               <p><strong>Emaile:</strong></p>
               <ul>
                 <li v-for="email in selectedBusiness.contactData.emails" :key="email.idEmail">{{ email.email }}</li>

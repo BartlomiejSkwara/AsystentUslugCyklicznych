@@ -11,12 +11,12 @@
         <input type="text" id="locality" v-model="form.locality" class="form-control" required>
       </div>
       <div>
-        <label for="countryCode">Kod kraju:<span class="text-danger"> *</span></label>
-        <select id="countryCode" v-model="form.countryCode" @change="setPostalCodePattern" class="form-control">
-          <option v-for="country in countries" :key="country.countryCode" :value="country.countryCode">
-            {{ country.countryCode }}
-          </option>
-        </select>
+<!--        <label for="countryCode">Kod kraju:<span class="text-danger"> *</span></label>-->
+<!--        <select id="countryCode" v-model="form.countryCode" @change="setPostalCodePattern" class="form-control">-->
+<!--          <option v-for="country in countries" :key="country.countryCode" :value="country.countryCode">-->
+<!--            {{ country.countryCode }}-->
+<!--          </option>-->
+<!--        </select>-->
 
         <label for="postalCode">Kod pocztowy:<span class="text-danger"> *</span></label>
         <input
