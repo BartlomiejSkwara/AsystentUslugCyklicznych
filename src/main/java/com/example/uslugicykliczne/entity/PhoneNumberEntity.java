@@ -2,10 +2,14 @@ package com.example.uslugicykliczne.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Data
 @Table(name = "PhoneNumber", schema = "uslugi_cykliczne", catalog = "")
+@NoArgsConstructor
+@SuperBuilder
 public class PhoneNumberEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

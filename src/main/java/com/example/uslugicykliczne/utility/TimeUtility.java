@@ -14,7 +14,7 @@ public class TimeUtility {
         return zoneOffset;
     }
     public static Date getCurrentDate(){
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         return Date.from(localDateTime.toInstant(zoneOffset));
     }
 

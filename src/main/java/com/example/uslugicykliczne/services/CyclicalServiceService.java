@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -363,7 +364,7 @@ public class CyclicalServiceService {
         serviceStatusHistoryService.addNewStatusHistoryRecord(null,StatusEnum.IGNORE,"Zmieniono status na \"Ignorowany\" na kolejne "+days+" dni",id);
 
 
-        cyclicalService.setIgnoreTo(LocalDateTime.now().plusDays(days));
+        cyclicalService.setIgnoreTo(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusDays(days));
         cyclicalServiceRepo.save(cyclicalService);
         return ResponseEntity.ok(cyclicalService.getStatusBitmap());
 

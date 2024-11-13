@@ -2,12 +2,16 @@ package com.example.uslugicykliczne.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
 
 @Entity
 @Data
 @Table(name = "Address", schema = "uslugi_cykliczne", catalog = "")
+@NoArgsConstructor
+@SuperBuilder
 public class AddressEntity {
 
     @Id

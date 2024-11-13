@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class ServiceStatusHistoryService {
@@ -20,7 +21,7 @@ public class ServiceStatusHistoryService {
     @Transactional
     public void addNewStatusHistoryRecord(LocalDateTime date, StatusEnum statusEnum,String comment,Integer cyclicalServiceId){
         StatusChangeEntity statusChangeEntity = new StatusChangeEntity();
-        statusChangeEntity.setChangeDate(date==null?LocalDateTime.now():date);
+        statusChangeEntity.setChangeDate(date==null?LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES):date);
         statusChangeEntity.setStatusTypeEntity(entityManager.getReference(StatusTypeEntity.class,statusEnum.getMaskValue()));
         statusChangeEntity.setComment(comment);
         statusChangeEntity.setCyclicalService(entityManager.getReference(CyclicalServiceEntity.class,cyclicalServiceId));
@@ -30,7 +31,7 @@ public class ServiceStatusHistoryService {
     @Transactional
     public void addNewStatusHistoryRecord(LocalDateTime date, Integer statusEnum,String comment,Integer cyclicalServiceId){
         StatusChangeEntity statusChangeEntity = new StatusChangeEntity();
-        statusChangeEntity.setChangeDate(date==null?LocalDateTime.now():date);
+        statusChangeEntity.setChangeDate(date==null?LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES):date);
         statusChangeEntity.setStatusTypeEntity(entityManager.getReference(StatusTypeEntity.class,statusEnum));
         statusChangeEntity.setComment(comment);
         statusChangeEntity.setCyclicalService(entityManager.getReference(CyclicalServiceEntity.class,cyclicalServiceId));

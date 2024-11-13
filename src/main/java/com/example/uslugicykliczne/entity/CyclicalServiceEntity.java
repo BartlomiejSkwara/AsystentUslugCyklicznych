@@ -3,6 +3,8 @@ package com.example.uslugicykliczne.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -12,6 +14,8 @@ import java.util.List;
 @Data
 @Table(name = "CyclicalService", schema = "uslugi_cykliczne", catalog = "")
 @EqualsAndHashCode
+@NoArgsConstructor
+@SuperBuilder
 public class CyclicalServiceEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

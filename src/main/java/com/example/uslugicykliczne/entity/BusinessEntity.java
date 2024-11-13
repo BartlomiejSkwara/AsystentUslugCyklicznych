@@ -2,12 +2,16 @@ package com.example.uslugicykliczne.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
 
 @Entity
 @Data
 @Table(name = "Business", schema = "uslugi_cykliczne", catalog = "")
+@NoArgsConstructor
+@SuperBuilder
 public class BusinessEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

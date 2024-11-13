@@ -1,11 +1,17 @@
 package com.example.uslugicykliczne.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "AccountData", schema = "uslugi_cykliczne", catalog = "")
 @Data
+@NoArgsConstructor
+@SuperBuilder
 public class AccountDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 interface CustomServiceRepo{
@@ -188,7 +189,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
         Query enableSafeUpdate = entityManager.createNativeQuery("SET SQL_SAFE_UPDATES = 1");
         enableSafeUpdate.executeUpdate();
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         List<StatusChangeEntity> statusChangeEntities = new ArrayList<>();
         for(int id:idList){
             StatusChangeEntity statusChangeEntity = new StatusChangeEntity();
@@ -258,7 +259,7 @@ class  CustomServiceRepoImpl implements CustomServiceRepo{
         Query enableSafeUpdate = entityManager.createNativeQuery("SET SQL_SAFE_UPDATES = 1");
         enableSafeUpdate.executeUpdate();
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         List<StatusChangeEntity> statusChangeEntities = new ArrayList<>();
         for(int id:idList){
             StatusChangeEntity statusChangeEntity = new StatusChangeEntity();

@@ -3,6 +3,8 @@ package com.example.uslugicykliczne.entity;
 import com.example.uslugicykliczne.services.PhoneNumberService;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,6 +12,8 @@ import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
+@SuperBuilder
 @Table(name = "ContactData", schema = "uslugi_cykliczne", catalog = "")
 public class ContactDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

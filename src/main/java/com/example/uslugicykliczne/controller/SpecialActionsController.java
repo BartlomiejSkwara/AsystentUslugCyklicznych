@@ -1,23 +1,60 @@
 package com.example.uslugicykliczne.controller;
 
+import com.example.uslugicykliczne.entity.AccountDataEntity;
+import com.example.uslugicykliczne.services.CsvService;
 import com.example.uslugicykliczne.services.StartupService;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/specialActions")
 @AllArgsConstructor
 public class SpecialActionsController {
 
-    EntityManager entityManager;
-    StartupService startupService;
+    private EntityManager entityManager;
+    private final StartupService startupService;
+    private final CsvService csvService;
+
+
+    @PostMapping(value = "/importCsv", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> importCsv(@RequestPart("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Wystąpił błąd podczas importowania danych");
+        }
+
+        try {
+            csvService.importCsvFile(file);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Wystąpił błąd podczas importowania danych");
+        }
+        return ResponseEntity.ok("ok");
+    }
+    @GetMapping("/exportCsv")
+    public void exportCsv(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv;  charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"export.csv\"");
+        csvService.exportCsvFile(response.getWriter());
+
+    }
+
+
 
     @PostMapping("/dbWipe")
     @Transactional

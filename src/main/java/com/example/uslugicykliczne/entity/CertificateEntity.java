@@ -3,6 +3,8 @@ package com.example.uslugicykliczne.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 @Data
 @Table(name = "Certificate", schema = "uslugi_cykliczne", catalog = "")
 @EqualsAndHashCode
+@NoArgsConstructor
+@SuperBuilder
 public class CertificateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

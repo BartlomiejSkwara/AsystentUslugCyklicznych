@@ -1,7 +1,7 @@
 <template>
     <div>
       <h1 style="margin-bottom: 20px;">Panel administratora</h1>
-      <div class="container ">
+      <div class=" ">
         <!-- <button  class="add-button" @click="switchRequestModalVisibility()"
         data-bs-toggle="modal" data-bs-target="#registerModal"        
         >Dodaj nowe konto</button> -->
@@ -20,6 +20,14 @@
           <button class="btn btn-warning" style="margin-left: 5px" type="button" @click="forceDailyCheck">
             Aktualizuj Stany
           </button>
+          <button class="btn btn-success" style="margin-left: 5px" type="button" @click="exportData">
+            Eksportuje Dane
+          </button>
+          <label for="avatar"  class="custom-file-upload btn btn-danger ms-1">
+            Importuj bazę danych
+          </label>
+          <input class="d-none" type="file" id="avatar" name="avatar" accept="text/csv" @change="importData"/>
+      
           <!-- <button @click="toggleSearchFields" style="margin-left: 10px;">+</button> -->
         </div>
       </div>
@@ -129,35 +137,112 @@
       this.fetchAccounts();
     },
     methods: {
+      async importData(event){
+        const confirmed = window.confirm("Uwaga akcja doprowadzi do utraty obecnie przechowywanych danych. Czy na pewno chcesz importować dane do bazy ? Tej operacji nie można cofnąć!");
 
-        async forceLogout(login){
-          try {
-                const cookie = getCookie('XSRF-TOKEN');
+        
+        if (!confirmed) {
+          return;
+        }
 
-                const response = await fetchWrapper(this,`/api/authentication/forceLogout?login=${login}`, {
-                    method: 'POST',
-                    headers:{
-                      'X-XSRF-TOKEN': cookie
+        let selectedFile = event.target.files[0];
+        const formData = new FormData();
+        formData.append("file", selectedFile);
 
-                    }
-                });
+        try {
+          const cookie = getCookie('XSRF-TOKEN');
+          const response = await fetchWrapper(this, '/api/specialActions/importCsv', {
+            method: 'POST',
+            headers: {
+              'X-XSRF-TOKEN': cookie
+            },
+            body: formData
+          });
 
-                if (!response.ok) {
-                    throw new Error("Network response was not ok " + response.statusText);
-                }
+          if (!response.ok) {
+            throw new Error('Wystąpił błąd podczas importowania bazy danych');
+          }
 
-                const role = response.headers.get('frontRole');
-                this.$store.commit('setRole', role);
-                
-                this.accounts.splice(this.accounts.findIndex(ac=>ac[0]==login),1)
-                alert(`Z powodzeniem dokonano operacji wygaszenia żetonu użytkownika ${login}!`);
+          alert('Z powodzeniem dokonano importowania danych do bazy danych');
+          this.fetchAccounts();
+        } catch (error) {
+          console.error('Wystąpił błąd:', error);
+          alert(error.message);
+        }
+        
+      },
+      async exportData(){
+        
+        const confirmed = window.confirm("Czy na pewno chcesz dokonać eksportu bazy danych ?");
 
-                // const data = await response.json();
-                
+        if (!confirmed) {
+          return;
+        }
 
-            } catch (error) {
-                console.error("There has been a problem with your fetch operation:", error);
+        try {
+          const response = await fetchWrapper(this, '/api/specialActions/exportCsv', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'text/csv',
+
             }
+          });
+
+          if (!response.ok) {
+            throw new Error('Wystąpił błąd podczas usuwania bazy danych');
+          }
+          
+          // console.log(await response.text());
+          
+          const csvContent = await response.text()
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "export_uslugi_cykliczne_BD";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          // alert('Z powodzeniem odświeżono stany usług cyklicznych');
+        } catch (error) {
+          console.error('Wystąpił błąd:', error);
+          alert(error.message);
+        }
+
+        
+
+
+
+      },
+
+      async forceLogout(login){
+        try {
+              const cookie = getCookie('XSRF-TOKEN');
+
+              const response = await fetchWrapper(this,`/api/authentication/forceLogout?login=${login}`, {
+                  method: 'POST',
+                  headers:{
+                    'X-XSRF-TOKEN': cookie
+
+                  }
+              });
+
+              if (!response.ok) {
+                  throw new Error("Network response was not ok " + response.statusText);
+              }
+
+              const role = response.headers.get('frontRole');
+              this.$store.commit('setRole', role);
+              
+              this.accounts.splice(this.accounts.findIndex(ac=>ac[0]==login),1)
+              alert(`Z powodzeniem dokonano operacji wygaszenia żetonu użytkownika ${login}!`);
+
+              // const data = await response.json();
+              
+
+          } catch (error) {
+              console.error("There has been a problem with your fetch operation:", error);
+          }
         },
         async fetchAccounts(){
             try {
