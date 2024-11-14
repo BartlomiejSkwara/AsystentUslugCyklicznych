@@ -11,21 +11,22 @@
         <input type="text" id="locality" v-model="form.locality" class="form-control" required>
       </div>
       <div>
-<!--        <label for="countryCode">Kod kraju:<span class="text-danger"> *</span></label>-->
-<!--        <select id="countryCode" v-model="form.countryCode" @change="setPostalCodePattern" class="form-control">-->
-<!--          <option v-for="country in countries" :key="country.countryCode" :value="country.countryCode">-->
-<!--            {{ country.countryCode }}-->
-<!--          </option>-->
-<!--        </select>-->
-
+        <label for="countryCode">Kod kraju:<span class="text-danger"> *</span></label>
+        <select id="countryCode" v-model="form.countryCode" @change="updatePostalCodePattern"  class="form-control">
+          <option v-for="country in countries" :key="country.countryCode" :value="country.countryCode">
+            {{ country.countryCode }}
+          </option>
+        </select>
         <label for="postalCode">Kod pocztowy:<span class="text-danger"> *</span></label>
         <input
             type="text"
             id="postalCode"
+            :placeholder="postalCodePlaceholder"
+            :maxlength="postalCodeMaxLength"
             v-model="form.postalCode"
-            :pattern="postalCodePattern"
+            @input="handlePostalCodeInput"
             class="form-control"
-            required>
+        />
       </div>
       <div>
         <label for="street">Ulica: <span class="text-danger">*</span></label>
@@ -132,8 +133,10 @@ export default {
       ignoreDup: false,
       showRequestModal: false,
       countries: postalCodeData,
-      postalCodePattern: '^[0-9]{2}-?[0-9]{3}$',
-
+      // postalCodePattern: '^[0-9]{2}-?[0-9]{3}$',
+      // postalCodePatterns: postalCodeData
+      postalCodePlaceholder: '',
+      postalCodeMaxLength: 10,
     };
   },
   computed:{
@@ -150,22 +153,33 @@ export default {
   },
   mounted() {
     refreshCSRF();
-    this.setPostalCodePattern();
+    this.updatePostalCodePattern();
     if (this.$route.query.idBusiness) {
       this.formMode = 'edit';
       this.fetchBusiness();
     }
   },
   methods: {
-    setPostalCodePattern() {
-      const countryCode = this.form.countryCode;
-      const countryData = this.countries.find(country => country.countryCode === countryCode);
-      this.postalCodePattern = countryData ? countryData.pattern.source : '';
-      
-
-      console.log(this.postalCodePattern)
-      return this.postalCodePattern
+    updatePostalCodePattern() {
+      const country = this.countries.find(c => c.countryCode === this.form.countryCode);
+      if (country) {
+        this.postalCodePlaceholder = country.placeholder;
+        this.postalCodeMaxLength = country.placeholder.length;
+      }
     },
+    handlePostalCodeInput(event) {
+      this.form.postalCode = event.target.value;
+      this.formatPostalCode();
+    },
+    formatPostalCode() {
+      const country = this.countries.find(c => c.countryCode === this.form.countryCode);
+      if (country && !new RegExp(country.pattern).test(this.form.postalCode)) {
+        this.errorMessage = `Kod pocztowy nie jest zgodny z formatem dla kraju ${country.countryCode}.`;
+      } else {
+        this.errorMessage = '';
+      }
+    },
+
     formatNIP() {
       this.form.nip=this.form.nip.replace(/\D/g, '');
     },
@@ -217,7 +231,10 @@ export default {
     async submitForm() {
 
       let emailsCheck = this.form.emails.filter(str=> str.trim().length !==0)
-
+      let error = 0;
+      if (this.errorMessage !== '' && this.errorMessage != null) {
+        error = 1;
+      }
 
       let numbersCheck = [];
       for (let i = 0; i <  this.form.phoneNumbers.length; i++) {
@@ -225,62 +242,62 @@ export default {
         numbersCheck.push(`+${instance.selectedCountryData.dialCode} ${this.form.phoneNumbers[i].replace(/\+\d+/,'')}`)
 
       }
+      if (error !== 1) {
+        const payload = {
+          name: this.form.name,
+          locality: this.form.locality,
+          postalCode: this.form.postalCode,
+          street: this.form.street,
+          propertyNumber: this.form.propertyNumber,
+          apartmentNumber: this.form.apartmentNumber,
+          nip: this.form.nip,
+          regon: this.form.regon,
+          comments: this.form.comments,
+          emails: emailsCheck.length === 0 ? null : emailsCheck,
+          phoneNumbers: numbersCheck
+        };
 
-      const payload = {
-        name: this.form.name,
-        locality: this.form.locality,
-        postalCode: this.form.postalCode,
-        street: this.form.street,
-        propertyNumber: this.form.propertyNumber,
-        apartmentNumber: this.form.apartmentNumber,
-        nip: this.form.nip,
-        regon: this.form.regon,
-        comments: this.form.comments,
-        emails: emailsCheck.length === 0 ? null : emailsCheck,
-        phoneNumbers: numbersCheck
-      };
-
-      let url = this.formMode === 'add'
-          ? '/api/business/insertBody'
-          : `/api/business/update/${this.form.idBusiness}`;
+        let url = this.formMode === 'add'
+            ? '/api/business/insertBody'
+            : `/api/business/update/${this.form.idBusiness}`;
 
 
-      if(this.ignoreDup)
-        url+="?checkForDuplicates=false";
-      console.log(url);
-      
-      const cookie = getCookie("XSRF-TOKEN");
-      
-      
-      try {
-        const response = await fetchWrapper(this,url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-XSRF-TOKEN':cookie
-          },
-          body: JSON.stringify(payload)
-        })
+        if (this.ignoreDup)
+          url += "?checkForDuplicates=false";
+        console.log(url);
 
-        // if (!response.ok) {
-        //   throw new Error('Network response was not ok ' + response.statusText);
-        // }
-        if(response.status == 400){
-          this.errorMessage = await response.text();
-        }else if(response.status == 200){
-          if(this.standalone){
-            this.$router.push('/Business'); 
+        const cookie = getCookie("XSRF-TOKEN");
+
+
+        try {
+          const response = await fetchWrapper(this, url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-XSRF-TOKEN': cookie
+            },
+            body: JSON.stringify(payload)
+          })
+
+          // if (!response.ok) {
+          //   throw new Error('Network response was not ok ' + response.statusText);
+          // }
+          if (response.status == 400) {
+            this.errorMessage = await response.text();
+          } else if (response.status == 200) {
+            if (this.standalone) {
+              this.$router.push('/Business');
+            } else {
+              return this.form.name;
+            }
           }
-          else{
-            return this.form.name;            
-          }
+
+        } catch (error) {
+          console.error('Error saving business:', error);
         }
-      
-      } catch (error) {
-        console.error('Error saving business:', error);
+
+        return null;
       }
-      
-      return null;   
     },
     checkFormAndOpenModal() {
       if (this.isFormFilled) {
