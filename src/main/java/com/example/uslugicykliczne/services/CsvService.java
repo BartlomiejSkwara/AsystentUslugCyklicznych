@@ -149,8 +149,8 @@ public class CsvService {
             builder.append(addressEntity.getPostalCode()).append(',');
             builder.append(addressEntity.getLocality()).append(',');
             builder.append(addressEntity.getStreet()).append(',');
-            builder.append(addressEntity.getPropertyNumber()).append(',');
-            builder.append(addressEntity.getApartmentNumber()).append('\n');
+            builder.append(addressEntity.getPropertyNumber() != null ? addressEntity.getPropertyNumber() : "").append(',');
+            builder.append(addressEntity.getApartmentNumber() != null ? addressEntity.getApartmentNumber() : "").append('\n');
         }
         writer.write(builder.toString());
         builder.setLength(0);
@@ -163,7 +163,7 @@ public class CsvService {
             builder.append(businessEntity.getIdBusiness()).append(',');
             builder.append(businessEntity.getName()).append(',');
             builder.append(businessEntity.getAddress().getAddressId()).append(',');
-            builder.append(businessEntity.getRegon()).append(',');
+            builder.append(businessEntity.getRegon() != null ? businessEntity.getRegon() : "").append(',');
             builder.append(businessEntity.getNip()).append(',');
             builder.append(businessEntity.getComments() != null ? businessEntity.getComments() : "").append(',');
             builder.append(businessEntity.getContactData().getIdContactData()).append('\n');
@@ -179,7 +179,7 @@ public class CsvService {
             builder.append(cyclicalServiceEntity.getIdCyclicalService()).append(',');
             builder.append(cyclicalServiceEntity.isOneTime()).append(',');
             builder.append(cyclicalServiceEntity.getAgreementNumber()).append(',');
-            builder.append(cyclicalServiceEntity.getDescription()).append(',');
+            builder.append(cyclicalServiceEntity.getDescription() != null ? cyclicalServiceEntity.getDescription() : "").append(',');
             builder.append(cyclicalServiceEntity.getBusiness().getIdBusiness()).append(',');
             builder.append(cyclicalServiceEntity.getServiceUser().getIdServiceUser()).append(',');
             builder.append(cyclicalServiceEntity.getStatusBitmap()).append(',');
@@ -199,7 +199,7 @@ public class CsvService {
             builder.append(certificateEntity.getValidTo()).append(',');
             builder.append(certificateEntity.getCardType()).append(',');
             builder.append(certificateEntity.getCardNumber()).append(',');
-            builder.append(certificateEntity.getNameInOrganisation()).append(',');
+            builder.append(certificateEntity.getNameInOrganisation() != null ? certificateEntity.getNameInOrganisation() : "").append(',');
             builder.append(certificateEntity.isMostRecent()).append(',');
             builder.append(certificateEntity.getCyclicalServiceEntity().getIdCyclicalService()).append('\n');
         }
@@ -212,7 +212,7 @@ public class CsvService {
         writer.write("\nid,comment,changeDate,status_type,cyclical_service_id\n");
         for (StatusChangeEntity statusChangeEntity : statusChangeEntities) {
             builder.append(statusChangeEntity.getIdStatusChange()).append(',');
-            builder.append(statusChangeEntity.getComment()).append(',');
+            builder.append(statusChangeEntity.getComment() != null ? statusChangeEntity.getComment() : "").append(',');
             builder.append(statusChangeEntity.getChangeDate()).append(',');
             builder.append(statusChangeEntity.getStatusTypeEntity().getIdStatusType()).append(',');
             builder.append(statusChangeEntity.getCyclicalService().getIdCyclicalService()).append('\n');
