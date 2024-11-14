@@ -23,9 +23,11 @@
             id="postalCode"
             :placeholder="postalCodePlaceholder"
             :maxlength="postalCodeMaxLength"
+            :readonly="isPostalCodeReadonly"
             v-model="form.postalCode"
             @input="handlePostalCodeInput"
             class="form-control"
+            required
         />
       </div>
       <div>
@@ -137,6 +139,7 @@ export default {
       // postalCodePatterns: postalCodeData
       postalCodePlaceholder: '',
       postalCodeMaxLength: 10,
+      isPostalCodeReadonly: false,
     };
   },
   computed:{
@@ -163,8 +166,21 @@ export default {
     updatePostalCodePattern() {
       const country = this.countries.find(c => c.countryCode === this.form.countryCode);
       if (country) {
-        this.postalCodePlaceholder = country.placeholder;
-        this.postalCodeMaxLength = country.placeholder.length;
+        // this.postalCodePlaceholder = country.placeholder;
+        // this.postalCodeMaxLength = country.placeholder.length;
+
+        if (country.placeholder) {
+          this.postalCodePlaceholder = country.placeholder;
+          this.postalCodeMaxLength = country.placeholder.length;
+          this.form.postalCode = '';
+          this.isPostalCodeReadonly = false;
+        }
+        else {
+          this.postalCodePlaceholder = "brak";
+          this.postalCodeMaxLength = 1;
+          this.form.postalCode = 'brak';
+          this.isPostalCodeReadonly = true;
+        }
       }
     },
     handlePostalCodeInput(event) {
@@ -173,7 +189,7 @@ export default {
     },
     formatPostalCode() {
       const country = this.countries.find(c => c.countryCode === this.form.countryCode);
-      if (country && !new RegExp(country.pattern).test(this.form.postalCode)) {
+      if (country && country.placeholder && !new RegExp(country.pattern).test(this.form.postalCode)) {
         this.errorMessage = `Kod pocztowy nie jest zgodny z formatem dla kraju ${country.countryCode}.`;
       } else {
         this.errorMessage = '';
