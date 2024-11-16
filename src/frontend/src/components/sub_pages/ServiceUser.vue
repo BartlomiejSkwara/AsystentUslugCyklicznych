@@ -6,6 +6,13 @@
       <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
         <input type="text" class="input" v-model="searchQuery" placeholder="Szukaj" style="margin-bottom: 10px; margin-right: 10px;">
       </div>
+      <button class="btn1 btn btn-primary dropdown-toggle options" style="margin-right: 5px" type="button" data-bs-toggle="dropdown" aria-expanded="false">Wybór ról</button>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" @click="filterRole('ALL')">Wszyscy</button>
+        <button class="dropdown-item" @click="filterRole('ROLE_admin')">ROLE_Admin</button>
+        <button class="dropdown-item" @click="filterRole('ROLE_editor')">ROLE_Editor</button>
+        <button class="dropdown-item" @click="filterRole('ROLE_user')">ROLE_User</button>
+      </div>
     </div>
     <div class="search_filters" >
       <div style="display: flex; align-items: center;">
@@ -204,6 +211,7 @@ export default {
       usersPerPage: 8,
       contactDataDetails: null,
       selectedBusiness: null,
+      selectedRole: 'ALL',
     };
   },
   computed: {
@@ -236,7 +244,12 @@ export default {
           matches = true;
         }
 
-        return matches;
+        if(this.selectedRole === 'ALL') {
+          return matches;
+        }
+        else {
+          return matches && user.accountDataEntity.role.includes(this.selectedRole);
+        }
       });
     },
     paginatedUsers() {
@@ -253,6 +266,9 @@ export default {
     }
   },
   methods: {
+    filterRole(role) {
+      this.selectedRole = role;
+    },
     translateCardType,
     calculateCertLen(sDate,eDate){
       const d1 = new Date(sDate);
