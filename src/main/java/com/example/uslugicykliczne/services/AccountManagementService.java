@@ -5,6 +5,8 @@ import com.example.uslugicykliczne.dataTypes.LoginValidationRecord;
 import com.example.uslugicykliczne.entity.AccountDataEntity;
 import com.example.uslugicykliczne.repo.AccountDataRepo;
 import com.example.uslugicykliczne.security.CustomUserDetails;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -28,7 +30,7 @@ public class AccountManagementService {
     private final AccountDataRepo accountDataRepo;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
-
+    private final EntityManager entityManager;
 
     @Transactional
     public AccountDataEntity register(String password, String login) {
@@ -110,6 +112,16 @@ public class AccountManagementService {
             return ResponseEntity.badRequest().body("Podana rola nie istnieje");
         }
 
+
+        if(accountDataEntity.getRole().equals("ROLE_admin")){
+            Query u  = entityManager.createQuery("SELECT COUNT(a) FROM AccountDataEntity a WHERE a.role = :role ");
+            u.setParameter("role","ROLE_admin");
+            Long count = (Long) u.getSingleResult();
+            if(count <= 1){
+                return ResponseEntity.badRequest().body("Nie można przeprowadzać operacji zmiany roli na adminie gdy jest tylko jeden admin !!!");
+            }
+
+        }
         accountDataEntity.setRole(role);
         accountDataRepo.save(accountDataEntity);
         return ResponseEntity.ok("Z powodzeniem dokonano zmiany roli");

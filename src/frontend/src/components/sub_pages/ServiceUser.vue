@@ -368,7 +368,7 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Próba zmiany użytkownika na rolę wyższą/z roli wyższej niż posiadasz jako edytor.');
+          throw new Error(await response.text());
         }
 
         alert('Rola użytkownika została zmieniona.');
