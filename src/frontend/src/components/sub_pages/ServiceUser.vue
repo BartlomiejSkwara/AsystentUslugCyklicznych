@@ -24,7 +24,7 @@
         <th>Nazwisko</th>
         <th>Kontakt</th>
 <!--        <th>Polski PESEL?</th>-->
-        <th>PESEL</th>
+<!--        <th>PESEL</th>-->
         <th>Dodatkowy opis</th>
         <th>Rola w systemie</th>
         <th style="width: 125px"></th>
@@ -43,7 +43,7 @@
           >...</button>
         </td>
 <!--        <td>{{ user.hasPolishPesel }}</td>-->
-        <td>{{ user.taxIdentificationNumber }}</td>
+<!--        <td>{{ user.taxIdentificationNumber }}</td>-->
         <td>{{ user.comments }}</td>
         <td> {{ user.accountDataEntity.role}}</td>
         <td>

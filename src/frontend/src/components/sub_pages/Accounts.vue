@@ -7,10 +7,15 @@
         >Dodaj nowe konto</button> -->
         <div style="display: inline-block; align-items: center; flex-wrap: wrap;">
           <input type="text" class="input" v-model="searchFields.username" placeholder="Username" style="margin-bottom: 10px; margin-right: 10px;">
-          <div v-if="showAdditionalFields" style="display: inline-block; flex-wrap: wrap;">
-            <input type="text" class="input" v-model="searchFields.role" placeholder="Rola" style="margin-bottom: 10px; margin-right: 10px;">
-            <!-- <input type="text" class="input" v-model="searchFields.id" placeholder="REGON" style="margin-bottom: 10px; margin-right: 10px;"> -->
-          </div>
+<!--          <div class="dropdown">-->
+            <button class="btn1 btn btn-primary dropdown-toggle options" style="margin-right: 5px" type="button" data-bs-toggle="dropdown" aria-expanded="false">Wybór ról</button>
+            <div class="dropdown-menu">
+              <button class="dropdown-item" @click="filterRole('ALL')">Wszyscy</button>
+              <button class="dropdown-item" @click="filterRole('ROLE_admin')">ROLE_Admin</button>
+              <button class="dropdown-item" @click="filterRole('ROLE_editor')">ROLE_Editor</button>
+              <button class="dropdown-item" @click="filterRole('ROLE_user')">ROLE_User</button>
+            </div>
+<!--          </div>-->
           <button class="btn btn-primary"  @click="fetchAccounts">
                 Odśwież Użytkowników
             </button>
@@ -32,23 +37,22 @@
         </div>
       </div>
 
-
       <table class=" custom-container">
         <thead>
         <tr>
           <th>Login</th>
           <th>Ostatnio aktywny</th>
-          <!-- <th>Rola</th> -->
+           <th>Rola</th>
           <th></th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="account in filteredAccounts" :key="account.idLoginCredentials">
-          <td>{{ account[0] }}</td>
-          <td>{{ account[1] == 0 ? "teraz" : account[1]+" min temu"}} </td>
-          <!-- <td>{{ account.role }}</td> -->
+        <tr v-for="account in filteredAccounts" :key="account.username">
+          <td>{{ account.username }}</td>
+          <td>{{ account.lastActive == 0 ? "teraz" : account.lastActive + " min temu" }}</td>
+          <td>{{ account.role }}</td>
           <td>
-            <button class="btn btn-danger "  type="button" @click="forceLogout(account[0])">
+            <button class="btn btn-danger "  type="button" @click="forceLogout(account.username)">
                 Wygaś Żeton
             </button>
 
@@ -105,10 +109,11 @@
     data() {
       return {
         accounts: [],
+        roles: [],
+        filteredRoles: [],
+        selectedRole: 'ALL',
         searchFields: {
-          id: '',
           username: '',
-          role: ''
         },
         registerForm:{
             username:'',
@@ -124,12 +129,12 @@
     computed: {
       filteredAccounts() {
         return this.accounts.filter(account => {
-          return (
-            account[0].toLowerCase().includes(this.searchFields.username.toLowerCase())
-            
-            //&&
-            // account.role.toLowerCase().includes(this.searchFields.role.toLowerCase())
-          );
+          if (this.selectedRole === 'ALL') {
+            return account.username.toLowerCase().includes(this.searchFields.username.toLowerCase())
+          }
+          else {
+            return account.username.toLowerCase().includes(this.searchFields.username.toLowerCase()) && account.role.includes(this.selectedRole)
+          }
         });
       }
     },
@@ -137,6 +142,9 @@
       this.fetchAccounts();
     },
     methods: {
+      filterRole(role) {
+        this.selectedRole = role;
+      },
       async importData(event){
         const confirmed = window.confirm("Uwaga akcja doprowadzi do utraty obecnie przechowywanych danych. Czy na pewno chcesz importować dane do bazy ? Tej operacji nie można cofnąć!");
 
@@ -234,7 +242,7 @@
               const role = response.headers.get('frontRole');
               this.$store.commit('setRole', role);
               
-              this.accounts.splice(this.accounts.findIndex(ac=>ac[0]==login),1)
+              this.accounts.splice(this.accounts.findIndex(ac=>ac.username==login),1)
               alert(`Z powodzeniem dokonano operacji wygaszenia żetonu użytkownika ${login}!`);
 
               // const data = await response.json();
@@ -244,39 +252,41 @@
               console.error("There has been a problem with your fetch operation:", error);
           }
         },
-        async fetchAccounts(){
-            try {
-                const response = await fetchWrapper(this,`/api/authentication/getRecentActivities`, {
-                    method: 'GET',
-                });
+      async fetchAccounts() {
+        try {
+          const responseActivities = await fetchWrapper(this, `/api/authentication/getRecentActivities`, {
+            method: 'GET',
+          });
 
-                if (!response.ok) {
-                    throw new Error("Network response was not ok " + response.statusText);
-                }
+          if (!responseActivities.ok) {
+            throw new Error("Problem z pobraniem ostatnio aktywnych użytkowników: " + responseActivities.statusText);
+          }
 
-                const role = response.headers.get('frontRole');
-                this.$store.commit('setRole', role);
-                const data = await response.json();
-                this.accounts = Object.entries(data);
-                // const serverTimezone = parseInt(response.headers.get("timezone"),10);
-                // let localTime = new Date(Date.now())
-                // console.log(localTime);
-                
-                // console.log(localTime.getTimezoneOffset()*1000*60," vs ",serverTimezone);
-                
+          const dataActivities = await responseActivities.json();
+          const accounts = Object.entries(dataActivities).map(([username, lastActive]) => ({ username, lastActive }));
 
-                // this.accounts.forEach(account=>{
-                  
-                //   const minutes = -1*((new Date(account[1])).getTime()-Date.now())/1000/60;
-                //   account[1] = minutes.toFixed(0);
-                // })
+          const responseRoles = await fetchWrapper(this, `/api/accountData/getAll`, {
+            method: 'GET',
+          });
 
+          if (!responseRoles.ok) {
+            throw new Error("Problem z pobraniem ról: " + responseRoles.statusText);
+          }
 
-            } catch (error) {
-                console.error("There has been a problem with your fetch operation:", error);
-            }
-            
-        },
+          const dataRoles = await responseRoles.json();
+          this.roles = dataRoles;
+
+          this.accounts = accounts.map(account => {
+            const matchedRole = this.roles.find(roleData => roleData.username === account.username);
+            return {
+              ...account,
+              role: matchedRole.role
+            };
+          });
+        } catch (error) {
+          console.error("Problem z pobraniem danych:", error);
+        }
+      },
       async dbWipe() {
 
         const confirmed = window.confirm("Czy na pewno chcesz usunąć całą bazę danych? Tej operacji nie można cofnąć!");
