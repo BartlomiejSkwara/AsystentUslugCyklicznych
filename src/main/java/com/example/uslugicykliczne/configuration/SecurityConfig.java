@@ -81,7 +81,8 @@ public class SecurityConfig {
                             "/api/cyclicalservice/getAllAwaiting",
                             "/api/cyclicalservice/getAll",
                             "/api/cyclicalservice/getAllExpired",
-
+                            "/api/business/get/**",
+                            "/api/serviceUser/get/**",
                             "/api/cyclicalservice/getAllByUser",
                             "/api/cyclicalservice/getAllByBusiness",
                             "/api/cyclicalservice/renewalRequest/*",
@@ -97,12 +98,12 @@ public class SecurityConfig {
                             "/api/cyclicalservice/insertBody",
                             "/api/cyclicalservice/statusChange/*",
                             "/api/serviceUser/getAll",
-                            "/api/serviceUser/get/**",
+
                             "/api/serviceUser/insertBody",
                             "/api/business/update/*",
                             "/api/serviceUser/update/*",
                             "/api/business/getAll",
-                            "/api/business/get/**",
+
                             "/api/business/insertBody",
                             "/api/business/getAllByUser",
                             "/api/accountData/getAll",

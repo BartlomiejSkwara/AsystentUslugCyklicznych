@@ -6,12 +6,16 @@ import com.example.uslugicykliczne.dataTypes.projections.BusinessProjection;
 
 import com.example.uslugicykliczne.entity.BusinessEntity;
 import com.example.uslugicykliczne.repo.BusinessRepo;
+import com.example.uslugicykliczne.security.CustomUserDetails;
 import com.example.uslugicykliczne.services.BusinessService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,8 +49,16 @@ public class BusinessController
     }
     @GetMapping("/get/{id}")
     public ResponseEntity<BusinessProjection> getDysponent (@PathVariable Integer id ){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = ((CustomUserDetails)authentication.getPrincipal());
+
+
+        String name = authentication.getName();
+        boolean roleCheck = userDetails.getRole().equals("ROLE_admin")||userDetails.getRole().equals("ROLE_editor");
+        List<BusinessEntity> permittedBusiness = businessService.getAllRelatedToUsername(name);
         Optional<BusinessEntity> soughtEntity = businessRepo.findBusinessWithContactDataById(id);
-        if(soughtEntity.isPresent()){
+        if(soughtEntity.isPresent() && (permittedBusiness.contains(soughtEntity.get()) || roleCheck)){
             ProjectionFactory pf = new SpelAwareProxyProjectionFactory();
             BusinessProjection bp = pf.createProjection(BusinessProjection.class, soughtEntity.get());
             return ResponseEntity.ok(bp);

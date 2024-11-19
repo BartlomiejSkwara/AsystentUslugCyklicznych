@@ -112,4 +112,11 @@ public class BusinessService {
             return new ArrayList<>();
         return businessRepo.findBusinessWithProjectedContactDataFromBusinessGroup(v);
     }
+
+    public List<BusinessEntity> getAllRelatedToUsername(String name) {
+        var v = businessRepo.findBusinessRelatedToUserByUsername(name);
+        if(v.isEmpty())
+            return new ArrayList<>();
+        return businessRepo.findBusinessWithContactDataFromBusinessGroup(v);
+    }
 }

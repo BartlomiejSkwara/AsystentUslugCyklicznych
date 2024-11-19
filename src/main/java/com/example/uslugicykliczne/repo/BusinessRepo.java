@@ -21,12 +21,23 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
         return null;
     }
 
+    default List<BusinessEntity> findBusinessWithContactDataFromBusinessGroup(List<BusinessEntity> businessGroup){
+        List<BusinessEntity> all = findBJoinedEmailFromIdGroupBy(businessGroup);
+        if (all != null && !all.isEmpty()){
+            return  findBEJoinedPhoneBy(all);
+        }
+        return null;
+    }
+
     @Query("select distinct b from BusinessEntity b LEFT JOIN FETCH b.contactData cd LEFT JOIN FETCH cd.emails JOIN FETCH b.address where b in(:businessGroup)")
     List<BusinessEntity> findBJoinedEmailFromIdGroupBy(List<BusinessEntity> businessGroup);
 
 
     @Query("select distinct  cs.business from CyclicalServiceEntity cs where cs.serviceUser = :user")
     List<BusinessEntity> findBusinessRelatedToUserBy(ServiceUserEntity user);
+
+    @Query("select distinct  cs.business from CyclicalServiceEntity cs where cs.serviceUser.accountDataEntity.username = :username")
+    List<BusinessEntity> findBusinessRelatedToUserByUsername(String username);
     /////////////////
 
     default List<BusinessProjection> findBusinessesWithProjectedContactData(){
@@ -41,7 +52,8 @@ public interface BusinessRepo extends ListCrudRepository<BusinessEntity,Integer>
     @Query("select distinct b from BusinessEntity b LEFT JOIN FETCH b.contactData cd LEFT JOIN FETCH cd.phoneNumbers where b in (:oldB)")
     List<BusinessProjection> findBJoinedPhoneBy(List<BusinessEntity> oldB);
 
-
+    @Query("select distinct b from BusinessEntity b LEFT JOIN FETCH b.contactData cd LEFT JOIN FETCH cd.phoneNumbers where b in (:oldB)")
+    List<BusinessEntity> findBEJoinedPhoneBy(List<BusinessEntity> oldB);
 
     default Optional<BusinessEntity> findBusinessWithContactDataById(int id){
         Optional<BusinessEntity> entity = findBSingleJoinedEmailBy(id);
