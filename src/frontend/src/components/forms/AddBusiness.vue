@@ -89,7 +89,7 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" class="btn1" style="float: right" @click="checkFormAndOpenModal">Powrót</button>
+      <button v-if="standalone" class="btn1" style="float: right" @click="goBack">Powrót</button>
       <br>
     </form>
   </div>
@@ -319,10 +319,10 @@ export default {
       if (this.isFormFilled) {
         const confirmation = window.confirm('Czy na pewno chcesz opuścić formularz? Stracisz niezapisane postępy!');
         if (confirmation) {
-          this.goBack();
+          return this.goBack();
         }
       } else {
-        this.goBack();
+        //this.goBack();
       }
     },
     goBack() {

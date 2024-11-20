@@ -74,7 +74,7 @@
       <p class="text-danger">{{ errorMessage }}</p>
 
       <button v-if="standalone" type="submit">Zapisz</button>
-      <button v-if="standalone" class="btn1" style="float: right" @click="checkFormAndOpenModal">Powrót</button>
+      <button v-if="standalone" class="btn1" style="float: right" @click="goBack">Powrót</button>
     </form>
   </div>
 </template>
