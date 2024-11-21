@@ -153,9 +153,12 @@
           return;
         }
 
+        document.getElementById("loader").style.visibility = 'visible';
+
         let selectedFile = event.target.files[0];
         const formData = new FormData();
         formData.append("file", selectedFile);
+
 
         try {
           const cookie = getCookie('XSRF-TOKEN');
@@ -168,16 +171,18 @@
           });
 
           if (!response.ok) {
+           document.getElementById("loader").style.visibility = 'hidden';
             throw new Error('Wystąpił błąd podczas importowania bazy danych');
           }
-
+          document.getElementById("loader").style.visibility = 'hidden';
           alert('Z powodzeniem dokonano importowania danych do bazy danych');
           this.fetchAccounts();
         } catch (error) {
+          document.getElementById("loader").style.visibility = 'hidden';
           console.error('Wystąpił błąd:', error);
           alert(error.message);
         }
-        
+         document.getElementById("loader").style.visibility = 'hidden';
       },
       async exportData(){
         

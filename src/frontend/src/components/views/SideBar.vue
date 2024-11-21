@@ -33,6 +33,14 @@
           Panel administratora
         </router-link>
       </li>
+      <li>
+        <div class="loader" id="loader" >
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <p> Processing Database Transaction</p>
+        </div>
+      </li>
     </ul>
   </div>
 </template>
